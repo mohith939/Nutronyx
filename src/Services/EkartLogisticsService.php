@@ -354,59 +354,179 @@ class EkartLogisticsService
         $auth = self::getAccessToken();
         $token = $auth['access_token'] ?? '';
 
-        $endpoint = self::BASE_URL . "/api/v2/serviceability/" . $pin;
-        $response = self::executeHttpRequest('GET', $endpoint, null, ["Authorization: Bearer {$token}"]);
+        // If active live token exists, query live Ekart endpoint
+        if (!empty($auth['is_live']) && !empty($token)) {
+            $endpoint = self::BASE_URL . "/api/v2/serviceability/" . $pin;
+            $response = self::executeHttpRequest('GET', $endpoint, null, ["Authorization: Bearer {$token}"]);
 
-        if ($response['success'] && isset($response['data']['status'])) {
-            $data = $response['data'];
-            $data['is_live_data'] = true;
-            return $data;
+            if ($response['success'] && isset($response['data']['status'])) {
+                $data = $response['data'];
+                $data['is_live_data'] = true;
+                return $data;
+            }
         }
 
         // Standard Indian Pincode Directory Intelligence
-        $pincodeStr = (string)$pin;
+        $pincodeStr = trim((string)$pin);
+        
+        // Validation: Must be a legitimate 6-digit Indian PIN (starts with digits 1 to 8)
+        if (strlen($pincodeStr) !== 6 || !ctype_digit($pincodeStr) || $pincodeStr[0] < '1' || $pincodeStr[0] > '8') {
+            return [
+                'status' => false,
+                'pincode' => $pin ?: $pincode,
+                'remark' => "Invalid or unserviceable PIN code",
+                'details' => [
+                    'cod' => false,
+                    'max_cod_amount' => 0,
+                    'city' => 'Unallocated Zone',
+                    'state' => 'India',
+                    'zone' => 'Outside Network'
+                ],
+                'service_types' => [],
+                'estimated_tat_days' => 'N/A',
+                'is_live_data' => false
+            ];
+        }
+
         $prefix3 = substr($pincodeStr, 0, 3);
         $prefix2 = substr($pincodeStr, 0, 2);
         
-        $stateMap3 = [
-            '533' => ['Andhra Pradesh', 'East Godavari (Kakinada / Rajahmundry)', true, 50000, '1-2 Days'],
-            '534' => ['Andhra Pradesh', 'West Godavari (Eluru / Bhimavaram)', true, 45000, '1-2 Days'],
-            '530' => ['Andhra Pradesh', 'Visakhapatnam Urban Hub', true, 50000, '1-2 Days'],
-            '531' => ['Andhra Pradesh', 'Anakapalli / Visakhapatnam Rural', true, 40000, '1-2 Days'],
-            '520' => ['Andhra Pradesh', 'Vijayawada Central', true, 50000, '1-2 Days'],
-            '522' => ['Andhra Pradesh', 'Guntur Urban', true, 45000, '1-2 Days'],
-            '500' => ['Telangana', 'Hyderabad Metro Hub', true, 50000, '1-2 Days'],
-            '560' => ['Karnataka', 'Bengaluru Metro Hub', true, 50000, '1-2 Days'],
-            '600' => ['Tamil Nadu', 'Chennai Metro Hub', true, 50000, '1-2 Days'],
-            '400' => ['Maharashtra', 'Mumbai Metro Hub', true, 50000, '1-2 Days'],
-            '110' => ['Delhi', 'Delhi NCR Central Hub', true, 50000, '1-2 Days'],
+        // Exact 3-digit hub prefix definitions with realistic TAT from dispatch warehouse in Rajahmundry/AP (533101)
+        $directory3 = [
+            // Local Zone (Andhra Pradesh - Godavari & Coastal)
+            '533' => ['Andhra Pradesh', 'Rajahmundry / Kakinada (East Godavari)', true, 50000, '2–3 Business Days', 'Local Zone'],
+            '534' => ['Andhra Pradesh', 'Eluru / Bhimavaram (West Godavari)', true, 50000, '2–3 Business Days', 'Local Zone'],
+            '530' => ['Andhra Pradesh', 'Visakhapatnam Urban Hub', true, 50000, '2–3 Business Days', 'Local Zone'],
+            '531' => ['Andhra Pradesh', 'Anakapalli / Vizag Rural', true, 40000, '2–3 Business Days', 'Local Zone'],
+            '532' => ['Andhra Pradesh', 'Srikakulam', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
+            '535' => ['Andhra Pradesh', 'Vizianagaram', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
+            '520' => ['Andhra Pradesh', 'Vijayawada Central', true, 50000, '2–3 Business Days', 'Intra-State Hub'],
+            '521' => ['Andhra Pradesh', 'Machilipatnam / Krishna', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
+            '522' => ['Andhra Pradesh', 'Guntur Urban Hub', true, 50000, '3–4 Business Days', 'Intra-State Hub'],
+            '523' => ['Andhra Pradesh', 'Ongole / Prakasam', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
+            '524' => ['Andhra Pradesh', 'Nellore Central', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
+            '515' => ['Andhra Pradesh', 'Anantapur', true, 35000, '3–4 Business Days', 'Intra-State Hub'],
+            '516' => ['Andhra Pradesh', 'Kadapa', true, 35000, '3–4 Business Days', 'Intra-State Hub'],
+            '517' => ['Andhra Pradesh', 'Tirupati / Chittoor Hub', true, 45000, '3–4 Business Days', 'Intra-State Hub'],
+            '518' => ['Andhra Pradesh', 'Kurnool Hub', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
+
+            // Telangana
+            '500' => ['Telangana', 'Hyderabad Metro Hub', true, 50000, '3–4 Business Days', 'Regional Metro Hub'],
+            '501' => ['Telangana', 'Ranga Reddy / Secunderabad', true, 45000, '3–4 Business Days', 'Regional Hub'],
+            '502' => ['Telangana', 'Medak / Sangareddy', true, 40000, '3–4 Business Days', 'Regional Hub'],
+            '503' => ['Telangana', 'Nizamabad', true, 35000, '4–5 Business Days', 'Regional Hub'],
+            '505' => ['Telangana', 'Karimnagar', true, 40000, '3–4 Business Days', 'Regional Hub'],
+            '506' => ['Telangana', 'Warangal Urban', true, 40000, '3–4 Business Days', 'Regional Hub'],
+
+            // South Metros & Hubs
+            '560' => ['Karnataka', 'Bengaluru Metro Hub', true, 50000, '3–5 Business Days', 'South India Metro'],
+            '562' => ['Karnataka', 'Bengaluru Rural Hub', true, 45000, '3–5 Business Days', 'South India Metro'],
+            '570' => ['Karnataka', 'Mysuru', true, 40000, '4–5 Business Days', 'South Zone'],
+            '575' => ['Karnataka', 'Mangaluru Hub', true, 40000, '4–5 Business Days', 'South Zone'],
+            '600' => ['Tamil Nadu', 'Chennai Metro Hub', true, 50000, '3–5 Business Days', 'South India Metro'],
+            '641' => ['Tamil Nadu', 'Coimbatore Urban', true, 45000, '4–5 Business Days', 'South Zone'],
+            '625' => ['Tamil Nadu', 'Madurai', true, 40000, '4–5 Business Days', 'South Zone'],
+            '682' => ['Kerala', 'Kochi / Ernakulam Hub', true, 45000, '4–5 Business Days', 'South Zone'],
+            '695' => ['Kerala', 'Thiruvananthapuram', true, 40000, '4–5 Business Days', 'South Zone'],
+
+            // West Hubs
+            '400' => ['Maharashtra', 'Mumbai Metro Hub', true, 50000, '4–5 Business Days', 'National Metro'],
+            '411' => ['Maharashtra', 'Pune Urban Hub', true, 45000, '4–5 Business Days', 'National Metro'],
+            '440' => ['Maharashtra', 'Nagpur', true, 40000, '4–5 Business Days', 'National Zone'],
+            '380' => ['Gujarat', 'Ahmedabad Metro', true, 45000, '4–5 Business Days', 'National Zone'],
+            '395' => ['Gujarat', 'Surat Hub', true, 40000, '4–5 Business Days', 'National Zone'],
+
+            // North Hubs
+            '110' => ['Delhi', 'Delhi NCR Central Hub', true, 50000, '4–5 Business Days', 'National Metro'],
+            '122' => ['Haryana', 'Gurugram Hub', true, 50000, '4–5 Business Days', 'National Metro'],
+            '201' => ['Uttar Pradesh', 'Noida / Ghaziabad Hub', true, 45000, '4–5 Business Days', 'National Metro'],
+            '160' => ['Chandigarh', 'Chandigarh Capital Region', true, 45000, '4–6 Business Days', 'North Zone'],
+            '302' => ['Rajasthan', 'Jaipur Hub', true, 40000, '4–6 Business Days', 'North Zone'],
+            '226' => ['Uttar Pradesh', 'Lucknow Hub', true, 40000, '4–6 Business Days', 'North Zone'],
+
+            // East Hubs
+            '700' => ['West Bengal', 'Kolkata Metro Hub', true, 50000, '4–6 Business Days', 'National Metro'],
+            '751' => ['Odisha', 'Bhubaneswar Hub', true, 45000, '3–5 Business Days', 'East Zone'],
+            '800' => ['Bihar', 'Patna Hub', true, 35000, '5–6 Business Days', 'East Zone'],
+            '781' => ['Assam', 'Guwahati Hub', true, 30000, '6–8 Business Days', 'North-East Zone'],
+
+            // Remote / Islands
+            '744' => ['Andaman & Nicobar', 'Port Blair Hub', false, 0, '7–10 Business Days', 'Special Island (Prepaid Only)'],
+            '190' => ['Jammu & Kashmir', 'Srinagar / Kashmir Valley', true, 25000, '6–8 Business Days', 'Special Hill Region'],
+            '194' => ['Ladakh', 'Leh Ladakh', true, 20000, '7–9 Business Days', 'Special Hill Region']
         ];
 
-        $stateMap2 = [
-            '50' => ['Telangana', 'Hyderabad', true, 50000, '1-2 Days'],
-            '51' => ['Andhra Pradesh', 'Tirupati', true, 40000, '2-3 Days'],
-            '52' => ['Andhra Pradesh', 'Vijayawada', true, 40000, '2-3 Days'],
-            '53' => ['Andhra Pradesh', 'Visakhapatnam', true, 40000, '2-3 Days'],
-            '56' => ['Karnataka', 'Bengaluru', true, 49999, '1-2 Days'],
-            '57' => ['Karnataka', 'Mangaluru', true, 35000, '2-3 Days'],
-            '58' => ['Karnataka', 'Hubballi', true, 30000, '2-3 Days'],
-            '60' => ['Tamil Nadu', 'Chennai', true, 45000, '1-2 Days'],
-            '40' => ['Maharashtra', 'Mumbai', true, 49999, '1-2 Days'],
-            '41' => ['Maharashtra', 'Pune', true, 45000, '1-2 Days'],
-            '11' => ['Delhi', 'New Delhi', true, 49999, '1-2 Days'],
-            '12' => ['Haryana', 'Gurugram', true, 45000, '1-2 Days'],
-            '20' => ['Uttar Pradesh', 'Noida', true, 35000, '2-4 Days'],
-            '70' => ['West Bengal', 'Kolkata', true, 40000, '2-4 Days'],
-            '38' => ['Gujarat', 'Ahmedabad', true, 45000, '2-3 Days'],
+        // 2-digit fallback
+        $directory2 = [
+            '50' => ['Telangana', 'Telangana District Hub', true, 40000, '3–5 Business Days', 'Regional Hub'],
+            '51' => ['Andhra Pradesh', 'Rayalaseema Region', true, 40000, '3–5 Business Days', 'Intra-State Hub'],
+            '52' => ['Andhra Pradesh', 'Coastal Central AP', true, 45000, '3–4 Business Days', 'Intra-State Hub'],
+            '53' => ['Andhra Pradesh', 'North Coastal AP', true, 45000, '2–3 Business Days', 'Local Zone'],
+            '56' => ['Karnataka', 'Bengaluru / South KA', true, 45000, '3–5 Business Days', 'South Zone'],
+            '57' => ['Karnataka', 'Coastal Karnataka', true, 35000, '4–5 Business Days', 'South Zone'],
+            '58' => ['Karnataka', 'North Karnataka', true, 35000, '4–6 Business Days', 'South Zone'],
+            '60' => ['Tamil Nadu', 'Chennai / North TN', true, 45000, '3–5 Business Days', 'South Zone'],
+            '61' => ['Tamil Nadu', 'Central TN', true, 40000, '4–5 Business Days', 'South Zone'],
+            '62' => ['Tamil Nadu', 'South TN', true, 40000, '4–5 Business Days', 'South Zone'],
+            '63' => ['Tamil Nadu', 'North-West TN', true, 40000, '4–5 Business Days', 'South Zone'],
+            '64' => ['Tamil Nadu', 'Coimbatore Region', true, 40000, '4–5 Business Days', 'South Zone'],
+            '67' => ['Kerala', 'North Kerala', true, 35000, '4–5 Business Days', 'South Zone'],
+            '68' => ['Kerala', 'Central Kerala', true, 40000, '4–5 Business Days', 'South Zone'],
+            '69' => ['Kerala', 'South Kerala', true, 40000, '4–5 Business Days', 'South Zone'],
+            '40' => ['Maharashtra', 'Mumbai / Konkan', true, 45000, '4–5 Business Days', 'National Metro'],
+            '41' => ['Maharashtra', 'Pune / Western MH', true, 45000, '4–5 Business Days', 'National Zone'],
+            '42' => ['Maharashtra', 'Nashik / Khandesh', true, 40000, '4–6 Business Days', 'National Zone'],
+            '43' => ['Maharashtra', 'Marathwada', true, 35000, '4–6 Business Days', 'National Zone'],
+            '44' => ['Maharashtra', 'Vidarbha', true, 40000, '4–6 Business Days', 'National Zone'],
+            '38' => ['Gujarat', 'North / Central Gujarat', true, 45000, '4–6 Business Days', 'National Zone'],
+            '39' => ['Gujarat', 'South Gujarat / Saurashtra', true, 40000, '4–6 Business Days', 'National Zone'],
+            '11' => ['Delhi', 'Delhi NCR', true, 50000, '4–5 Business Days', 'National Metro'],
+            '12' => ['Haryana', 'Haryana District', true, 40000, '4–6 Business Days', 'North Zone'],
+            '13' => ['Haryana', 'North Haryana', true, 40000, '4–6 Business Days', 'North Zone'],
+            '14' => ['Punjab', 'East Punjab', true, 40000, '4–6 Business Days', 'North Zone'],
+            '15' => ['Punjab', 'West Punjab', true, 40000, '4–6 Business Days', 'North Zone'],
+            '20' => ['Uttar Pradesh', 'West UP / NCR', true, 40000, '4–6 Business Days', 'North Zone'],
+            '21' => ['Uttar Pradesh', 'Central UP', true, 35000, '4–6 Business Days', 'North Zone'],
+            '22' => ['Uttar Pradesh', 'East UP', true, 35000, '5–6 Business Days', 'North Zone'],
+            '30' => ['Rajasthan', 'Jaipur / North RJ', true, 40000, '4–6 Business Days', 'North Zone'],
+            '31' => ['Rajasthan', 'South RJ', true, 35000, '5–6 Business Days', 'North Zone'],
+            '32' => ['Rajasthan', 'East RJ', true, 35000, '5–6 Business Days', 'North Zone'],
+            '33' => ['Rajasthan', 'North-West RJ', true, 35000, '5–6 Business Days', 'North Zone'],
+            '34' => ['Rajasthan', 'West RJ', true, 35000, '5–6 Business Days', 'North Zone'],
+            '70' => ['West Bengal', 'Kolkata District', true, 45000, '4–6 Business Days', 'East Zone'],
+            '71' => ['West Bengal', 'South Bengal', true, 40000, '4–6 Business Days', 'East Zone'],
+            '72' => ['West Bengal', 'Midnapore', true, 35000, '5–6 Business Days', 'East Zone'],
+            '73' => ['West Bengal', 'North Bengal', true, 35000, '5–7 Business Days', 'East Zone'],
+            '74' => ['West Bengal', 'Sub-Himalayan Bengal', true, 30000, '5–7 Business Days', 'East Zone'],
+            '75' => ['Odisha', 'Coastal Odisha', true, 40000, '4–5 Business Days', 'East Zone'],
+            '76' => ['Odisha', 'South Odisha', true, 35000, '4–5 Business Days', 'East Zone'],
+            '77' => ['Odisha', 'North Odisha', true, 35000, '4–6 Business Days', 'East Zone'],
+            '80' => ['Bihar', 'Patna / Central Bihar', true, 35000, '5–6 Business Days', 'East Zone'],
+            '81' => ['Bihar', 'East Bihar', true, 30000, '5–7 Business Days', 'East Zone'],
+            '82' => ['Bihar', 'South Bihar / Gaya', true, 30000, '5–7 Business Days', 'East Zone'],
+            '83' => ['Jharkhand', 'Ranchi / Jamshedpur', true, 35000, '5–6 Business Days', 'East Zone'],
+            '84' => ['Bihar', 'North Bihar', true, 30000, '5–7 Business Days', 'East Zone'],
+            '85' => ['Bihar', 'North-East Bihar', true, 30000, '5–7 Business Days', 'East Zone'],
+            '45' => ['Madhya Pradesh', 'Indore Region', true, 40000, '4–6 Business Days', 'Central Zone'],
+            '46' => ['Madhya Pradesh', 'Bhopal Region', true, 40000, '4–6 Business Days', 'Central Zone'],
+            '47' => ['Madhya Pradesh', 'Gwalior Region', true, 35000, '5–6 Business Days', 'Central Zone'],
+            '48' => ['Madhya Pradesh', 'Jabalpur Region', true, 35000, '5–6 Business Days', 'Central Zone'],
+            '49' => ['Chhattisgarh', 'Raipur / Bilaspur', true, 35000, '4–6 Business Days', 'Central Zone'],
+            '78' => ['Assam', 'Assam Valley', true, 30000, '6–8 Business Days', 'North-East Zone'],
+            '79' => ['North East', 'NE Hill States', true, 25000, '6–8 Business Days', 'North-East Zone'],
+            '17' => ['Himachal Pradesh', 'HP Hills', true, 30000, '5–7 Business Days', 'Hill Zone'],
+            '18' => ['Jammu & Kashmir', 'Jammu Region', true, 30000, '5–7 Business Days', 'Special Zone'],
+            '19' => ['Jammu & Kashmir', 'Kashmir / Ladakh', true, 20000, '6–8 Business Days', 'Special Zone'],
+            '24' => ['Uttarakhand', 'Dehradun / Garhwal', true, 35000, '5–7 Business Days', 'Hill Zone'],
+            '26' => ['Uttarakhand', 'Kumaon / Nainital', true, 35000, '5–7 Business Days', 'Hill Zone'],
         ];
 
-        $info = $stateMap3[$prefix3] ?? $stateMap2[$prefix2] ?? ['India Region', 'Hub Station', true, 25000, '2-4 Days'];
-        $isServiceable = strlen($pincodeStr) === 6 && is_numeric($pincodeStr);
+        $info = $directory3[$prefix3] ?? $directory2[$prefix2] ?? ['India', 'National Coverage Station', true, 30000, '4–6 Business Days', 'National Coverage'];
 
         return [
-            'status' => $isServiceable,
+            'status' => true,
             'pincode' => $pin,
-            'remark' => $isServiceable ? "Pincode is serviceable via Ekart Express & Surface" : "Invalid pincode format",
+            'remark' => "Serviceable via Ekart Logistics Network",
             'details' => [
                 'cod' => $info[2],
                 'max_cod_amount' => $info[3],
@@ -415,10 +535,11 @@ class EkartLogisticsService
                 'reverse_pickup' => true,
                 'reverse_drop' => true,
                 'city' => $info[1],
-                'state' => $info[0]
+                'state' => $info[0],
+                'zone' => $info[5] ?? 'National Coverage'
             ],
             'service_types' => ['EXPRESS', 'SURFACE'],
-            'estimated_tat_days' => $info[4] ?? '2-3 Days',
+            'estimated_tat_days' => $info[4],
             'is_live_data' => false
         ];
     }
@@ -442,10 +563,10 @@ class EkartLogisticsService
         return [
             [
                 'courierGroup' => 'EKART_ELITE_DIRECT',
-                'tat' => ['min_days' => 1, 'max_days' => 3],
-                'forwardDeliveredCharges' => ['base' => 65.0, 'fuel' => 6.5, 'total' => 71.5],
-                'rtoDeliveredCharges' => ['base' => 55.0, 'total' => 55.0],
-                'reverseDeliveredCharges' => ['base' => 65.0, 'total' => 65.0]
+                'tat' => ['min_days' => 2, 'max_days' => 4],
+                'forwardDeliveredCharges' => ['base' => 45.0, 'fuel' => 2.25, 'total' => 47.25],
+                'rtoDeliveredCharges' => ['base' => 40.0, 'total' => 40.0],
+                'reverseDeliveredCharges' => ['base' => 45.0, 'total' => 45.0]
             ]
         ];
     }
@@ -459,31 +580,79 @@ class EkartLogisticsService
         $auth = self::getAccessToken();
         $token = $auth['access_token'] ?? '';
 
-        $endpoint = self::BASE_URL . "/data/pricing/estimate";
-        $response = self::executeHttpRequest('POST', $endpoint, json_encode($params), ["Authorization: Bearer {$token}"]);
+        // If live Ekart session exists, query live API
+        if (!empty($auth['is_live']) && !empty($token)) {
+            $endpoint = self::BASE_URL . "/data/pricing/estimate";
+            $response = self::executeHttpRequest('POST', $endpoint, json_encode($params), ["Authorization: Bearer {$token}"]);
 
-        if ($response['success'] && !empty($response['data']['total'])) {
-            $data = $response['data'];
-            $data['is_live_estimate'] = true;
-            return $data;
+            if ($response['success'] && !empty($response['data']['total'])) {
+                $data = $response['data'];
+                $data['is_live_estimate'] = true;
+                return $data;
+            }
         }
 
-        $weightGrams = (int)($params['weight'] ?? 1000);
-        $weightKg = max(0.5, $weightGrams / 1000);
-        $service = $params['serviceType'] ?? 'SURFACE';
-        $baseRate = ($service === 'EXPRESS') ? 65.00 : 45.00;
-        $slabExtra = max(0, ceil(($weightKg - 0.5) / 0.5)) * (($service === 'EXPRESS') ? 35.00 : 25.00);
-        $shippingCharge = $baseRate + $slabExtra;
-        $fuel = round($shippingCharge * 0.10, 2);
-        $cod = (!empty($params['codAmount']) && (float)$params['codAmount'] > 0) ? 40.00 : 0.00;
-        $taxes = round(($shippingCharge + $fuel + $cod) * 0.18, 2);
-        $total = round($shippingCharge + $fuel + $cod + $taxes, 2);
+        $dropPin = (string)($params['dropPincode'] ?? $params['drop'] ?? '533101');
+        $prefix3 = substr($dropPin, 0, 3);
+        $prefix2 = substr($dropPin, 0, 2);
+
+        // Accurate Indian logistics zone pricing from dispatch warehouse (533101 - Rajahmundry, AP)
+        $isLocal = in_array($prefix3, ['533', '534', '530', '531'], true);
+        $isIntraState = in_array($prefix2, ['50', '51', '52', '53'], true);
+        $isSouthMetro = in_array($prefix3, ['560', '562', '600', '682'], true) || in_array($prefix2, ['56', '60'], true);
+        $isNorthWestMetro = in_array($prefix3, ['400', '411', '110', '122', '201', '700', '380'], true);
+        $isRemote = in_array($prefix2, ['78', '79', '18', '19', '74'], true);
+
+        if ($isLocal) {
+            $zone = 'Zone A (Local / Godavari AP)';
+            $base250 = 36.00;
+            $base500 = 42.00;
+            $extra500 = 22.00;
+        } elseif ($isIntraState || $isSouthMetro) {
+            $zone = 'Zone B (Regional / South India)';
+            $base250 = 44.00;
+            $base500 = 50.00;
+            $extra500 = 26.00;
+        } elseif ($isNorthWestMetro) {
+            $zone = 'Zone C (National Metro)';
+            $base250 = 52.00;
+            $base500 = 60.00;
+            $extra500 = 30.00;
+        } elseif ($isRemote) {
+            $zone = 'Zone E (Special / Remote)';
+            $base250 = 70.00;
+            $base500 = 85.00;
+            $extra500 = 42.00;
+        } else {
+            $zone = 'Zone D (Rest of India)';
+            $base250 = 56.00;
+            $base500 = 66.00;
+            $extra500 = 32.00;
+        }
+
+        $weightGrams = max(50, (int)($params['weight'] ?? 1000));
+        if ($weightGrams <= 250) {
+            $shippingCharge = $base250;
+        } elseif ($weightGrams <= 500) {
+            $shippingCharge = $base500;
+        } else {
+            $extraWeight = $weightGrams - 500;
+            $extraSlabs = (int)ceil($extraWeight / 500);
+            $shippingCharge = $base500 + ($extraSlabs * $extra500);
+        }
+
+        $fuel = round($shippingCharge * 0.05, 2); // 5% fuel surcharge
+        $hasCod = (!empty($params['codAmount']) && (float)$params['codAmount'] > 0);
+        $cod = $hasCod ? 25.00 : 0.00; // Flat ₹25 standard courier COD handling fee
+        $subtotal = $shippingCharge + $fuel + $cod;
+        $taxes = round($subtotal * 0.18, 2); // 18% GST
+        $total = round($subtotal + $taxes, 2);
 
         return [
             'type' => 'WEIGHT_BASED',
-            'zone' => 'Zone B (South Metro)',
+            'zone' => $zone,
             'volumetricWeight' => (string)round(($weightGrams * 1.1) / 1000, 2),
-            'billingWeight' => (string)$weightKg,
+            'billingWeight' => (string)($weightGrams / 1000),
             'shippingCharge' => (string)$shippingCharge,
             'rtoCharge' => (string)$shippingCharge,
             'fuelSurcharge' => (string)$fuel,
@@ -491,6 +660,13 @@ class EkartLogisticsService
             'qcCharge' => '0.00',
             'taxes' => (string)$taxes,
             'total' => (string)$total,
+            'breakdown' => [
+                'freight' => $shippingCharge,
+                'fuel' => $fuel,
+                'cod' => $cod,
+                'tax' => $taxes,
+                'total' => $total
+            ],
             'rid' => 'ek_est_' . bin2hex(random_bytes(6)),
             'rSnapshotId' => 'snap_' . date('YmdHis'),
             'is_live_estimate' => false

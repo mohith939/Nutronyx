@@ -221,14 +221,14 @@ $isEkartConnected = ($ekartConfig['status'] ?? '') === 'CONNECTED';
 $liveStatus = EkartLogisticsService::isLiveConnected();
 $isLiveEkart = !empty($liveStatus['is_live']);
 
-// Pre-calculate initial serviceability and rate for PIN 533429
-$initPin = '533429';
+// Pre-calculate initial serviceability and rate for local hub PIN 533101
+$initPin = '533101';
 $initService = EkartLogisticsService::checkServiceability($initPin);
 $initRate = EkartLogisticsService::getRateEstimate([
     'pickupPincode' => 533101,
-    'dropPincode' => 533429,
-    'weight' => 1000,
-    'serviceType' => 'EXPRESS',
+    'dropPincode' => 533101,
+    'weight' => 500,
+    'serviceType' => 'SURFACE',
     'codAmount' => 0,
     'invoiceAmount' => 1250
 ]);
@@ -766,26 +766,34 @@ $initRate = EkartLogisticsService::getRateEstimate([
 
                         <!-- Pincode Input & Check Button Row -->
                         <div style="display: flex; gap: 10px; margin-bottom: 14px;">
-                            <input type="text" id="ekartTestPin" value="533429" maxlength="6" class="form-standard-input" style="flex: 1; font-weight: 600;" placeholder="Enter PIN" oninput="window.handlePinTyping(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();window.testEkartPincode();}">
+                            <input type="text" id="ekartTestPin" value="533101" maxlength="6" class="form-standard-input" style="flex: 1; font-weight: 600;" placeholder="Enter PIN (e.g. 533101)" oninput="window.handlePinTyping(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();window.testEkartPincode();}">
                             <button type="button" class="btn-check-pin" onclick="window.testEkartPincode()">
                                 Check
                             </button>
                         </div>
 
-                        <!-- Result Pill Box Matching Mockup -->
-                        <div id="ekartPinResult" class="green-result-box">
-                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #166534; font-size: 14.5px;">
-                                <span style="width: 19px; height: 19px; border-radius: 50%; background: #10B981; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900;">✓</span>
-                                <span id="pinResultTitle">PIN 533429 is Serviceable</span>
+                        <!-- Result Pill Box -->
+                        <div id="ekartPinResult" class="green-result-box" style="transition: all 0.25s ease;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                                <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #166534; font-size: 14.5px;">
+                                    <span id="pinResultBadge" style="width: 20px; height: 20px; border-radius: 50%; background: #10B981; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900;">✓</span>
+                                    <span id="pinResultTitle">PIN 533101 is Serviceable</span>
+                                </div>
+                                <span id="pinResultZonePill" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 9999px; background: #DCFCE7; color: #15803D;">Local Zone</span>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 24px; margin-top: 10px; font-size: 13px; color: #166534; font-weight: 500; flex-wrap: wrap;">
+
+                            <div id="pinResultLocation" style="font-size: 12.5px; color: #374151; font-weight: 600; margin-top: 6px;">
+                                Rajahmundry / Kakinada (East Godavari), Andhra Pradesh
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 20px; margin-top: 10px; font-size: 13px; color: #166534; font-weight: 500; flex-wrap: wrap;">
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                                    <span id="pinResultCod">COD: <strong>Available</strong></span>
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                    <span id="pinResultCod">COD: <strong>Available (up to ₹50,000)</strong></span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                    <span id="pinResultTat">Estimated Delivery: <strong>1–2 Days</strong></span>
+                                    <span id="pinResultTat">Estimated Delivery: <strong>2–3 Business Days</strong></span>
                                 </div>
                             </div>
                         </div>
@@ -818,24 +826,34 @@ $initRate = EkartLogisticsService::getRateEstimate([
                         <div style="display: grid; grid-template-columns: 1fr 1.35fr; gap: 16px; margin-bottom: 18px;">
                             <div>
                                 <label class="form-standard-label">Weight (grams)</label>
-                                <input type="number" id="ekartCalcWeight" value="1000" min="50" step="50" class="form-standard-input" oninput="window.calculateEkartRate()">
+                                <input type="number" id="ekartCalcWeight" value="100" min="50" step="50" class="form-standard-input" oninput="window.calculateEkartRate()">
                             </div>
                             <div>
                                 <label class="form-standard-label">Payment Mode</label>
                                 <select id="ekartCalcPayment" class="form-standard-input" style="cursor: pointer;" onchange="window.calculateEkartRate()">
-                                    <option value="Prepaid" selected>Prepaid (No COD)</option>
+                                    <option value="Prepaid" selected>Prepaid (Online Payment)</option>
                                     <option value="COD">Cash on Delivery (COD)</option>
                                 </select>
                             </div>
                         </div>
 
-                        <!-- Result Box with Total ₹129.80 -->
-                        <div class="green-result-box" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px;">
-                            <div style="font-size: 14px; color: #166534; font-weight: 600;">
-                                Estimated Shipping Charge
+                        <!-- Result Box with Total and Breakdown -->
+                        <div class="green-result-box" style="padding: 16px 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                                <div>
+                                    <div style="font-size: 14px; color: #166534; font-weight: 600;">
+                                        Estimated Shipping Charge
+                                    </div>
+                                    <div id="ekartRateZoneInfo" style="font-size: 11.5px; color: #4B5563; margin-top: 2px;">
+                                        Zone A (Local / Godavari AP) &bull; 100g package
+                                    </div>
+                                </div>
+                                <div style="font-size: 28px; font-weight: 700; color: #144D29; letter-spacing: -0.02em;" id="ekartRateTotal">
+                                    ₹<?= number_format((float)($initRate['total'] ?? 44.60), 2) ?>
+                                </div>
                             </div>
-                            <div style="font-size: 28px; font-weight: 700; color: #144D29; letter-spacing: -0.02em;" id="ekartRateTotal">
-                                ₹<?= number_format((float)($initRate['total'] ?? 129.80), 2) ?>
+                            <div id="ekartRateBreakdown" style="font-size: 11.5px; color: #6B7280; border-top: 1px dashed #A7F3D0; margin-top: 10px; padding-top: 8px;">
+                                Base Freight: ₹<?= number_format((float)($initRate['breakdown']['freight'] ?? 36.00), 2) ?> &bull; Fuel (5%): ₹<?= number_format((float)($initRate['breakdown']['fuel'] ?? 1.80), 2) ?> &bull; GST (18%): ₹<?= number_format((float)($initRate['breakdown']['tax'] ?? 6.80), 2) ?>
                             </div>
                         </div>
                     </div>
@@ -920,48 +938,119 @@ $initRate = EkartLogisticsService::getRateEstimate([
     };
 
     window.testEkartPincode = function() {
-        const pin = document.getElementById('ekartTestPin').value.trim();
+        const pinInp = document.getElementById('ekartTestPin');
+        const pin = pinInp ? pinInp.value.trim() : '';
         if (!pin || pin.length !== 6 || isNaN(pin)) {
             alert('Please enter a valid 6-digit Indian PIN code.');
             return;
         }
 
+        const box = document.getElementById('ekartPinResult');
         const title = document.getElementById('pinResultTitle');
+        const badge = document.getElementById('pinResultBadge');
+        const locationEl = document.getElementById('pinResultLocation');
+        const zonePill = document.getElementById('pinResultZonePill');
         const cod = document.getElementById('pinResultCod');
         const tat = document.getElementById('pinResultTat');
-        title.textContent = `Checking PIN ${pin}...`;
+
+        if (title) title.textContent = `Checking PIN ${pin}...`;
 
         fetch(`shipping.php?ajax=ekart_serviceability&pin=${encodeURIComponent(pin)}`)
             .then(r => r.json())
             .then(data => {
                 if (data.status) {
                     const d = data.details || {};
-                    title.textContent = `PIN ${data.pincode} is Serviceable`;
-                    cod.innerHTML = `COD: <strong>${d.cod ? 'Available' : 'Prepaid Only'}</strong>`;
-                    tat.innerHTML = `Estimated Delivery: <strong>${data.estimated_tat_days || '1–2 Days'}</strong>`;
+                    if (box) {
+                        box.style.background = '#EBFDF2';
+                        box.style.borderColor = '#A7F3D0';
+                    }
+                    if (badge) {
+                        badge.style.background = '#10B981';
+                        badge.textContent = '✓';
+                    }
+                    if (title) {
+                        title.style.color = '#166534';
+                        title.textContent = `PIN ${data.pincode} is Serviceable`;
+                    }
+                    if (zonePill) {
+                        zonePill.style.display = 'inline-block';
+                        zonePill.style.background = '#DCFCE7';
+                        zonePill.style.color = '#15803D';
+                        zonePill.textContent = d.zone || 'Serviceable';
+                    }
+                    if (locationEl) {
+                        locationEl.style.display = 'block';
+                        locationEl.style.color = '#374151';
+                        locationEl.textContent = `${d.city || 'Hub Station'}, ${d.state || 'India'}`;
+                    }
+                    if (cod) cod.innerHTML = `COD: <strong>${d.cod ? 'Available (up to ₹50,000)' : 'Prepaid Only'}</strong>`;
+                    if (tat) tat.innerHTML = `Estimated Delivery: <strong>${data.estimated_tat_days || '2–3 Business Days'}</strong>`;
                 } else {
-                    title.textContent = `PIN ${data.pincode} Not Serviceable`;
-                    cod.innerHTML = `COD: <strong>Unavailable</strong>`;
-                    tat.innerHTML = `Estimated Delivery: <strong>N/A</strong>`;
+                    if (box) {
+                        box.style.background = '#FEF2F2';
+                        box.style.borderColor = '#FECACA';
+                    }
+                    if (badge) {
+                        badge.style.background = '#EF4444';
+                        badge.textContent = '✕';
+                    }
+                    if (title) {
+                        title.style.color = '#991B1B';
+                        title.textContent = `PIN ${data.pincode} Not Serviceable`;
+                    }
+                    if (zonePill) {
+                        zonePill.style.display = 'inline-block';
+                        zonePill.style.background = '#FEE2E2';
+                        zonePill.style.color = '#991B1B';
+                        zonePill.textContent = 'Outside Network';
+                    }
+                    if (locationEl) {
+                        locationEl.style.display = 'block';
+                        locationEl.style.color = '#991B1B';
+                        locationEl.textContent = data.remark || 'Invalid or unserviceable PIN code';
+                    }
+                    if (cod) cod.innerHTML = `COD: <strong>Unavailable</strong>`;
+                    if (tat) tat.innerHTML = `Estimated Delivery: <strong>N/A</strong>`;
                 }
+
+                // Immediately recalculate shipping estimate for this destination PIN!
+                window.calculateEkartRate();
             })
             .catch(e => {
-                title.textContent = `Error checking PIN: ` + e.message;
+                if (title) title.textContent = `Error checking PIN: ` + e.message;
             });
     };
 
     // Rate Calculator
     window.calculateEkartRate = function() {
-        const weight = parseInt(document.getElementById('ekartCalcWeight').value) || 1000;
-        const payment = document.getElementById('ekartCalcPayment').value;
-        const dropPin = document.getElementById('ekartTestPin').value || '533429';
+        const weightInp = document.getElementById('ekartCalcWeight');
+        const weight = parseInt(weightInp ? weightInp.value : 100) || 100;
+        const paymentEl = document.getElementById('ekartCalcPayment');
+        const payment = paymentEl ? paymentEl.value : 'Prepaid';
+        const pinInp = document.getElementById('ekartTestPin');
+        const dropPin = pinInp ? (pinInp.value.trim() || '533101') : '533101';
         const codAmount = (payment === 'COD') ? 1250 : 0;
 
-        fetch(`shipping.php?ajax=ekart_estimate&weight=${weight}&drop=${dropPin}&cod=${codAmount}&service=EXPRESS&invoice=1250`)
+        fetch(`shipping.php?ajax=ekart_estimate&weight=${weight}&drop=${encodeURIComponent(dropPin)}&cod=${codAmount}&service=SURFACE&invoice=1250`)
             .then(r => r.json())
             .then(data => {
                 if (data.total) {
-                    document.getElementById('ekartRateTotal').textContent = '₹' + parseFloat(data.total).toFixed(2);
+                    const totalEl = document.getElementById('ekartRateTotal');
+                    if (totalEl) totalEl.textContent = '₹' + parseFloat(data.total).toFixed(2);
+
+                    const zoneEl = document.getElementById('ekartRateZoneInfo');
+                    if (zoneEl) zoneEl.textContent = `${data.zone || 'Standard Courier'} • ${weight}g package`;
+
+                    const bdEl = document.getElementById('ekartRateBreakdown');
+                    if (bdEl && data.breakdown) {
+                        const bd = data.breakdown;
+                        let text = `Base Freight: ₹${parseFloat(bd.freight).toFixed(2)} &bull; Fuel (5%): ₹${parseFloat(bd.fuel).toFixed(2)}`;
+                        if (parseFloat(bd.cod) > 0) {
+                            text += ` &bull; COD Fee: ₹${parseFloat(bd.cod).toFixed(2)}`;
+                        }
+                        text += ` &bull; GST (18%): ₹${parseFloat(bd.tax).toFixed(2)}`;
+                        bdEl.innerHTML = text;
+                    }
                 }
             })
             .catch(e => console.error(e));
