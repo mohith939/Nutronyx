@@ -1,6 +1,17 @@
 # Apache Configuration for NUTRONYX
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Allow clean, extensionless URLs (e.g., /admin/login -> /admin/login.php, /shop -> /shop.php)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.*)$ $1.php [L,QSA]
+</IfModule>
+
+# MultiViews fallback for Apache extensionless file negotiation
+<IfModule mod_negotiation.c>
+    Options +MultiViews
 </IfModule>
 
 # Force UTF-8 Encoding
