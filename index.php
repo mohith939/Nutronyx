@@ -40,7 +40,7 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                 <div class="hero-left-content">
                     <h1 class="hero-headline">
                         <span class="headline-green">Nature's Goodness.</span>
-                        <span class="headline-burgundy">Simplified.</span>
+                        <span class="headline-green">Simplified.</span>
                     </h1>
 
                     <p class="hero-description">
