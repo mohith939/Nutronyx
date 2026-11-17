@@ -360,6 +360,13 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+        }
+        .kpi-item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+            border-color: #10B981;
         }
         .kpi-item-top {
             display: flex;
@@ -561,8 +568,14 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 13px 0;
+            padding: 10px 8px;
             border-bottom: 1px solid #F3F4F6;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.15s ease;
+        }
+        .mock-product-row:hover {
+            background: #F9FAFB;
         }
         .mock-product-row:last-child {
             border-bottom: none;
@@ -611,7 +624,13 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            padding: 10px 0;
+            padding: 8px 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.15s ease;
+        }
+        .mock-category-row:hover {
+            background: #F9FAFB;
         }
         .mock-category-left {
             display: flex;
@@ -680,6 +699,13 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
         .mock-orders-table tr:last-child td {
             border-bottom: none;
         }
+        .mock-orders-table tbody tr {
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .mock-orders-table tbody tr:hover {
+            background: #F9FAFB;
+        }
         .order-status-pill {
             display: inline-block;
             font-size: 11px;
@@ -711,7 +737,7 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
             <!-- Welcome Header Row -->
             <div class="dash-welcome-row">
                 <div>
-                    <h1 class="dash-welcome-title">Good Morning, <?= htmlspecialchars($adminName) ?></h1>
+                    <h1 class="dash-welcome-title">Hello, <?= htmlspecialchars($adminName) ?></h1>
                     <p class="dash-welcome-subtitle">Here's what's happening with your store today.</p>
                 </div>
 
@@ -762,10 +788,10 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
                 </div>
             </div>
 
-            <!-- ROW 1: 4 Primary KPI Cards -->
+            <!-- ROW 1: 3 Primary KPI Cards -->
             <div class="kpi-quad-grid">
                 <!-- Card 1: Revenue -->
-                <div class="kpi-item-card">
+                <div class="kpi-item-card" onclick="window.location.href='payments.php'" title="View Payments &amp; Revenue">
                     <div>
                         <div class="kpi-item-top">
                             <div class="kpi-item-top-left">
@@ -802,7 +828,7 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
                 </div>
 
                 <!-- Card 2: Orders -->
-                <div class="kpi-item-card">
+                <div class="kpi-item-card" onclick="window.location.href='orders.php'" title="View All Orders">
                     <div>
                         <div class="kpi-item-top">
                             <div class="kpi-item-top-left">
@@ -838,7 +864,7 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
                 </div>
 
                 <!-- Card 3: Average Order Value -->
-                <div class="kpi-item-card">
+                <div class="kpi-item-card" onclick="window.location.href='orders.php'" title="View Orders &amp; Order Values">
                     <div>
                         <div class="kpi-item-top">
                             <div class="kpi-item-top-left">
@@ -877,9 +903,12 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
             <!-- ROW 2: Middle Section (Revenue Chart + Action Center + Order Fulfillment) -->
             <div class="middle-tri-grid">
                 <!-- 1. Revenue & Orders Combination Chart -->
-                <div class="replica-card">
+                <div class="replica-card" onclick="window.location.href='orders.php'" style="cursor: pointer;" title="View Revenue &amp; Orders details">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
-                        <h2 class="section-card-title">Revenue &amp; Orders</h2>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <h2 class="section-card-title">Revenue &amp; Orders</h2>
+                            <span style="font-size: 14px; color: #166534; font-weight: 600;">&rarr;</span>
+                        </div>
                         <div style="display: flex; align-items: center; gap: 18px; font-size: 12.5px; color: #4B5563;">
                             <div style="display: flex; align-items: center; gap: 6px;">
                                 <span style="width: 8px; height: 8px; background: #143D24; border-radius: 50%; display: inline-block;"></span>
@@ -950,7 +979,7 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
                 <!-- 2. Action Center -->
                 <div class="replica-card">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                        <h2 class="section-card-title">Action Center</h2>
+                        <h2 class="section-card-title"><a href="orders.php" style="color: inherit; text-decoration: none;">Action Center &rarr;</a></h2>
                         <a href="orders.php" style="color: #9CA3AF; text-decoration: none; font-size: 16px; font-weight: 600;">&rsaquo;</a>
                     </div>
 
@@ -1023,13 +1052,14 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
 
                 <!-- 3. Order Fulfillment Donut Chart -->
                 <div class="replica-card">
-                    <div style="margin-bottom: 8px;">
-                        <h2 class="section-card-title">Order Fulfillment</h2>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <h2 class="section-card-title"><a href="orders.php" style="color: inherit; text-decoration: none;">Order Fulfillment &rarr;</a></h2>
+                        <a href="orders.php" style="color: #9CA3AF; text-decoration: none; font-size: 16px; font-weight: 600;">&rsaquo;</a>
                     </div>
 
                     <div class="fulfillment-body">
                         <!-- High Precision SVG Donut -->
-                        <div class="donut-wrap">
+                        <div class="donut-wrap" onclick="window.location.href='orders.php'" style="cursor: pointer;" title="View Orders Pipeline">
                             <svg width="140" height="140" viewBox="0 0 140 140">
                                 <!-- Radius 52, Circumference = 2 * PI * 52 ≈ 326.73 -->
                                 <circle cx="70" cy="70" r="52" fill="none" stroke="#E5E7EB" stroke-width="15" />
@@ -1061,37 +1091,37 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
 
                         <!-- Legend List -->
                         <div class="fulfillment-legend-list">
-                            <div class="legend-row">
+                            <a href="orders.php?tab=FULFILLED" class="legend-row" style="text-decoration: none; color: inherit; cursor: pointer;" title="Filter Fulfilled Orders">
                                 <div class="legend-dot-label">
                                     <span class="legend-dot" style="background: #143D24;"></span>
                                     <span>Delivered</span>
                                 </div>
                                 <span class="legend-value-bold"><?= $pipeDeliveredPct ?>%</span>
-                            </div>
+                            </a>
 
-                            <div class="legend-row">
+                            <a href="orders.php?tab=PROCESSING" class="legend-row" style="text-decoration: none; color: inherit; cursor: pointer;" title="Filter Processing Orders">
                                 <div class="legend-dot-label">
                                     <span class="legend-dot" style="background: #4ADE80;"></span>
                                     <span>Preparing</span>
                                 </div>
                                 <span class="legend-value-bold"><?= $pipePreparingPct ?>%</span>
-                            </div>
+                            </a>
 
-                            <div class="legend-row">
+                            <a href="orders.php?tab=DISPATCHED" class="legend-row" style="text-decoration: none; color: inherit; cursor: pointer;" title="Filter Dispatched Orders">
                                 <div class="legend-dot-label">
                                     <span class="legend-dot" style="background: #BBF7D0;"></span>
                                     <span>Dispatching</span>
                                 </div>
                                 <span class="legend-value-bold"><?= $pipeDispatchingPct ?>%</span>
-                            </div>
+                            </a>
 
-                            <div class="legend-row">
+                            <a href="orders.php?tab=PENDING" class="legend-row" style="text-decoration: none; color: inherit; cursor: pointer;" title="Filter Pending Orders">
                                 <div class="legend-dot-label">
                                     <span class="legend-dot" style="background: #D1D5DB;"></span>
                                     <span>Pending</span>
                                 </div>
                                 <span class="legend-value-bold"><?= $pipePendingPct ?>%</span>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1116,7 +1146,7 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
                             </div>
                         <?php else: ?>
                             <?php foreach ($topProdsList as $tp): ?>
-                            <div class="mock-product-row">
+                            <div class="mock-product-row" onclick="window.location.href='products.php?search=<?= urlencode($tp['title']) ?>'" title="View <?= htmlspecialchars($tp['title']) ?> in Catalog">
                                 <div class="mock-product-left">
                                     <div class="mock-product-thumb">
                                         <?php if (!empty($tp['image_url']) && file_exists(__DIR__ . '/../' . ltrim($tp['image_url'], '/'))): ?>
@@ -1147,7 +1177,7 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
                 <!-- 2. Top Categories -->
                 <div class="replica-card">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                        <h2 class="section-card-title">Top Categories</h2>
+                        <h2 class="section-card-title"><a href="categories.php" style="color: inherit; text-decoration: none;">Top Categories &rarr;</a></h2>
                         <a href="categories.php" style="font-size: 13px; font-weight: 500; color: #111827; text-decoration: none;">View All &rarr;</a>
                     </div>
 
@@ -1172,7 +1202,7 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
                                 $catPct = round(($tc['total_revenue'] / $totalCatRev) * 100);
                                 $iconPath = $catIcons[$cIdx % count($catIcons)];
                             ?>
-                            <div class="mock-category-row">
+                            <div class="mock-category-row" onclick="window.location.href='categories.php'" title="Manage Categories">
                                 <div class="mock-category-left">
                                     <div class="mock-category-icon">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1194,7 +1224,7 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
                 <!-- 3. Recent Orders -->
                 <div class="replica-card">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                        <h2 class="section-card-title">Recent Orders</h2>
+                        <h2 class="section-card-title"><a href="orders.php" style="color: inherit; text-decoration: none;">Recent Orders &rarr;</a></h2>
                         <a href="orders.php" style="font-size: 13px; font-weight: 500; color: #111827; text-decoration: none;">View All &rarr;</a>
                     </div>
 
@@ -1210,7 +1240,7 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
                         <tbody>
                             <?php if (empty($recentOrders)): ?>
                             <tr>
-                                <td colspan="4" style="text-align: center; color: #9CA3AF; padding: 24px;">No recent orders found.</td>
+                                <td colspan="4" style="text-align: center; color: #9CA3AF; padding: 24px; cursor: pointer;" onclick="window.location.href='orders.php'">No recent orders found. Click to view all orders.</td>
                             </tr>
                             <?php else: ?>
                                 <?php foreach ($recentOrders as $ro): 
@@ -1231,7 +1261,7 @@ $offsetPending = -($dashDelivered + $dashPreparing + $dashDispatching);
                                         $statusLabel = 'Cancelled';
                                     }
                                 ?>
-                                <tr>
+                                <tr onclick="window.location.href='orders.php?search=<?= urlencode($ro['order_number']) ?>'" title="View Order #<?= htmlspecialchars($ro['order_number']) ?>">
                                     <td><a href="orders.php?search=<?= urlencode($ro['order_number']) ?>" style="font-weight: 600; color: #111827; text-decoration: none;">#<?= htmlspecialchars($ro['order_number']) ?></a></td>
                                     <td><?= htmlspecialchars($ro['customer_name'] ?? 'Guest Customer') ?></td>
                                     <td style="font-weight: 600;"><?= Context::formatMoney((int)$ro['grand_total_amount']) ?></td>

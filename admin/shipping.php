@@ -977,8 +977,7 @@ $initRate = EkartLogisticsService::getRateEstimate([
             .then(data => {
                 if (btn) btn.innerHTML = '<span>⟳</span> Reconnect';
                 if (data.is_live && data.success) {
-                    alert('✓ Ekart Live Gateway Reconnected!
-Status: Connected & Streaming Live');
+                    alert('✓ Ekart Live Gateway Reconnected!\nStatus: Connected & Streaming Live');
                 } else {
                     alert('Ekart Live Server: ' + (data.message || 'Authentication check completed') + ' (HTTP ' + (data.code || 401) + ')');
                 }
