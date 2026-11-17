@@ -1,0 +1,22 @@
+# OS & Editor metadata
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Sensitive Environment Configurations
+.env
+.env.local
+
+# Large archive files
+*.zip
+*.tar.gz
+
+# SQLite Local Database (Never overwrite production DB/orders)
+storage/*.sqlite
+storage/*.sqlite-wal
+storage/*.sqlite-shm
+storage/*.db
+
+# Scratch and temporary folders
+scratch/

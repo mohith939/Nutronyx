@@ -1,0 +1,1610 @@
+/**
+ * NUTRONYX — About Us Page Stylesheet
+ * Section 01: Hero — "Built on nature. Driven by purpose."
+ * Luxury Botanical Editorial Experience
+ */
+
+/* ==========================================================================
+   SECTION 01: ABOUT US HERO
+   ========================================================================== */
+
+.about-hero-section {
+    position: relative;
+    padding: clamp(110px, 13vh, 145px) clamp(24px, 4.5vw, 64px) clamp(70px, 9vh, 110px);
+    background: radial-gradient(ellipse at 25% 25%, #FAF7F2 0%, #F6F1E8 52%, #ECE4D6 100%);
+    overflow: hidden;
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+}
+
+/* Atmospheric Botanical Sunlight Shadows (Top-Left) */
+.about-shadow-top-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 480px;
+    height: 420px;
+    background: radial-gradient(ellipse at 10% 10%, rgba(35, 65, 45, 0.08) 0%, rgba(35, 65, 45, 0.02) 48%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+    filter: blur(28px);
+}
+
+/* Flowing Translucent Bottom Wave Ribbons */
+.about-bottom-waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: clamp(80px, 10vw, 130px);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.about-bottom-waves svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Main Container & 2-Column Grid */
+.about-container {
+    width: 100%;
+    max-width: 1360px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 3;
+}
+
+.about-hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.95fr;
+    gap: clamp(32px, 4vw, 68px);
+    align-items: center;
+}
+
+/* ==========================================================================
+   LEFT COLUMN: EDITORIAL CONTENT
+   ========================================================================== */
+
+.about-hero-copy-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 660px;
+}
+
+/* Pill Eyebrow Badge */
+.about-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(30, 87, 54, 0.28);
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #1E5736;
+    margin-bottom: clamp(20px, 2.5vw, 28px);
+    box-shadow: 0 4px 12px rgba(20, 52, 36, 0.035);
+}
+
+/* Main Editorial Headline */
+.about-main-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(34px, 4vw, 54px);
+    font-weight: 600;
+    line-height: 1.16;
+    color: #14221A;
+    margin: 0 0 clamp(18px, 2.2vw, 26px) 0;
+    letter-spacing: -0.018em;
+}
+
+.about-hl-line {
+    display: block;
+}
+
+.about-hl-line-3 {
+    white-space: nowrap;
+}
+
+.about-hl-italic {
+    font-style: italic;
+    font-weight: 400;
+    color: #1E5736;
+}
+
+/* Supporting Narrative */
+.about-hero-description {
+    font-family: var(--font-sans);
+    font-size: clamp(15px, 1.1vw, 16.5px);
+    line-height: 1.68;
+    color: #48594F;
+    margin: 0 0 clamp(28px, 3.2vw, 38px) 0;
+    max-width: 510px;
+}
+
+/* 3-Button Single Row Group */
+.about-btn-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+}
+
+.about-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+}
+
+.about-btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.about-btn-arrow {
+    display: inline-block;
+    transition: transform 0.25s ease;
+    font-size: 15px;
+    line-height: 1;
+}
+
+.about-cta-btn:hover .about-btn-arrow {
+    transform: translateX(4px);
+}
+
+/* Button 1: Solid Dark Botanical Green */
+.about-cta-btn.btn-solid {
+    background: #0E2B1A;
+    color: #FFFFFF;
+    border: 1px solid #0E2B1A;
+    box-shadow: 0 6px 18px rgba(14, 43, 26, 0.16);
+}
+
+.about-cta-btn.btn-solid:hover {
+    background: #1E5736;
+    border-color: #1E5736;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(30, 87, 54, 0.25);
+}
+
+/* Buttons 2 & 3: Outline Soft Pills */
+.about-cta-btn.btn-outline {
+    background: rgba(255, 255, 255, 0.72);
+    color: #14221A;
+    border: 1px solid rgba(30, 87, 54, 0.32);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(20, 52, 36, 0.04);
+}
+
+.about-cta-btn.btn-outline:hover {
+    background: #1E5736;
+    color: #FFFFFF;
+    border-color: #1E5736;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(30, 87, 54, 0.2);
+}
+
+.about-cta-btn.btn-outline:hover .about-btn-icon svg {
+    stroke: #FFFFFF;
+}
+
+/* ==========================================================================
+   RIGHT COLUMN: LUXURY PHOTOGRAPHIC STAGE
+   ========================================================================== */
+
+.about-hero-visual-col {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.about-stage-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    margin: 0;
+}
+
+/* Layered Accent Ghost Frame */
+.about-stage-ghost-frame {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    bottom: 14px;
+    left: 14px;
+    border: 1.5px solid rgba(30, 87, 54, 0.2);
+    border-radius: 44px;
+    pointer-events: none;
+    z-index: 1;
+    transition: all 0.4s ease;
+}
+
+.about-stage-wrapper:hover .about-stage-ghost-frame {
+    transform: translate(3px, -3px);
+    border-color: rgba(30, 87, 54, 0.35);
+}
+
+/* Main Photo Box */
+.about-stage-photo-box {
+    position: relative;
+    border-radius: 36px;
+    overflow: hidden;
+    aspect-ratio: 16 / 11.2;
+    background: #E8ECE8;
+    box-shadow: 0 20px 50px rgba(20, 52, 36, 0.12),
+                0 4px 12px rgba(20, 52, 36, 0.04);
+    z-index: 2;
+}
+
+.about-stage-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.about-stage-wrapper:hover .about-stage-img {
+    transform: scale(1.025);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN BREAKPOINTS
+   ========================================================================== */
+
+@media (max-width: 1120px) {
+    .about-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 46px;
+    }
+
+    .about-hero-copy-col {
+        align-items: center;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .about-hero-description {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .about-hero-visual-col {
+        justify-content: center;
+    }
+
+    .about-btn-group {
+        justify-content: center;
+    }
+
+    .about-hl-line-3 {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 640px) {
+    .about-hero-section {
+        padding: 95px 18px 70px 18px;
+    }
+
+    .about-stage-photo-box {
+        border-radius: 26px;
+    }
+
+    .about-stage-ghost-frame {
+        border-radius: 30px;
+        top: -8px;
+        right: -8px;
+        bottom: 8px;
+        left: 8px;
+    }
+
+    .about-btn-group {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .about-cta-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .about-main-headline {
+        font-size: 32px;
+    }
+}
+
+
+/* ==========================================================================
+   SECTION 02: OUR STORY
+   ========================================================================== */
+
+.about-story-section {
+    position: relative;
+    padding: clamp(90px, 12vh, 135px) clamp(24px, 4.5vw, 64px) clamp(80px, 10vh, 120px);
+    background: radial-gradient(ellipse at 80% 20%, #FAF7F2 0%, #F5EFE6 52%, #EDE4D4 100%);
+    overflow: hidden;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+}
+
+/* Atmospheric Top-Right Leaf Shadow */
+.story-shadow-top-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 460px;
+    height: 420px;
+    background: radial-gradient(ellipse at 85% 15%, rgba(35, 65, 45, 0.07) 0%, rgba(35, 65, 45, 0.02) 48%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+    filter: blur(28px);
+}
+
+/* Flowing Translucent Bottom Wave Ribbons */
+.story-bottom-waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: clamp(80px, 10vw, 130px);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.story-bottom-waves svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.story-container {
+    width: 100%;
+    max-width: 1360px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 3;
+}
+
+.story-editorial-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.95fr;
+    gap: clamp(36px, 4.5vw, 76px);
+    align-items: center;
+}
+
+/* Left Column */
+.story-content-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 660px;
+}
+
+.story-header-block {
+    margin-bottom: clamp(24px, 3vw, 36px);
+}
+
+.story-sprout-icon {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.story-eyebrow-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.story-eyebrow-rule {
+    display: inline-block;
+    width: 34px;
+    height: 1px;
+    background: rgba(30, 87, 54, 0.4);
+}
+
+.story-eyebrow-text {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #1E5736;
+}
+
+.story-main-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(34px, 4vw, 54px);
+    font-weight: 600;
+    line-height: 1.16;
+    color: #14221A;
+    margin: 0;
+    letter-spacing: -0.018em;
+}
+
+.story-hl-line {
+    display: block;
+}
+
+.story-hl-italic {
+    font-style: italic;
+    font-weight: 400;
+    color: #1E5736;
+}
+
+/* 4-Milestone Timeline Rail */
+.story-timeline-track {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-left: 2px;
+    max-width: 580px;
+}
+
+.story-timeline-rail {
+    position: absolute;
+    left: 23px;
+    top: 24px;
+    bottom: 24px;
+    width: 2px;
+    background: rgba(30, 87, 54, 0.2);
+    z-index: 1;
+}
+
+.story-timeline-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    z-index: 2;
+}
+
+.story-node-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #E8F1EC;
+    color: #1E5736;
+    border: 1.5px solid rgba(30, 87, 54, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(20, 52, 36, 0.05);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.story-timeline-item:hover .story-node-badge {
+    background: #1E5736;
+    color: #FFFFFF;
+    border-color: #1E5736;
+    transform: scale(1.08);
+    box-shadow: 0 8px 20px rgba(30, 87, 54, 0.24);
+}
+
+.story-node-content {
+    padding-top: 5px;
+}
+
+.story-node-text {
+    font-family: var(--font-sans);
+    font-size: clamp(14.5px, 1.05vw, 16px);
+    line-height: 1.62;
+    color: #48594F;
+    margin: 0;
+}
+
+/* Right Column Photographic Stage */
+.story-visual-col {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.story-stage-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    margin: 0;
+}
+
+.story-stage-ghost-frame {
+    position: absolute;
+    top: -14px;
+    left: -14px;
+    bottom: 14px;
+    right: 14px;
+    border: 1.5px solid rgba(30, 87, 54, 0.2);
+    border-radius: 44px;
+    pointer-events: none;
+    z-index: 1;
+    transition: all 0.4s ease;
+}
+
+.story-stage-wrapper:hover .story-stage-ghost-frame {
+    transform: translate(-3px, -3px);
+    border-color: rgba(30, 87, 54, 0.35);
+}
+
+.story-stage-photo-box {
+    position: relative;
+    border-radius: 36px;
+    overflow: hidden;
+    aspect-ratio: 16 / 11.2;
+    background: #E8ECE8;
+    box-shadow: 0 20px 50px rgba(20, 52, 36, 0.12),
+                0 4px 12px rgba(20, 52, 36, 0.04);
+    z-index: 2;
+}
+
+.story-stage-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.story-stage-wrapper:hover .story-stage-img {
+    transform: scale(1.025);
+}
+
+/* Responsive Art Direction for Section 02 */
+@media (max-width: 1120px) {
+    .story-editorial-grid {
+        grid-template-columns: 1fr;
+        gap: 46px;
+    }
+
+    .story-content-col {
+        align-items: center;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .story-header-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .story-timeline-track {
+        text-align: left;
+    }
+
+    .story-visual-col {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .about-story-section {
+        padding: 85px 18px 70px 18px;
+    }
+
+    .story-node-badge {
+        width: 42px;
+        height: 42px;
+    }
+
+    .story-node-badge svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .story-timeline-rail {
+        left: 20px;
+    }
+
+    .story-stage-photo-box {
+        border-radius: 26px;
+    }
+
+    .story-stage-ghost-frame {
+        border-radius: 30px;
+        top: -8px;
+        left: -8px;
+        bottom: 8px;
+        right: 8px;
+    }
+
+    .story-main-headline {
+        font-size: 32px;
+    }
+}
+
+
+/* ==========================================================================
+   SECTION 03: OUR VISION
+   ========================================================================== */
+
+.about-vision-section {
+    position: relative;
+    padding: clamp(90px, 12vh, 135px) clamp(24px, 4.5vw, 64px) clamp(80px, 10vh, 120px);
+    background: radial-gradient(ellipse at 25% 75%, #FAF7F2 0%, #F6F1E8 52%, #EDE4D4 100%);
+    overflow: hidden;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+}
+
+/* Atmospheric Top-Right Leaf Shadow */
+.vision-shadow-top-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 480px;
+    height: 440px;
+    background: radial-gradient(ellipse at 85% 15%, rgba(35, 65, 45, 0.07) 0%, rgba(35, 65, 45, 0.02) 48%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+    filter: blur(28px);
+}
+
+/* Flowing Translucent Bottom Wave Ribbons */
+.vision-bottom-waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: clamp(80px, 10vw, 130px);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.vision-bottom-waves svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.vision-container {
+    width: 100%;
+    max-width: 1360px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 3;
+}
+
+.vision-editorial-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1px 1.15fr;
+    gap: clamp(32px, 4.5vw, 68px);
+    align-items: center;
+}
+
+/* Left Column */
+.vision-left-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.vision-header-block {
+    margin-bottom: 24px;
+}
+
+.vision-sprout-icon {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.vision-eyebrow-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.vision-eyebrow-rule {
+    display: inline-block;
+    width: 34px;
+    height: 1px;
+    background: rgba(30, 87, 54, 0.4);
+}
+
+.vision-eyebrow-text {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #1E5736;
+}
+
+.vision-main-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(34px, 4vw, 54px);
+    font-weight: 600;
+    line-height: 1.15;
+    color: #14221A;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.018em;
+}
+
+.vision-hl-line {
+    display: block;
+}
+
+.vision-hl-italic {
+    font-style: italic;
+    font-weight: 400;
+    color: #1E5736;
+}
+
+.vision-headline-flourish {
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+}
+
+/* Asymmetrical Sweeping Arch Landscape Photo Frame */
+.vision-arch-frame {
+    position: relative;
+    width: 100%;
+    max-width: 530px;
+    border-top-right-radius: clamp(140px, 16vw, 220px);
+    border-top-left-radius: 28px;
+    border-bottom-left-radius: 28px;
+    border-bottom-right-radius: 28px;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    background: #E8ECE8;
+    box-shadow: 0 20px 48px rgba(20, 52, 36, 0.12),
+                0 4px 12px rgba(20, 52, 36, 0.04);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vision-arch-frame:hover {
+    transform: translateY(-4px);
+}
+
+.vision-arch-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vision-arch-frame:hover .vision-arch-img {
+    transform: scale(1.03);
+}
+
+/* Center Vertical Hairline Divider */
+.vision-center-divider {
+    width: 1px;
+    height: 80%;
+    min-height: 380px;
+    background: rgba(30, 87, 54, 0.18);
+    align-self: center;
+}
+
+/* Right Column: 3 Vision Pillars Matrix */
+.vision-pillars-col {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    width: 100%;
+}
+
+.vision-pillar-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    padding: 10px 8px;
+    transition: transform 0.3s ease;
+}
+
+.vision-pillar-item:hover {
+    transform: translateX(4px);
+}
+
+/* Pebble / Rounded Icon Badge */
+.vision-pillar-badge {
+    width: 58px;
+    height: 58px;
+    border-radius: 20px;
+    background: #E8F1EC;
+    color: #1E5736;
+    border: 1.5px solid rgba(30, 87, 54, 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 16px rgba(20, 52, 36, 0.05);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vision-pillar-item:hover .vision-pillar-badge {
+    background: #1E5736;
+    color: #FFFFFF;
+    border-color: #1E5736;
+    transform: scale(1.08);
+    box-shadow: 0 10px 24px rgba(30, 87, 54, 0.22);
+}
+
+.vision-pillar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 4px;
+}
+
+.vision-pillar-title {
+    font-family: var(--font-sans);
+    font-size: clamp(17px, 1.2vw, 19.5px);
+    font-weight: 700;
+    line-height: 1.34;
+    color: #14221A;
+    margin: 0;
+    transition: color 0.25s ease;
+}
+
+.vision-pillar-item:hover .vision-pillar-title {
+    color: #1E5736;
+}
+
+.vision-pillar-desc {
+    font-family: var(--font-sans);
+    font-size: clamp(14.5px, 1.05vw, 15.5px);
+    line-height: 1.62;
+    color: #506558;
+    margin: 0;
+}
+
+.vision-pillar-divider {
+    width: 100%;
+    height: 1px;
+    background: rgba(30, 87, 54, 0.14);
+}
+
+/* Responsive Art Direction for Section 03 */
+@media (max-width: 1120px) {
+    .vision-editorial-grid {
+        grid-template-columns: 1fr;
+        gap: 46px;
+    }
+
+    .vision-center-divider {
+        display: none;
+    }
+
+    .vision-left-col {
+        align-items: center;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .vision-header-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .vision-headline-flourish {
+        justify-content: center;
+    }
+
+    .vision-pillars-col {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .about-vision-section {
+        padding: 85px 18px 70px 18px;
+    }
+
+    .vision-arch-frame {
+        border-top-right-radius: 120px;
+        aspect-ratio: 16 / 11;
+    }
+
+    .vision-pillar-badge {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+    }
+
+    .vision-pillar-badge svg {
+        width: 19px;
+        height: 19px;
+    }
+
+    .vision-pillar-item {
+        gap: 16px;
+    }
+
+    .vision-main-headline {
+        font-size: 32px;
+    }
+}
+
+
+/* ==========================================================================
+   SECTION 04: OUR COMMITMENT
+   ========================================================================== */
+
+.about-commitment-section {
+    position: relative;
+    padding: clamp(90px, 12vh, 135px) clamp(24px, 4.5vw, 64px) clamp(80px, 10vh, 120px);
+    background: radial-gradient(ellipse at 80% 30%, #FAF7F2 0%, #F6F1E8 52%, #EDE4D4 100%);
+    overflow: hidden;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+}
+
+/* Atmospheric Top-Right Leaf Shadow */
+.commit-shadow-top-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 480px;
+    height: 440px;
+    background: radial-gradient(ellipse at 85% 15%, rgba(35, 65, 45, 0.07) 0%, rgba(35, 65, 45, 0.02) 48%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+    filter: blur(28px);
+}
+
+/* Flowing Translucent Bottom Wave Ribbons */
+.commit-bottom-waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: clamp(80px, 10vw, 130px);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.commit-bottom-waves svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.commit-container {
+    width: 100%;
+    max-width: 1360px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 3;
+}
+
+.commit-editorial-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 40px 1.15fr;
+    gap: clamp(24px, 3.5vw, 56px);
+    align-items: center;
+}
+
+/* Left Column */
+.commit-left-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.commit-header-block {
+    margin-bottom: 24px;
+}
+
+.commit-sprout-icon {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.commit-eyebrow-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.commit-eyebrow-rule {
+    display: inline-block;
+    width: 34px;
+    height: 1px;
+    background: rgba(30, 87, 54, 0.4);
+}
+
+.commit-eyebrow-text {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #1E5736;
+}
+
+.commit-main-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(34px, 4vw, 54px);
+    font-weight: 600;
+    line-height: 1.15;
+    color: #14221A;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.018em;
+}
+
+.commit-hl-line {
+    display: block;
+}
+
+.commit-hl-italic {
+    font-style: italic;
+    font-weight: 400;
+    color: #1E5736;
+}
+
+.commit-headline-flourish {
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+}
+
+/* Asymmetrical Sweeping Arch Still Life Photo Frame */
+.commit-arch-frame {
+    position: relative;
+    width: 100%;
+    max-width: 530px;
+    border-top-right-radius: clamp(140px, 16vw, 220px);
+    border-top-left-radius: 28px;
+    border-bottom-left-radius: 28px;
+    border-bottom-right-radius: 28px;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    background: #E8ECE8;
+    box-shadow: 0 20px 48px rgba(20, 52, 36, 0.12),
+                0 4px 12px rgba(20, 52, 36, 0.04);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.commit-arch-frame:hover {
+    transform: translateY(-4px);
+}
+
+.commit-arch-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.commit-arch-frame:hover .commit-arch-img {
+    transform: scale(1.03);
+}
+
+/* Center Timeline Rail with Node Indicators */
+.commit-center-rail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 75%;
+    min-height: 420px;
+    align-self: center;
+}
+
+.commit-rail-line {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    background: rgba(30, 87, 54, 0.2);
+    z-index: 1;
+}
+
+.commit-rail-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #1E5736;
+    position: relative;
+    z-index: 2;
+    border: 2px solid #FAF7F2;
+    box-shadow: 0 0 0 1px rgba(30, 87, 54, 0.3);
+}
+
+/* Right Column: 4 Commitment Pillars Matrix */
+.commit-pillars-col {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+}
+
+.commit-pillar-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 8px 6px;
+    transition: transform 0.3s ease;
+}
+
+.commit-pillar-item:hover {
+    transform: translateX(4px);
+}
+
+.commit-pillar-badge {
+    width: 58px;
+    height: 58px;
+    border-radius: 20px;
+    background: #E8F1EC;
+    color: #1E5736;
+    border: 1.5px solid rgba(30, 87, 54, 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 16px rgba(20, 52, 36, 0.05);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.commit-pillar-item:hover .commit-pillar-badge {
+    background: #1E5736;
+    color: #FFFFFF;
+    border-color: #1E5736;
+    transform: scale(1.08);
+    box-shadow: 0 10px 24px rgba(30, 87, 54, 0.22);
+}
+
+.commit-pillar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 4px;
+}
+
+.commit-pillar-title {
+    font-family: var(--font-sans);
+    font-size: clamp(17px, 1.2vw, 19px);
+    font-weight: 700;
+    line-height: 1.34;
+    color: #14221A;
+    margin: 0;
+    transition: color 0.25s ease;
+}
+
+.commit-pillar-item:hover .commit-pillar-title {
+    color: #1E5736;
+}
+
+.commit-pillar-desc {
+    font-family: var(--font-sans);
+    font-size: clamp(14px, 1.05vw, 15px);
+    line-height: 1.62;
+    color: #506558;
+    margin: 0;
+}
+
+.commit-pillar-divider {
+    width: 100%;
+    height: 1px;
+    background: rgba(30, 87, 54, 0.14);
+}
+
+/* ==========================================================================
+   SECTION 05: JOIN OUR WELLNESS JOURNEY
+   ========================================================================== */
+
+.about-journey-section {
+    position: relative;
+    padding: clamp(90px, 12vh, 135px) clamp(24px, 4.5vw, 64px) clamp(80px, 10vh, 120px);
+    background: radial-gradient(ellipse at 20% 40%, #FAF7F2 0%, #F6F1E8 52%, #EDE4D4 100%);
+    overflow: hidden;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+}
+
+/* Atmospheric Top-Right Leaf Shadow */
+.journey-shadow-top-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 480px;
+    height: 440px;
+    background: radial-gradient(ellipse at 85% 15%, rgba(35, 65, 45, 0.07) 0%, rgba(35, 65, 45, 0.02) 48%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+    filter: blur(28px);
+}
+
+/* Flowing Translucent Bottom Wave Ribbons */
+.journey-bottom-waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: clamp(80px, 10vw, 130px);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.journey-bottom-waves svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.journey-container {
+    width: 100%;
+    max-width: 1360px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 3;
+}
+
+.journey-editorial-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(36px, 4.5vw, 76px);
+    align-items: center;
+}
+
+/* Left Column */
+.journey-left-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 620px;
+}
+
+.journey-header-block {
+    margin-bottom: 24px;
+}
+
+.journey-sprout-icon {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.journey-eyebrow-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.journey-eyebrow-rule {
+    display: inline-block;
+    width: 34px;
+    height: 1px;
+    background: rgba(30, 87, 54, 0.4);
+}
+
+.journey-eyebrow-text {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #1E5736;
+}
+
+.journey-main-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(38px, 4.4vw, 58px);
+    font-weight: 600;
+    line-height: 1.15;
+    color: #14221A;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.018em;
+}
+
+.journey-hl-text {
+    display: block;
+}
+
+.journey-hl-italic {
+    font-style: italic;
+    font-weight: 400;
+    color: #1E5736;
+}
+
+.journey-headline-flourish {
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+    margin-bottom: 24px;
+}
+
+/* 4-Step Narrative Timeline Rail */
+.journey-timeline-track {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-left: 2px;
+    max-width: 600px;
+    margin-bottom: 32px;
+}
+
+.journey-timeline-rail {
+    position: absolute;
+    left: 22px;
+    top: 22px;
+    bottom: 22px;
+    width: 2px;
+    background: rgba(30, 87, 54, 0.2);
+    z-index: 1;
+}
+
+.journey-timeline-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    z-index: 2;
+}
+
+.journey-node-badge {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    background: #E8F1EC;
+    color: #1E5736;
+    border: 1.5px solid rgba(30, 87, 54, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(20, 52, 36, 0.05);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.journey-timeline-item:hover .journey-node-badge {
+    background: #1E5736;
+    color: #FFFFFF;
+    border-color: #1E5736;
+    transform: scale(1.08);
+    box-shadow: 0 8px 20px rgba(30, 87, 54, 0.22);
+}
+
+.journey-node-content {
+    padding-top: 4px;
+}
+
+.journey-node-text {
+    font-family: var(--font-sans);
+    font-size: clamp(14px, 1.05vw, 15.5px);
+    line-height: 1.62;
+    color: #48594F;
+    margin: 0;
+}
+
+/* Solid Pill CTA Button */
+.journey-cta-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.journey-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 28px;
+    border-radius: 999px;
+    background: #0E2B1A;
+    color: #FFFFFF;
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid #0E2B1A;
+    box-shadow: 0 8px 22px rgba(14, 43, 26, 0.18);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+}
+
+.journey-cta-btn:hover {
+    background: #1E5736;
+    border-color: #1E5736;
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(30, 87, 54, 0.28);
+}
+
+.journey-cta-arrow {
+    display: inline-block;
+    transition: transform 0.25s ease;
+    font-size: 15px;
+    line-height: 1;
+}
+
+.journey-cta-btn:hover .journey-cta-arrow {
+    transform: translateX(4px);
+}
+
+/* Right Column Panoramic Lifestyle Stage */
+.journey-right-col {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.journey-photo-frame {
+    position: relative;
+    width: 100%;
+    max-width: 580px;
+    border-radius: 36px;
+    overflow: hidden;
+    aspect-ratio: 16 / 10.5;
+    background: #E8ECE8;
+    box-shadow: 0 20px 50px rgba(20, 52, 36, 0.12),
+                0 4px 12px rgba(20, 52, 36, 0.04);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.journey-photo-frame:hover {
+    transform: translateY(-4px);
+}
+
+.journey-photo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.journey-photo-frame:hover .journey-photo-img {
+    transform: scale(1.025);
+}
+
+/* Responsive Art Direction for Sections 04 & 05 */
+@media (max-width: 1120px) {
+    .commit-editorial-grid {
+        grid-template-columns: 1fr;
+        gap: 46px;
+    }
+
+    .commit-center-rail {
+        display: none;
+    }
+
+    .commit-left-col {
+        align-items: center;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .commit-header-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .commit-headline-flourish {
+        justify-content: center;
+    }
+
+    .commit-pillars-col {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .journey-editorial-grid {
+        grid-template-columns: 1fr;
+        gap: 46px;
+    }
+
+    .journey-left-col {
+        align-items: center;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .journey-header-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .journey-timeline-track {
+        text-align: left;
+    }
+
+    .journey-right-col {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .about-commitment-section,
+    .about-journey-section {
+        padding: 85px 18px 70px 18px;
+    }
+
+    .commit-arch-frame {
+        border-top-right-radius: 120px;
+        aspect-ratio: 16 / 11;
+    }
+
+    .commit-pillar-badge {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+    }
+
+    .commit-pillar-badge svg {
+        width: 19px;
+        height: 19px;
+    }
+
+    .commit-pillar-item {
+        gap: 16px;
+    }
+
+    .commit-main-headline,
+    .journey-main-headline {
+        font-size: 32px;
+    }
+
+    .journey-node-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+    }
+
+    .journey-node-badge svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .journey-timeline-rail {
+        left: 19px;
+    }
+
+    .journey-photo-frame {
+        border-radius: 26px;
+    }
+
+    .journey-cta-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

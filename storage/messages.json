@@ -1,0 +1,14 @@
+[
+    {
+        "id": "msg_20261105_082712_af9f9c67",
+        "created_at": "2026-11-05T08:27:12+00:00",
+        "name": "Aria Montgomery",
+        "email": "aria@example.com",
+        "phone": "+91 93926 33211",
+        "subject": "Product & Ingredients (ABC+)",
+        "message": "Hello NUTRONYX concierge, could you please clarify the optimal time in the morning to consume ABC+ with warm water?",
+        "ip_hash": "12ca17b49af22894",
+        "user_agent": "PHPUnit/TestAgent",
+        "status": "received"
+    }
+]

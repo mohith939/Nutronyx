@@ -1,0 +1,2 @@
+# Deny all direct HTTP access to stored inquiries
+Require all denied
