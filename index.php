@@ -400,6 +400,154 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     </section>
 
     <!-- ========================================== -->
+    <!-- NUTRONYX ABC+ Botanical Product Showcase   -->
+    <!-- ========================================== -->
+    <section class="section-showcase" id="product-showcase" aria-label="Featured Product Showcase — NUTRONYX ABC+">
+        <div class="showcase-container">
+            <!-- Two-Column Editorial Stage -->
+            <div class="showcase-grid">
+                <!-- 1. LEFT COLUMN: ACTUAL PRODUCT BOTANICAL VISUAL -->
+                <div class="showcase-visual-col">
+                    <div class="showcase-visual-frame">
+                        <img src="assets/images/product-showcase-botanical.png" 
+                             alt="NUTRONYX ABC+ Daily Wellness Powder with fresh Amla, Beetroot, Carrot, Ginger and Lemon on natural stone plinth" 
+                             class="showcase-visual-img" 
+                             loading="lazy">
+                    </div>
+                </div>
+
+                <!-- 2. RIGHT COLUMN: EDITORIAL PRODUCT INFORMATION & INGREDIENT TABLE -->
+                <div class="showcase-details-col">
+                    <!-- Eyebrow -->
+                    <div class="showcase-eyebrow-wrap">
+                        <span class="showcase-eyebrow">NUTRONYX • ABC+</span>
+                    </div>
+
+                    <!-- Headlines -->
+                    <h2 class="showcase-headline">
+                        <span class="showcase-headline-line">Five Ingredients.</span>
+                        <span class="showcase-headline-line">One Thoughtful Blend.</span>
+                    </h2>
+
+                    <!-- Product Description -->
+                    <p class="showcase-description">
+                        A thoughtfully crafted blend of Amla, Beetroot, Carrot, Ginger and Lemon, bringing natural plant-based goodness into your everyday routine.
+                    </p>
+
+                    <!-- Product Specifications Bar with Interactive Size Pills -->
+                    <div class="showcase-specs-row" aria-label="Product Specifications">
+                        <div class="spec-item spec-variant-item" style="display:inline-flex; align-items:center; gap:8px;">
+                            <span style="font-size:12px; font-weight:700; color:#526458; text-transform:uppercase; letter-spacing:0.5px;">Size:</span>
+                            <div class="showcase-size-pills-row" style="display:inline-flex; gap:6px;">
+                                <button type="button" class="showcase-size-pill active" id="scPill250" onclick="onShowcasePillClick('var_abc_250g', 299, '30 servings', this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #143D24; background:#143D24; color:#fff; font-size:12px; font-weight:700; cursor:pointer;">
+                                    200gm
+                                </button>
+                                <button type="button" class="showcase-size-pill" id="scPill500" onclick="onShowcasePillClick('var_abc_500g', 499, '60 servings', this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #D1D5DB; background:#fff; color:#374151; font-size:12px; font-weight:700; cursor:pointer;">
+                                    400gm
+                                </button>
+                            </div>
+                        </div>
+                        <span class="spec-divider" aria-hidden="true">|</span>
+                        <div class="spec-item spec-servings">
+                            <span class="spec-value" id="showcaseServingsVal">30 servings</span>
+                        </div>
+                        <span class="spec-divider" aria-hidden="true">|</span>
+                        <div class="spec-item spec-price">
+                            <span class="spec-value" id="showcasePriceVal">₹299</span>
+                        </div>
+                    </div>
+
+                    <!-- 5-Row Ingredient Information Table -->
+                    <div class="showcase-ingredients-table" aria-label="Botanical Ingredients Breakdown">
+                        <!-- Row 01: AMLA -->
+                        <div class="ingredient-row">
+                            <div class="ingredient-thumb-wrap">
+                                <img src="assets/images/amla.png" alt="Amla" class="ingredient-thumb-img" loading="lazy">
+                            </div>
+                            <span class="row-v-divider" aria-hidden="true">|</span>
+                            <div class="ingredient-name-cell">
+                                <h3 class="ingredient-name">Amla</h3>
+                            </div>
+                            <span class="row-v-divider" aria-hidden="true">|</span>
+                            <div class="ingredient-desc-cell">
+                                <p class="ingredient-benefit">Immunity & everyday vitality</p>
+                            </div>
+                        </div>
+
+                        <!-- Row 02: BEETROOT -->
+                        <div class="ingredient-row">
+                            <div class="ingredient-thumb-wrap">
+                                <img src="assets/images/beetroot.png" alt="Beetroot" class="ingredient-thumb-img" loading="lazy">
+                            </div>
+                            <span class="row-v-divider" aria-hidden="true">|</span>
+                            <div class="ingredient-name-cell">
+                                <h3 class="ingredient-name">Beetroot</h3>
+                            </div>
+                            <span class="row-v-divider" aria-hidden="true">|</span>
+                            <div class="ingredient-desc-cell">
+                                <p class="ingredient-benefit">Supports blood circulation & stamina</p>
+                            </div>
+                        </div>
+
+                        <!-- Row 03: CARROT -->
+                        <div class="ingredient-row">
+                            <div class="ingredient-thumb-wrap">
+                                <img src="assets/images/carrot.png" alt="Carrot" class="ingredient-thumb-img" loading="lazy">
+                            </div>
+                            <span class="row-v-divider" aria-hidden="true">|</span>
+                            <div class="ingredient-name-cell">
+                                <h3 class="ingredient-name">Carrot</h3>
+                            </div>
+                            <span class="row-v-divider" aria-hidden="true">|</span>
+                            <div class="ingredient-desc-cell">
+                                <p class="ingredient-benefit">Rich in beta-carotene for skin & eye health</p>
+                            </div>
+                        </div>
+
+                        <!-- Row 04: GINGER -->
+                        <div class="ingredient-row">
+                            <div class="ingredient-thumb-wrap">
+                                <img src="assets/images/ginger.png" alt="Ginger" class="ingredient-thumb-img" loading="lazy">
+                            </div>
+                            <span class="row-v-divider" aria-hidden="true">|</span>
+                            <div class="ingredient-name-cell">
+                                <h3 class="ingredient-name">Ginger</h3>
+                            </div>
+                            <span class="row-v-divider" aria-hidden="true">|</span>
+                            <div class="ingredient-desc-cell">
+                                <p class="ingredient-benefit">Aids digestion & gut comfort</p>
+                            </div>
+                        </div>
+
+                        <!-- Row 05: LEMON -->
+                        <div class="ingredient-row">
+                            <div class="ingredient-thumb-wrap">
+                                <img src="assets/images/lemon-slice.png" alt="Lemon" class="ingredient-thumb-img" loading="lazy">
+                            </div>
+                            <span class="row-v-divider" aria-hidden="true">|</span>
+                            <div class="ingredient-name-cell">
+                                <h3 class="ingredient-name">Lemon</h3>
+                            </div>
+                            <span class="row-v-divider" aria-hidden="true">|</span>
+                            <div class="ingredient-desc-cell">
+                                <p class="ingredient-benefit">Helps in daily cleansing & natural freshness</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Primary Action CTA -->
+                    <div class="showcase-cta-wrap">
+                        <a href="shop.php?variant=var_abc_250g" class="btn-shop-abc" id="showcaseCtaBtn">
+                            <span>SHOP ABC+</span>
+                            <span class="btn-arrow" aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
     <!-- SECTION 3: EVERY MINUTE MATTERS            -->
     <!-- Matching Reference (media_1794654632253.png)-->
     <!-- 3D Rotating Clock & Nutrient Orbit System  -->
@@ -926,154 +1074,6 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                         <span>Explore Our Products</span>
                         <span class="promise-arrow" aria-hidden="true">&rarr;</span>
                     </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- NUTRONYX ABC+ Botanical Product Showcase   -->
-    <!-- ========================================== -->
-    <section class="section-showcase" id="product-showcase" aria-label="Featured Product Showcase — NUTRONYX ABC+">
-        <div class="showcase-container">
-            <!-- Two-Column Editorial Stage -->
-            <div class="showcase-grid">
-                <!-- 1. LEFT COLUMN: ACTUAL PRODUCT BOTANICAL VISUAL -->
-                <div class="showcase-visual-col">
-                    <div class="showcase-visual-frame">
-                        <img src="assets/images/product-showcase-botanical.png" 
-                             alt="NUTRONYX ABC+ Daily Wellness Powder with fresh Amla, Beetroot, Carrot, Ginger and Lemon on natural stone plinth" 
-                             class="showcase-visual-img" 
-                             loading="lazy">
-                    </div>
-                </div>
-
-                <!-- 2. RIGHT COLUMN: EDITORIAL PRODUCT INFORMATION & INGREDIENT TABLE -->
-                <div class="showcase-details-col">
-                    <!-- Eyebrow -->
-                    <div class="showcase-eyebrow-wrap">
-                        <span class="showcase-eyebrow">NUTRONYX • ABC+</span>
-                    </div>
-
-                    <!-- Headlines -->
-                    <h2 class="showcase-headline">
-                        <span class="showcase-headline-line">Five Ingredients.</span>
-                        <span class="showcase-headline-line">One Thoughtful Blend.</span>
-                    </h2>
-
-                    <!-- Product Description -->
-                    <p class="showcase-description">
-                        A thoughtfully crafted blend of Amla, Beetroot, Carrot, Ginger and Lemon, bringing natural plant-based goodness into your everyday routine.
-                    </p>
-
-                    <!-- Product Specifications Bar with Interactive Size Pills -->
-                    <div class="showcase-specs-row" aria-label="Product Specifications">
-                        <div class="spec-item spec-variant-item" style="display:inline-flex; align-items:center; gap:8px;">
-                            <span style="font-size:12px; font-weight:700; color:#526458; text-transform:uppercase; letter-spacing:0.5px;">Size:</span>
-                            <div class="showcase-size-pills-row" style="display:inline-flex; gap:6px;">
-                                <button type="button" class="showcase-size-pill active" id="scPill250" onclick="onShowcasePillClick('var_abc_250g', 299, '30 servings', this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #143D24; background:#143D24; color:#fff; font-size:12px; font-weight:700; cursor:pointer;">
-                                    200gm
-                                </button>
-                                <button type="button" class="showcase-size-pill" id="scPill500" onclick="onShowcasePillClick('var_abc_500g', 499, '60 servings', this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #D1D5DB; background:#fff; color:#374151; font-size:12px; font-weight:700; cursor:pointer;">
-                                    400gm
-                                </button>
-                            </div>
-                        </div>
-                        <span class="spec-divider" aria-hidden="true">|</span>
-                        <div class="spec-item spec-servings">
-                            <span class="spec-value" id="showcaseServingsVal">30 servings</span>
-                        </div>
-                        <span class="spec-divider" aria-hidden="true">|</span>
-                        <div class="spec-item spec-price">
-                            <span class="spec-value" id="showcasePriceVal">₹299</span>
-                        </div>
-                    </div>
-
-                    <!-- 5-Row Ingredient Information Table -->
-                    <div class="showcase-ingredients-table" aria-label="Botanical Ingredients Breakdown">
-                        <!-- Row 01: AMLA -->
-                        <div class="ingredient-row">
-                            <div class="ingredient-thumb-wrap">
-                                <img src="assets/images/amla.png" alt="Amla" class="ingredient-thumb-img" loading="lazy">
-                            </div>
-                            <span class="row-v-divider" aria-hidden="true">|</span>
-                            <div class="ingredient-name-cell">
-                                <h3 class="ingredient-name">Amla</h3>
-                            </div>
-                            <span class="row-v-divider" aria-hidden="true">|</span>
-                            <div class="ingredient-desc-cell">
-                                <p class="ingredient-benefit">Immunity & everyday vitality</p>
-                            </div>
-                        </div>
-
-                        <!-- Row 02: BEETROOT -->
-                        <div class="ingredient-row">
-                            <div class="ingredient-thumb-wrap">
-                                <img src="assets/images/beetroot.png" alt="Beetroot" class="ingredient-thumb-img" loading="lazy">
-                            </div>
-                            <span class="row-v-divider" aria-hidden="true">|</span>
-                            <div class="ingredient-name-cell">
-                                <h3 class="ingredient-name">Beetroot</h3>
-                            </div>
-                            <span class="row-v-divider" aria-hidden="true">|</span>
-                            <div class="ingredient-desc-cell">
-                                <p class="ingredient-benefit">Supports blood circulation & stamina</p>
-                            </div>
-                        </div>
-
-                        <!-- Row 03: CARROT -->
-                        <div class="ingredient-row">
-                            <div class="ingredient-thumb-wrap">
-                                <img src="assets/images/carrot.png" alt="Carrot" class="ingredient-thumb-img" loading="lazy">
-                            </div>
-                            <span class="row-v-divider" aria-hidden="true">|</span>
-                            <div class="ingredient-name-cell">
-                                <h3 class="ingredient-name">Carrot</h3>
-                            </div>
-                            <span class="row-v-divider" aria-hidden="true">|</span>
-                            <div class="ingredient-desc-cell">
-                                <p class="ingredient-benefit">Rich in beta-carotene for skin & eye health</p>
-                            </div>
-                        </div>
-
-                        <!-- Row 04: GINGER -->
-                        <div class="ingredient-row">
-                            <div class="ingredient-thumb-wrap">
-                                <img src="assets/images/ginger.png" alt="Ginger" class="ingredient-thumb-img" loading="lazy">
-                            </div>
-                            <span class="row-v-divider" aria-hidden="true">|</span>
-                            <div class="ingredient-name-cell">
-                                <h3 class="ingredient-name">Ginger</h3>
-                            </div>
-                            <span class="row-v-divider" aria-hidden="true">|</span>
-                            <div class="ingredient-desc-cell">
-                                <p class="ingredient-benefit">Aids digestion & gut comfort</p>
-                            </div>
-                        </div>
-
-                        <!-- Row 05: LEMON -->
-                        <div class="ingredient-row">
-                            <div class="ingredient-thumb-wrap">
-                                <img src="assets/images/lemon-slice.png" alt="Lemon" class="ingredient-thumb-img" loading="lazy">
-                            </div>
-                            <span class="row-v-divider" aria-hidden="true">|</span>
-                            <div class="ingredient-name-cell">
-                                <h3 class="ingredient-name">Lemon</h3>
-                            </div>
-                            <span class="row-v-divider" aria-hidden="true">|</span>
-                            <div class="ingredient-desc-cell">
-                                <p class="ingredient-benefit">Helps in daily cleansing & natural freshness</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Primary Action CTA -->
-                    <div class="showcase-cta-wrap">
-                        <a href="shop.php?variant=var_abc_250g" class="btn-shop-abc" id="showcaseCtaBtn">
-                            <span>SHOP ABC+</span>
-                            <span class="btn-arrow" aria-hidden="true">→</span>
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
