@@ -582,14 +582,20 @@ foreach ($catalogProducts as $cProd) {
                                         <div class="author-name-line">
                                             <span class="author-name"><?= htmlspecialchars($sRev['customer_name'] ?? 'Verified Customer') ?></span>
                                             <?php if (!empty($sRev['is_verified_buyer']) && (int)$sRev['is_verified_buyer'] === 1): ?>
-                                                <span class="author-verified" title="Verified Customer" aria-hidden="true">
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#2E7D4E">
+                                                <span class="author-verified-tag" title="Verified Customer">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#2E7D4E">
                                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                                                     </svg>
+                                                    <span>Verified Buyer</span>
                                                 </span>
                                             <?php endif; ?>
                                         </div>
-                                        <span class="author-city"><?= htmlspecialchars($sRev['product_title'] ?? 'ABC+ Health Blend') ?></span>
+                                        <?php if (!empty($sRev['product_title'])): ?>
+                                            <div class="author-product-info">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity: 0.65; flex-shrink: 0;"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg>
+                                                <span class="author-product-title"><?= htmlspecialchars($sRev['product_title']) ?></span>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

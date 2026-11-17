@@ -557,7 +557,7 @@ $filterProducts = $distinctProdStmt->fetchAll(PDO::FETCH_ASSOC);
         background-color: var(--color-success-bg);
         color: var(--color-success-text);
         padding: 2px 8px;
-        border-radius: 20px;
+        border-radius: 4px;
         width: fit-content;
     }
     .badge-admin-added {
@@ -569,7 +569,7 @@ $filterProducts = $distinctProdStmt->fetchAll(PDO::FETCH_ASSOC);
         background-color: var(--color-purple-bg);
         color: var(--color-purple-text);
         padding: 2px 8px;
-        border-radius: 20px;
+        border-radius: 4px;
         width: fit-content;
     }
     .badge-unverified {
@@ -579,9 +579,10 @@ $filterProducts = $distinctProdStmt->fetchAll(PDO::FETCH_ASSOC);
         font-size: 11px;
         font-weight: 500;
         background-color: #F3F4F6;
-        color: #6B7280;
+        color: #4B5563;
+        border: 1px solid #E5E7EB;
         padding: 2px 8px;
-        border-radius: 20px;
+        border-radius: 4px;
         width: fit-content;
     }
 
@@ -603,8 +604,8 @@ $filterProducts = $distinctProdStmt->fetchAll(PDO::FETCH_ASSOC);
     }
     .review-body-snippet {
         font-size: 12.5px;
-        color: #6B7280;
-        line-height: 1.4;
+        color: #4B5563;
+        line-height: 1.45;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -627,27 +628,33 @@ $filterProducts = $distinctProdStmt->fetchAll(PDO::FETCH_ASSOC);
     .status-badge {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 4px 12px;
+        gap: 5px;
+        padding: 3px 10px;
         border-radius: 20px;
-        font-size: 12px;
+        font-size: 11.5px;
         font-weight: 600;
+        letter-spacing: 0.2px;
+        line-height: 1.3;
     }
     .status-badge.status-approved {
-        background-color: var(--color-success-bg);
-        color: var(--color-success-text);
+        background-color: #DCFCE7;
+        color: #166534;
+        border: 1px solid #BBF7D0;
     }
     .status-badge.status-pending {
-        background-color: var(--color-pending-bg);
-        color: var(--color-pending-text);
+        background-color: #FEF3C7;
+        color: #92400E;
+        border: 1px solid #FDE68A;
     }
     .status-badge.status-rejected {
-        background-color: var(--color-rejected-bg);
-        color: var(--color-rejected-text);
+        background-color: #FEE2E2;
+        color: #991B1B;
+        border: 1px solid #FECACA;
     }
     .status-badge.status-hidden {
-        background-color: var(--color-hidden-bg);
-        color: var(--color-hidden-text);
+        background-color: #F3F4F6;
+        color: #4B5563;
+        border: 1px solid #E5E7EB;
     }
 
     .action-icons-group {
@@ -680,15 +687,13 @@ $filterProducts = $distinctProdStmt->fetchAll(PDO::FETCH_ASSOC);
         display: inline-block;
     }
     .dropdown-menu-popover {
-        position: absolute;
-        right: 0;
-        top: calc(100% + 4px);
+        position: fixed;
         background: #FFFFFF;
         border: 1px solid var(--color-border);
         border-radius: 10px;
-        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
-        min-width: 180px;
-        z-index: 50;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.12), 0 8px 10px -6px rgba(0,0,0,0.08);
+        min-width: 175px;
+        z-index: 99999;
         padding: 6px;
         display: none;
     }
@@ -1198,19 +1203,19 @@ $filterProducts = $distinctProdStmt->fetchAll(PDO::FETCH_ASSOC);
 
                     <!-- Reviews Table (Matching media_1794577389303.png) -->
                     <div class="table-surface-card">
-                        <div style="overflow-x: auto;">
+                        <div style="overflow-x: auto; overflow-y: visible; min-height: 160px; -webkit-overflow-scrolling: touch;">
                             <table class="reviews-table">
                                 <thead>
                                     <tr>
                                         <th style="width: 40px; text-align: center;">
                                             <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" style="cursor: pointer; width: 16px; height: 16px;">
                                         </th>
-                                        <th>Product</th>
-                                        <th>Reviewer</th>
-                                        <th>Rating</th>
-                                        <th>Review Content</th>
-                                        <th>Status</th>
-                                        <th style="width: 80px; text-align: center;">Actions</th>
+                                        <th style="min-width: 200px;">Product</th>
+                                        <th style="min-width: 150px;">Reviewer</th>
+                                        <th style="min-width: 100px;">Rating</th>
+                                        <th style="min-width: 220px;">Review Content</th>
+                                        <th style="min-width: 110px;">Status</th>
+                                        <th style="width: 80px; min-width: 80px; text-align: center;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1635,20 +1640,38 @@ $filterProducts = $distinctProdStmt->fetchAll(PDO::FETCH_ASSOC);
     let activeMenu = null;
     function toggleRowMenu(e, id) {
         e.stopPropagation();
+        const btn = e.currentTarget;
         const menu = document.getElementById('rowMenu_' + id);
         if (activeMenu && activeMenu !== menu) {
             activeMenu.classList.remove('show');
         }
-        menu.classList.toggle('show');
-        activeMenu = menu.classList.contains('show') ? menu : null;
+        
+        const isShowing = menu.classList.contains('show');
+        if (isShowing) {
+            menu.classList.remove('show');
+            activeMenu = null;
+        } else {
+            const rect = btn.getBoundingClientRect();
+            menu.style.top = (rect.bottom + 4) + 'px';
+            menu.style.left = Math.max(10, rect.right - 175) + 'px';
+            menu.classList.add('show');
+            activeMenu = menu;
+        }
     }
 
-    document.addEventListener('click', function() {
-        if (activeMenu) {
+    document.addEventListener('click', function(e) {
+        if (activeMenu && !activeMenu.contains(e.target)) {
             activeMenu.classList.remove('show');
             activeMenu = null;
         }
     });
+
+    window.addEventListener('scroll', function() {
+        if (activeMenu) {
+            activeMenu.classList.remove('show');
+            activeMenu = null;
+        }
+    }, true);
 
     // Direct Moderation Actions
     function directModerate(id, status) {

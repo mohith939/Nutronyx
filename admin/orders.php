@@ -388,27 +388,27 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                         <div class="order-tabs-bar">
                             <a href="orders.php?tab=ALL<?= $search ? '&search=' . urlencode($search) : '' ?>" class="order-tab-btn <?= ($statusTab === 'ALL') ? 'active' : '' ?>">
                                 <span>All Orders</span>
-                                <span class="order-tab-counter"><?= number_format($tabCounts['ALL'] ?? 2846) ?></span>
+                                <span class="order-tab-counter"><?= number_format($tabCounts['ALL'] ?? 0) ?></span>
                             </a>
                             <a href="orders.php?tab=PENDING<?= $search ? '&search=' . urlencode($search) : '' ?>" class="order-tab-btn <?= ($statusTab === 'PENDING') ? 'active' : '' ?>">
                                 <span>Pending</span>
-                                <span class="order-tab-counter"><?= number_format($tabCounts['PENDING'] ?? 128) ?></span>
+                                <span class="order-tab-counter"><?= number_format($tabCounts['PENDING'] ?? 0) ?></span>
                             </a>
                             <a href="orders.php?tab=PROCESSING<?= $search ? '&search=' . urlencode($search) : '' ?>" class="order-tab-btn <?= ($statusTab === 'PROCESSING') ? 'active' : '' ?>">
                                 <span>Processing</span>
-                                <span class="order-tab-counter"><?= number_format($tabCounts['PROCESSING'] ?? 96) ?></span>
+                                <span class="order-tab-counter"><?= number_format($tabCounts['PROCESSING'] ?? 0) ?></span>
                             </a>
                             <a href="orders.php?tab=SHIPPED<?= $search ? '&search=' . urlencode($search) : '' ?>" class="order-tab-btn <?= ($statusTab === 'SHIPPED') ? 'active' : '' ?>">
                                 <span>Shipped</span>
-                                <span class="order-tab-counter"><?= number_format($tabCounts['SHIPPED'] ?? 1942) ?></span>
+                                <span class="order-tab-counter"><?= number_format($tabCounts['SHIPPED'] ?? 0) ?></span>
                             </a>
                             <a href="orders.php?tab=DELIVERED<?= $search ? '&search=' . urlencode($search) : '' ?>" class="order-tab-btn <?= ($statusTab === 'DELIVERED') ? 'active' : '' ?>">
                                 <span>Delivered</span>
-                                <span class="order-tab-counter"><?= number_format($tabCounts['DELIVERED'] ?? 648) ?></span>
+                                <span class="order-tab-counter"><?= number_format($tabCounts['DELIVERED'] ?? 0) ?></span>
                             </a>
                             <a href="orders.php?tab=RETURNS<?= $search ? '&search=' . urlencode($search) : '' ?>" class="order-tab-btn <?= ($statusTab === 'RETURNS') ? 'active' : '' ?>">
                                 <span>Returns</span>
-                                <span class="order-tab-counter"><?= number_format($tabCounts['RETURNS'] ?? 32) ?></span>
+                                <span class="order-tab-counter"><?= number_format($tabCounts['RETURNS'] ?? 0) ?></span>
                             </a>
                         </div>
 
@@ -719,14 +719,18 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                             </table>
                         </div>
 
-                        <!-- Footer Pagination (Matching Mockup: Showing 1–8 of 2,846 orders | Rows per page: [ 10 ⌄ ] | < [ 1 ] 2 3 ... 285 >) -->
+                        <!-- Footer Pagination -->
                         <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 16px; margin-top: 8px; border-top: 1px solid #E5E7EB; background: #FFFFFF; flex-wrap: wrap; gap: 12px;">
                             <div style="font-size: 13px; color: #6B7280;">
                                 <?php 
                                     $from = $totalOrders > 0 ? (($page - 1) * $perPage + 1) : 0;
                                     $to = min($totalOrders, $page * $perPage);
                                 ?>
-                                Showing <strong style="color: #111827;"><?= $from ?>–<?= $to ?></strong> of <strong style="color: #111827;"><?= number_format($totalOrders > 0 ? $totalOrders : 2846) ?></strong> orders
+                                <?php if ($totalOrders > 0): ?>
+                                    Showing <strong style="color: #111827;"><?= $from ?>–<?= $to ?></strong> of <strong style="color: #111827;"><?= number_format($totalOrders) ?></strong> orders
+                                <?php else: ?>
+                                    Showing <strong style="color: #111827;">0</strong> orders
+                                <?php endif; ?>
                             </div>
 
                             <div style="display: flex; align-items: center; gap: 16px;">
@@ -748,11 +752,19 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                         <span class="page-num-btn" style="opacity: 0.4; pointer-events: none;">&lsaquo;</span>
                                     <?php endif; ?>
 
-                                    <a href="orders.php?tab=<?= urlencode($statusTab) ?>&page=1&per_page=<?= $perPage ?>" class="page-num-btn <?= ($page === 1) ? 'active' : '' ?>">1</a>
-                                    <a href="orders.php?tab=<?= urlencode($statusTab) ?>&page=2&per_page=<?= $perPage ?>" class="page-num-btn <?= ($page === 2) ? 'active' : '' ?>">2</a>
-                                    <a href="orders.php?tab=<?= urlencode($statusTab) ?>&page=3&per_page=<?= $perPage ?>" class="page-num-btn <?= ($page === 3) ? 'active' : '' ?>">3</a>
-                                    <span style="font-size: 12.5px; color: #9CA3AF; padding: 0 2px;">...</span>
-                                    <a href="orders.php?tab=<?= urlencode($statusTab) ?>&page=<?= max(4, $totalPages) ?>&per_page=<?= $perPage ?>" class="page-num-btn"><?= max(285, $totalPages) ?></a>
+                                    <?php if ($totalPages <= 1): ?>
+                                        <span class="page-num-btn active">1</span>
+                                    <?php else: ?>
+                                        <?php for ($p = 1; $p <= min(3, $totalPages); $p++): ?>
+                                            <a href="orders.php?tab=<?= urlencode($statusTab) ?>&page=<?= $p ?>&per_page=<?= $perPage ?>" class="page-num-btn <?= ($page === $p) ? 'active' : '' ?>"><?= $p ?></a>
+                                        <?php endfor; ?>
+                                        <?php if ($totalPages > 4): ?>
+                                            <span style="font-size: 12.5px; color: #9CA3AF; padding: 0 2px;">...</span>
+                                            <a href="orders.php?tab=<?= urlencode($statusTab) ?>&page=<?= $totalPages ?>&per_page=<?= $perPage ?>" class="page-num-btn <?= ($page === $totalPages) ? 'active' : '' ?>"><?= $totalPages ?></a>
+                                        <?php elseif ($totalPages === 4): ?>
+                                            <a href="orders.php?tab=<?= urlencode($statusTab) ?>&page=4&per_page=<?= $perPage ?>" class="page-num-btn <?= ($page === 4) ? 'active' : '' ?>">4</a>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
 
                                     <?php if ($page < $totalPages): ?>
                                         <a href="orders.php?tab=<?= urlencode($statusTab) ?>&page=<?= $page + 1 ?>&per_page=<?= $perPage ?>" class="page-num-btn" title="Next">&rsaquo;</a>
