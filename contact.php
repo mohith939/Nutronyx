@@ -32,9 +32,9 @@ $currentPage = 'contact';
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Global Base & Component Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261117_v2">
     <!-- Scoped Contact Page Stylesheet -->
-    <link rel="stylesheet" href="assets/css/contact.css">
+    <link rel="stylesheet" href="assets/css/contact.css?v=20261117_v2">
 </head>
 <body class="nutronyx-body contact-page-body">
 
@@ -418,7 +418,7 @@ $currentPage = 'contact';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
     <!-- Scoped Contact Interaction Script -->
-    <script src="assets/js/contact.js"></script>
+    <script src="assets/js/contact.js?v=20261117_v2"></script>
 
     <!-- Finstics Tap Handler -->
     <script>

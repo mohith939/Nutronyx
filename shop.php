@@ -64,9 +64,9 @@ foreach ($catalogProducts as $cProd) {
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Global Base & Component Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261117_v2">
     <!-- Scoped Shop Page Stylesheet -->
-    <link rel="stylesheet" href="assets/css/shop.css">
+    <link rel="stylesheet" href="assets/css/shop.css?v=20261117_v2">
 </head>
 <body class="nutronyx-body shop-page-body">
 
@@ -632,7 +632,7 @@ foreach ($catalogProducts as $cProd) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     
     <!-- Shop Hero & Section 02 Interaction Script -->
-    <script src="assets/js/shop.js"></script>
+    <script src="assets/js/shop.js?v=20261117_v2"></script>
 
     <!-- Footer Common Handlers -->
     <script>

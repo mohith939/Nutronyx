@@ -29,9 +29,9 @@ $currentPage = "about";
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Global Base & Component Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261117_v2">
     <!-- Scoped About Page Stylesheet -->
-    <link rel="stylesheet" href="assets/css/about.css">
+    <link rel="stylesheet" href="assets/css/about.css?v=20261117_v2">
 </head>
 <body class="nutronyx-body about-page-body">
 
@@ -753,7 +753,7 @@ $currentPage = "about";
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
     <!-- Scoped About Page Script -->
-    <script src="assets/js/about.js"></script>
+    <script src="assets/js/about.js?v=20261117_v2"></script>
 
     <!-- Finstics Tap Handler -->
     <script>

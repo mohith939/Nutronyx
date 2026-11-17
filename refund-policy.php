@@ -29,7 +29,7 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Global Base & Component Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261117_v2">
 
     <style>
         /* Dedicated Policy Page Styles (Matching FAQ & Privacy Experience) */
@@ -689,7 +689,7 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
     <!-- Scripts: GSAP & Smooth Scrolling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="assets/js/main.js"></script>
+    <script src="assets/js/main.js?v=20261117_v2"></script>
 
     <script>
         // Smooth scroll & active state tracking for TOC links

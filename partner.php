@@ -33,9 +33,9 @@ $currentPage = 'partner';
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Global Base Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261117_v2">
     <!-- Scoped Partner Page Stylesheet -->
-    <link rel="stylesheet" href="assets/css/partner.css">
+    <link rel="stylesheet" href="assets/css/partner.css?v=20261117_v2">
 </head>
 <body class="nutronyx-body partner-page-body">
 
@@ -936,7 +936,7 @@ $currentPage = 'partner';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
     <!-- Scoped Partner Page Interaction Script -->
-    <script src="assets/js/partner.js"></script>
+    <script src="assets/js/partner.js?v=20261117_v2"></script>
 
     <!-- Finstics Tap Handler -->
     <script>

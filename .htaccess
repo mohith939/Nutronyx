@@ -1,0 +1,25 @@
+# Apache Configuration for NUTRONYX
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+</IfModule>
+
+# Force UTF-8 Encoding
+AddDefaultCharset UTF-8
+
+# Prevent Directory Browsing
+Options -Indexes
+
+# Cache Management for Fast Updates & CDN Freshness
+<IfModule mod_headers.c>
+    # Dynamic PHP Pages: Never cache in browser or proxy
+    <FilesMatch "\.(php|html|htm)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+
+    # Versioned CSS & JS: Revalidate to avoid stale styles
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=3600, must-revalidate"
+    </FilesMatch>
+</IfModule>
