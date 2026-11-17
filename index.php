@@ -439,17 +439,13 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                         <div class="spec-item spec-variant-item" style="display:inline-flex; align-items:center; gap:8px;">
                             <span style="font-size:12px; font-weight:700; color:#526458; text-transform:uppercase; letter-spacing:0.5px;">Size:</span>
                             <div class="showcase-size-pills-row" style="display:inline-flex; gap:6px;">
-                                <button type="button" class="showcase-size-pill active" id="scPill250" onclick="onShowcasePillClick('var_abc_250g', 299, '30 servings', this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #143D24; background:#143D24; color:#fff; font-size:12px; font-weight:700; cursor:pointer;">
+                                <button type="button" class="showcase-size-pill active" id="scPill250" onclick="onShowcasePillClick('var_abc_250g', 299, this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #143D24; background:#143D24; color:#fff; font-size:12px; font-weight:700; cursor:pointer;">
                                     200gm
                                 </button>
-                                <button type="button" class="showcase-size-pill" id="scPill500" onclick="onShowcasePillClick('var_abc_500g', 499, '60 servings', this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #D1D5DB; background:#fff; color:#374151; font-size:12px; font-weight:700; cursor:pointer;">
+                                <button type="button" class="showcase-size-pill" id="scPill500" onclick="onShowcasePillClick('var_abc_500g', 499, this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #D1D5DB; background:#fff; color:#374151; font-size:12px; font-weight:700; cursor:pointer;">
                                     400gm
                                 </button>
                             </div>
-                        </div>
-                        <span class="spec-divider" aria-hidden="true">|</span>
-                        <div class="spec-item spec-servings">
-                            <span class="spec-value" id="showcaseServingsVal">30 servings</span>
                         </div>
                         <span class="spec-divider" aria-hidden="true">|</span>
                         <div class="spec-item spec-price">
@@ -1541,7 +1537,10 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     <!-- Interaction & Motion Script -->
     <script src="assets/js/main.js?v=20261117_v2"></script>
     <script>
-    function onShowcasePillClick(variantId, price, servings, btn) {
+    function onShowcasePillClick(variantId, price, btn) {
+        if (arguments.length === 4) {
+            btn = arguments[3];
+        }
         document.querySelectorAll('.showcase-size-pill').forEach(b => {
             b.style.background = '#fff';
             b.style.borderColor = '#D1D5DB';
@@ -1553,20 +1552,18 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
             btn.style.color = '#fff';
         }
         
-        const servingsEl = document.getElementById('showcaseServingsVal');
         const priceEl = document.getElementById('showcasePriceVal');
         const ctaBtn = document.getElementById('showcaseCtaBtn');
         
-        if (servingsEl) servingsEl.textContent = servings;
         if (priceEl) priceEl.textContent = '₹' + parseInt(price, 10).toLocaleString('en-IN');
         if (ctaBtn) ctaBtn.href = 'shop.php?variant=' + encodeURIComponent(variantId);
     }
 
     function onShowcaseVariantChange(variantId) {
         if (variantId === 'var_abc_500g') {
-            onShowcasePillClick('var_abc_500g', 499, '60 servings', document.getElementById('scPill500'));
+            onShowcasePillClick('var_abc_500g', 499, document.getElementById('scPill500'));
         } else {
-            onShowcasePillClick('var_abc_250g', 299, '30 servings', document.getElementById('scPill250'));
+            onShowcasePillClick('var_abc_250g', 299, document.getElementById('scPill250'));
         }
     }
     </script>

@@ -378,7 +378,14 @@ document.addEventListener("DOMContentLoaded", function() {
 // =========================================================================
 // 4. DOSSIER QUANTITY STEPPER & COMMERCE
 // =========================================================================
-function selectDossierSize(variantId, price, servings, perServing, guideText, btnEl) {
+function selectDossierSize(variantId, price, guideText, btnEl) {
+    // Support flexible signature if called with legacy arguments
+    if (typeof guideText !== 'string' || (btnEl && typeof btnEl === 'string')) {
+        // legacy signature: (variantId, price, servings, perServing, guideText, btnEl)
+        guideText = arguments[4] || '';
+        btnEl = arguments[5] || null;
+    }
+
     activeVariantId = variantId;
     activeVariantBasePrice = price;
 
@@ -392,15 +399,13 @@ function selectDossierSize(variantId, price, servings, perServing, guideText, bt
         btnEl.setAttribute('aria-checked', 'true');
     }
 
-    const servingsVal = document.getElementById("dossierServingsVal");
     const priceDisplay = document.getElementById("dossierPriceDisplay");
     const priceSub = document.getElementById("dossierPriceSub");
     const totalBtnPrice = document.getElementById("dossierTotalBtnPrice");
     const guideEl = document.getElementById("sizeServingsGuide");
 
-    if (servingsVal) servingsVal.textContent = servings;
     if (priceDisplay) priceDisplay.textContent = "₹" + price.toLocaleString("en-IN");
-    if (priceSub) priceSub.textContent = "₹" + perServing + " per serving • Inclusive of all taxes";
+    if (priceSub) priceSub.textContent = "Inclusive of all taxes";
     if (guideEl) guideEl.textContent = guideText;
     if (totalBtnPrice) {
         totalBtnPrice.textContent = "₹" + (price * flagshipQty).toLocaleString("en-IN");
@@ -410,10 +415,10 @@ function selectDossierSize(variantId, price, servings, perServing, guideText, bt
 function onDossierVariantChange(variantId) {
     if (variantId === 'var_abc_500g') {
         const btn500 = document.getElementById('pill_var_abc_500g');
-        selectDossierSize('var_abc_500g', 499, '60 servings', '8.32', '60 Servings • 2 Months Ritual (Save 17%)', btn500);
+        selectDossierSize('var_abc_500g', 499, '2 Months Ritual (Save 17%)', btn500);
     } else {
         const btn250 = document.getElementById('pill_var_abc_250g');
-        selectDossierSize('var_abc_250g', 299, '30 servings', '9.97', '30 Servings • 1 Month Ritual', btn250);
+        selectDossierSize('var_abc_250g', 299, '1 Month Ritual', btn250);
     }
 }
 

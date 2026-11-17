@@ -149,11 +149,7 @@ foreach ($catalogProducts as $cProd) {
                         <!-- Authentic Specifications Bar -->
                         <div class="dossier-specs-row" aria-label="Product Specifications">
                             <div class="dossier-spec-item">
-                                <strong>100% Whole Botanicals</strong>
-                            </div>
-                            <span class="dossier-spec-sep" aria-hidden="true">|</span>
-                            <div class="dossier-spec-item">
-                                <strong id="dossierServingsVal"><?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? '60 servings' : '30 servings' ?></strong>
+                                <strong>100% Natural Foods</strong>
                             </div>
                             <span class="dossier-spec-sep" aria-hidden="true">|</span>
                             <div class="dossier-spec-item">
@@ -165,11 +161,11 @@ foreach ($catalogProducts as $cProd) {
                         <div class="dossier-ingredients-box">
                             <span class="dossier-ing-label">Five Whole-Food Botanicals:</span>
                             <div class="dossier-ingredients-list">
-                                <span class="dossier-ing-chip">🍏 <strong>Amla</strong> Immunity</span>
-                                <span class="dossier-ing-chip">🌿 <strong>Beetroot</strong> Stamina</span>
-                                <span class="dossier-ing-chip">🥕 <strong>Carrot</strong> Vitality</span>
-                                <span class="dossier-ing-chip">🫚 <strong>Ginger</strong> Digestion</span>
-                                <span class="dossier-ing-chip">🍋 <strong>Lemon</strong> Freshness</span>
+                                <span class="dossier-ing-chip"><img src="assets/images/amla.png" alt="Amla" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Amla</strong> Immunity</span>
+                                <span class="dossier-ing-chip"><img src="assets/images/beetroot.png" alt="Beetroot" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Beetroot</strong> Stamina</span>
+                                <span class="dossier-ing-chip"><img src="assets/images/carrot.png" alt="Carrot" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Carrot</strong> Vitality</span>
+                                <span class="dossier-ing-chip"><img src="assets/images/ginger.png" alt="Ginger" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Ginger</strong> Digestion</span>
+                                <span class="dossier-ing-chip"><img src="assets/images/lemon-slice.png" alt="Lemon" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Lemon</strong> Freshness</span>
                             </div>
                         </div>
 
@@ -177,7 +173,7 @@ foreach ($catalogProducts as $cProd) {
                         <div class="dossier-size-selector-wrap" aria-label="Select Size">
                             <div class="size-selector-header">
                                 <span class="size-selector-title">Select Size</span>
-                                <span class="size-selector-guide" id="sizeServingsGuide"><?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? '60 Servings • 2 Months Ritual (Save 17%)' : '30 Servings • 1 Month Ritual' ?></span>
+                                <span class="size-selector-guide" id="sizeServingsGuide"><?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? '2 Months Ritual (Save 17%)' : '1 Month Ritual' ?></span>
                             </div>
                             <div class="size-pills-row" role="radiogroup" aria-label="Choose product size">
                                 <button type="button" 
@@ -185,18 +181,18 @@ foreach ($catalogProducts as $cProd) {
                                         id="pill_var_abc_250g" 
                                         role="radio"
                                         aria-checked="<?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? 'false' : 'true' ?>"
-                                        onclick="selectDossierSize('var_abc_250g', 299, '30 servings', '9.97', '30 Servings • 1 Month Ritual', this)">
+                                        onclick="selectDossierSize('var_abc_250g', 299, '1 Month Ritual', this)">
                                     <span class="pill-weight">200gm</span>
-                                    <span class="pill-badge">30 Servings</span>
+                                    <span class="pill-badge">Standard Pack</span>
                                 </button>
                                 <button type="button" 
                                         class="size-pill-btn <?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? 'active' : '' ?>" 
                                         id="pill_var_abc_500g" 
                                         role="radio"
                                         aria-checked="<?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? 'true' : 'false' ?>"
-                                        onclick="selectDossierSize('var_abc_500g', 499, '60 servings', '8.32', '60 Servings • 2 Months Ritual (Save 17%)', this)">
+                                        onclick="selectDossierSize('var_abc_500g', 499, '2 Months Ritual (Save 17%)', this)">
                                     <span class="pill-weight">400gm</span>
-                                    <span class="pill-badge pill-badge-value">60 Servings &bull; Best Value</span>
+                                    <span class="pill-badge pill-badge-value">Best Value</span>
                                 </button>
                             </div>
                         </div>
@@ -204,7 +200,7 @@ foreach ($catalogProducts as $cProd) {
                         <!-- Actual Price Display -->
                         <div class="dossier-price-row">
                             <span class="dossier-price-val" id="dossierPriceDisplay"><?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? '₹499' : '₹299' ?></span>
-                            <span class="dossier-price-sub" id="dossierPriceSub"><?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? '₹8.32 per serving • Inclusive of all taxes' : '₹9.97 per serving • Inclusive of all taxes' ?></span>
+                            <span class="dossier-price-sub" id="dossierPriceSub">Inclusive of all taxes</span>
                         </div>
 
                         <!-- Direct Commerce Actions: Quantity Stepper + Add to Cart -->
