@@ -185,7 +185,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action']) && 
         'webhook_url' => trim($_POST['webhook_url'] ?? 'https://nutronyx.com/api/v2/webhooks/ekart')
     ];
 
-    if (!empty($carrierData['account_number']) && !empty($carrierData['api_key']) && !empty($carrierData['api_secret'])) {
+    $currentCfg = EkartLogisticsService::getConfig();
+    if (empty($carrierData['api_secret']) || $carrierData['api_secret'] === '•••••••••••••') {
+        $carrierData['api_secret'] = $currentCfg['api_secret'] ?? '';
+    }
+
+    if (!empty($carrierData['account_number']) && !empty($carrierData['api_key'])) {
         if (EkartLogisticsService::saveConfig($carrierData)) {
             ShippingService::saveIntegration('ekart', $carrierData);
             
@@ -194,13 +199,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action']) && 
             if ($testRes['is_live']) {
                 $notice = "Ekart Logistics credentials saved successfully! Connected with Live Gateway.";
             } else {
-                $notice = "Credentials saved. Ekart Gateway status: " . htmlspecialchars($testRes['message']) . " (HTTP " . ($testRes['code'] ?? '401') . ").";
+                $notice = "Ekart credentials saved successfully! Gateway response: " . htmlspecialchars($testRes['message']) . " (HTTP " . ($testRes['code'] ?? '401') . ").";
             }
         } else {
-            $error = "Failed to update Ekart API credentials.";
+            $error = "Failed to update Ekart API credentials in database.";
         }
     } else {
-        $error = "Please fill in all required fields (Client ID, Username, and Password).";
+        $error = "Please fill in all required fields (Client ID and Username / Email).";
     }
 }
 
@@ -682,7 +687,7 @@ $initRate = EkartLogisticsService::getRateEstimate([
                         </div>
                     </div>
 
-                    <form method="POST" action="shipping.php" id="ekartCredentialsForm">
+                    <form method="POST" action="" id="ekartCredentialsForm">
                         <input type="hidden" name="action" value="save_ekart_credentials">
                         <input type="hidden" name="environment" value="<?= htmlspecialchars($ekartConfig['environment'] ?? 'PRODUCTION') ?>">
                         <input type="hidden" name="webhook_url" value="<?= htmlspecialchars($ekartConfig['webhook_url'] ?? 'https://nutronyx.com/api/v2/webhooks/ekart') ?>">
@@ -691,7 +696,7 @@ $initRate = EkartLogisticsService::getRateEstimate([
                         <div style="margin-bottom: 18px;">
                             <label class="form-standard-label">Client ID *</label>
                             <div class="input-with-icon">
-                                <input type="text" id="cfgClientId" name="account_number" value="<?= htmlspecialchars($ekartConfig['account_number'] ?: 'EKART_6a48e4517e1a9ded61c4c188') ?>" required>
+                                <input type="text" id="cfgClientId" name="account_number" value="<?= htmlspecialchars($ekartConfig['account_number'] ?? '') ?>" placeholder="Enter Ekart Client ID" required>
                                 <button type="button" class="input-icon-btn" onclick="window.copyClientId()" title="Copy Client ID">
                                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -704,14 +709,14 @@ $initRate = EkartLogisticsService::getRateEstimate([
                         <!-- Username / Email Field -->
                         <div style="margin-bottom: 18px;">
                             <label class="form-standard-label">Username / Email *</label>
-                            <input type="text" id="cfgUsername" name="api_key" value="<?= htmlspecialchars($ekartConfig['api_key'] ?: 'nutronyx.official@gmail.com') ?>" required class="form-standard-input">
+                            <input type="text" id="cfgUsername" name="api_key" value="<?= htmlspecialchars($ekartConfig['api_key'] ?? '') ?>" placeholder="Enter Ekart Username / Email" required class="form-standard-input">
                         </div>
 
                         <!-- Password / Partner Secret Field with Eye Toggle -->
                         <div style="margin-bottom: 22px;">
                             <label class="form-standard-label">Password / Partner Secret *</label>
                             <div class="input-with-icon">
-                                <input type="password" id="cfgPassword" name="api_secret" value="<?= htmlspecialchars($ekartConfig['api_secret'] ?: '•••••••••••••') ?>" required>
+                                <input type="password" id="cfgPassword" name="api_secret" value="<?= htmlspecialchars($ekartConfig['api_secret'] ?? '') ?>" placeholder="Enter Ekart Partner Secret / Password" required>
                                 <button type="button" class="input-icon-btn" id="btnTogglePassword" onclick="window.togglePasswordVisibility()" title="Toggle password visibility" aria-label="Toggle password visibility">
                                     <!-- Eye Slash (Hidden state - matches user mockup) -->
                                     <svg id="eyeIconHidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block; pointer-events: none;">

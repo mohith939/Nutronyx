@@ -102,23 +102,54 @@ class ShippingService
     {
         self::ensureIntegrationSchema();
         $db = Database::getConnection();
+        $wid = Context::getWebsiteId();
         $status = (!empty($data['api_key'])) ? 'CONNECTED' : 'DISCONNECTED';
 
-        $stmt = $db->prepare("
-            UPDATE shipping_integrations 
-            SET api_key = :key, api_secret = :secret, account_number = :acct, 
-                environment = :env, status = :status, updated_at = CURRENT_TIMESTAMP
-            WHERE carrier_code = :code AND website_id = :wid
-        ");
-        $res = $stmt->execute([
-            ':key' => trim($data['api_key'] ?? ''),
-            ':secret' => trim($data['api_secret'] ?? ''),
-            ':acct' => trim($data['account_number'] ?? ''),
-            ':env' => $data['environment'] ?? 'SANDBOX',
-            ':status' => $status,
-            ':code' => $carrierCode,
-            ':wid' => Context::getWebsiteId()
-        ]);
+        // Check existing
+        $stmtEx = $db->prepare("SELECT * FROM shipping_integrations WHERE carrier_code = :code AND website_id = :wid LIMIT 1");
+        $stmtEx->execute([':code' => $carrierCode, ':wid' => $wid]);
+        $existing = $stmtEx->fetch() ?: [];
+
+        $apiKey = !empty($data['api_key']) ? trim($data['api_key']) : ($existing['api_key'] ?? '');
+        $apiSecret = (!empty($data['api_secret']) && $data['api_secret'] !== '•••••••••••••') 
+            ? trim($data['api_secret']) 
+            : ($existing['api_secret'] ?? '');
+        $acct = !empty($data['account_number']) ? trim($data['account_number']) : ($existing['account_number'] ?? '');
+        $env = !empty($data['environment']) ? trim($data['environment']) : ($existing['environment'] ?? 'SANDBOX');
+
+        if (!empty($existing['id'])) {
+            $stmt = $db->prepare("
+                UPDATE shipping_integrations 
+                SET api_key = :key, api_secret = :secret, account_number = :acct, 
+                    environment = :env, status = :status, updated_at = CURRENT_TIMESTAMP
+                WHERE id = :id
+            ");
+            $res = $stmt->execute([
+                ':key' => $apiKey,
+                ':secret' => $apiSecret,
+                ':acct' => $acct,
+                ':env' => $env,
+                ':status' => $status,
+                ':id' => $existing['id']
+            ]);
+        } else {
+            $newId = 'ship_int_' . md5($wid . '_' . $carrierCode);
+            $stmt = $db->prepare("
+                INSERT INTO shipping_integrations (id, website_id, carrier_code, carrier_name, api_key, api_secret, account_number, environment, status, updated_at)
+                VALUES (:id, :wid, :code, :name, :key, :secret, :acct, :env, :status, CURRENT_TIMESTAMP)
+            ");
+            $res = $stmt->execute([
+                ':id' => $newId,
+                ':wid' => $wid,
+                ':code' => $carrierCode,
+                ':name' => ucfirst($carrierCode),
+                ':key' => $apiKey,
+                ':secret' => $apiSecret,
+                ':acct' => $acct,
+                ':env' => $env,
+                ':status' => $status
+            ]);
+        }
 
         AuditService::log('shipping_api.update', 'carrier_integration', $carrierCode, "Updated API keys for {$carrierCode} (Status: {$status})");
         return $res;

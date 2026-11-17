@@ -32,16 +32,23 @@ class EkartLogisticsService
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$row) {
+            // Check if there is an ekart row under any website_id before creating default
+            $stmtAny = $db->query("SELECT * FROM shipping_integrations WHERE carrier_code = 'ekart' ORDER BY updated_at DESC LIMIT 1");
+            $rowAny = $stmtAny->fetch(PDO::FETCH_ASSOC);
+            if ($rowAny) {
+                return $rowAny;
+            }
+
             $default = [
                 'id' => 'ship_int_' . md5($wid . '_ekart'),
                 'website_id' => $wid,
                 'carrier_code' => 'ekart',
                 'carrier_name' => 'Ekart Logistics Enterprise',
-                'api_key' => getenv('EKART_USERNAME') ?: self::DEFAULT_USERNAME,
-                'api_secret' => getenv('EKART_PASSWORD') ?: self::DEFAULT_PASSWORD,
-                'account_number' => getenv('EKART_CLIENT_ID') ?: self::DEFAULT_CLIENT_ID,
-                'environment' => getenv('EKART_ENVIRONMENT') ?: 'SANDBOX',
-                'status' => 'CONNECTED',
+                'api_key' => getenv('EKART_USERNAME') ?: '',
+                'api_secret' => getenv('EKART_PASSWORD') ?: '',
+                'account_number' => getenv('EKART_CLIENT_ID') ?: '',
+                'environment' => getenv('EKART_ENVIRONMENT') ?: 'PRODUCTION',
+                'status' => 'DISCONNECTED',
                 'webhook_url' => 'https://nutronyx.com/api/v2/webhooks/ekart',
                 'updated_at' => date('Y-m-d H:i:s')
             ];
@@ -86,23 +93,69 @@ class EkartLogisticsService
         $db = Database::getConnection();
         $wid = Context::getWebsiteId();
 
-        $status = (!empty($data['api_key']) || !empty($data['account_number'])) ? 'CONNECTED' : 'DISCONNECTED';
+        $existing = self::getConfig();
+        $apiKey = !empty($data['api_key']) ? trim($data['api_key']) : ($existing['api_key'] ?? '');
+        $apiSecret = (!empty($data['api_secret']) && $data['api_secret'] !== '•••••••••••••') 
+            ? trim($data['api_secret']) 
+            : ($existing['api_secret'] ?? '');
+        $acct = !empty($data['account_number']) ? trim($data['account_number']) : ($existing['account_number'] ?? '');
+        $env = !empty($data['environment']) ? trim($data['environment']) : ($existing['environment'] ?? 'PRODUCTION');
+        $wh = !empty($data['webhook_url']) ? trim($data['webhook_url']) : ($existing['webhook_url'] ?? 'https://nutronyx.com/api/v2/webhooks/ekart');
+        $status = (!empty($apiKey) || !empty($acct)) ? 'CONNECTED' : 'DISCONNECTED';
 
-        $stmt = $db->prepare("
+        // Check if row exists for active website
+        $stmt = $db->prepare("SELECT id FROM shipping_integrations WHERE carrier_code = 'ekart' AND website_id = :wid LIMIT 1");
+        $stmt->execute([':wid' => $wid]);
+        $rowId = $stmt->fetchColumn();
+
+        if ($rowId) {
+            $stmt = $db->prepare("
+                UPDATE shipping_integrations 
+                SET api_key = :key, api_secret = :secret, account_number = :acct, 
+                    environment = :env, status = :status, webhook_url = :wh, updated_at = CURRENT_TIMESTAMP
+                WHERE id = :id
+            ");
+            $res = $stmt->execute([
+                ':key' => $apiKey,
+                ':secret' => $apiSecret,
+                ':acct' => $acct,
+                ':env' => $env,
+                ':status' => $status,
+                ':wh' => $wh,
+                ':id' => $rowId
+            ]);
+        } else {
+            $newId = 'ship_int_' . md5($wid . '_ekart');
+            $stmt = $db->prepare("
+                INSERT INTO shipping_integrations (id, website_id, carrier_code, carrier_name, api_key, api_secret, account_number, environment, status, webhook_url, updated_at)
+                VALUES (:id, :wid, 'ekart', 'Ekart Logistics Enterprise', :key, :secret, :acct, :env, :status, :wh, CURRENT_TIMESTAMP)
+            ");
+            $res = $stmt->execute([
+                ':id' => $newId,
+                ':wid' => $wid,
+                ':key' => $apiKey,
+                ':secret' => $apiSecret,
+                ':acct' => $acct,
+                ':env' => $env,
+                ':status' => $status,
+                ':wh' => $wh
+            ]);
+        }
+
+        // Keep all tenant contexts in sync so switching store never reverts credentials
+        $stmtSync = $db->prepare("
             UPDATE shipping_integrations 
             SET api_key = :key, api_secret = :secret, account_number = :acct, 
                 environment = :env, status = :status, webhook_url = :wh, updated_at = CURRENT_TIMESTAMP
-            WHERE carrier_code = 'ekart' AND website_id = :wid
+            WHERE carrier_code = 'ekart'
         ");
-
-        $res = $stmt->execute([
-            ':key' => trim($data['api_key'] ?? self::DEFAULT_USERNAME),
-            ':secret' => trim($data['api_secret'] ?? self::DEFAULT_PASSWORD),
-            ':acct' => trim($data['account_number'] ?? self::DEFAULT_CLIENT_ID),
-            ':env' => $data['environment'] ?? 'SANDBOX',
+        $stmtSync->execute([
+            ':key' => $apiKey,
+            ':secret' => $apiSecret,
+            ':acct' => $acct,
+            ':env' => $env,
             ':status' => $status,
-            ':wh' => trim($data['webhook_url'] ?? 'https://nutronyx.com/api/v2/webhooks/ekart'),
-            ':wid' => $wid
+            ':wh' => $wh
         ]);
 
         // Invalidate cached token when credentials change
@@ -119,14 +172,12 @@ class EkartLogisticsService
      */
     public static function connect(): bool
     {
-        return self::saveConfig([
-            'account_number' => self::DEFAULT_CLIENT_ID,
-            'api_key' => self::DEFAULT_USERNAME,
-            'api_secret' => self::DEFAULT_PASSWORD,
-            'environment' => 'SANDBOX',
-            'status' => 'CONNECTED',
-            'webhook_url' => 'https://nutronyx.com/api/v2/webhooks/ekart'
-        ]);
+        $config = self::getConfig();
+        if (empty($config['account_number']) && empty($config['api_key'])) {
+            return false;
+        }
+        $token = self::getAccessToken(true);
+        return !empty($token['access_token']);
     }
 
     /**
