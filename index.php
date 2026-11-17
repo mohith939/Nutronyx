@@ -58,7 +58,7 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                 <!-- 2. CENTRAL ABC+ PRODUCT & BOTANICALS COMPOSITION -->
                 <div class="hero-center-stage" aria-label="NUTRONYX ABC+ Daily Wellness Composition">
                     <div class="hero-pouch-composition" id="heroPouchComposition">
-                        <img src="assets/images/hero-abc-pouch.png" alt="NUTRONYX ABC+ Daily Wellness Powder with 5 Whole Botanicals and Ruby Smoothie" class="hero-pouch-img">
+                        <img src="assets/images/hero-abc-pouch.png" alt="NUTRONYX ABC+ Daily Wellness Powder with 5 Whole Foods and Ruby Smoothie" class="hero-pouch-img">
                     </div>
                 </div>
 
@@ -314,7 +314,7 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                     </div>
                     <div class="card-text">
                         <h3 class="card-name">Ginger</h3>
-                        <p class="card-desc">A time-honored<br>botanical ingredient.</p>
+                        <p class="card-desc">A time-honored<br>ingredient.</p>
                     </div>
                 </div>
 
@@ -1220,7 +1220,7 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
             <div class="enjoy-footer-hint">
                 <div class="enjoy-hint-pill">
                     <span class="hint-bullet" aria-hidden="true">✦</span>
-                    <span class="hint-text">Best enjoyed every morning on an empty stomach for maximum cellular absorption.</span>
+                    <span class="hint-text">A little goodness, thoughtfully made for everyday life.</span>
                 </div>
             </div>
         </div>
@@ -1296,7 +1296,7 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                             <!-- Left: Lifestyle Photography -->
                             <div class="card-visual-col">
                                 <img src="assets/images/ritual-with-nutronyx.jpg" 
-                                     alt="Rohit enjoying his daily botanical wellness ritual" 
+                                     alt="Rohit enjoying his daily wellness ritual" 
                                      class="card-visual-img"
                                      loading="lazy">
                                 <div class="card-visual-tag">
@@ -1390,7 +1390,7 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                             <!-- Left: Lifestyle Photography -->
                             <div class="card-visual-col">
                                 <img src="assets/images/ritual-editorial.jpg" 
-                                     alt="Meghana preparing her pure botanical daily wellness drink" 
+                                     alt="Meghana preparing her daily wellness drink" 
                                      class="card-visual-img"
                                      loading="lazy">
                                 <div class="card-visual-tag">
@@ -1399,7 +1399,7 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                                             <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66l.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/>
                                         </svg>
                                     </span>
-                                    <span>Pure botanicals &amp; daily routine</span>
+                                    <span>Pure ingredients &amp; daily routine</span>
                                 </div>
                             </div>
 

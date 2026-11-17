@@ -27,11 +27,23 @@
                     <span class="brand-hl-line">thoughtfully.</span>
                 </h2>
                 <p class="footer-brand-subtext">
-                    Everyday wellness, crafted from nature’s finest botanicals.
+                    Everyday wellness, crafted from nature’s finest ingredients.
                 </p>
             </div>
 
-            <!-- Column 2: EXPLORE -->
+            <!-- Column 2: POLICIES -->
+            <div class="footer-col footer-col-policies">
+                <h3 class="footer-col-heading">POLICIES</h3>
+                <span class="col-accent-dash" aria-hidden="true"></span>
+                <ul class="footer-nav-list" role="list">
+                    <li><a href="privacy-policy.php" class="footer-nav-link">Privacy Policy</a></li>
+                    <li><a href="shipping-policy.php" class="footer-nav-link">Shipping Policy</a></li>
+                    <li><a href="refund-policy.php" class="footer-nav-link">Refund Policy</a></li>
+                    <li><a href="terms-and-conditions.php" class="footer-nav-link">Terms &amp; Conditions</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: EXPLORE -->
             <div class="footer-col footer-col-nav">
                 <h3 class="footer-col-heading">EXPLORE</h3>
                 <span class="col-accent-dash" aria-hidden="true"></span>
@@ -43,14 +55,14 @@
                 </ul>
             </div>
 
-            <!-- Column 3: LET'S CONNECT -->
+            <!-- Column 4: LET'S CONNECT -->
             <div class="footer-col footer-col-connect">
                 <h3 class="footer-col-heading">LET'S CONNECT</h3>
                 <span class="col-accent-dash" aria-hidden="true"></span>
-                <p class="footer-connect-sub">Your botanical concierge.</p>
+                <p class="footer-connect-sub">Your wellness concierge.</p>
 
                 <!-- Contact Phone Feature -->
-                <a href="tel:9392633211" class="footer-phone-badge" aria-label="Call Botanical Concierge at 93926 33211">
+                <a href="tel:9392633211" class="footer-phone-badge" aria-label="Call Wellness Concierge at 93926 33211">
                     <span class="phone-round-icon" aria-hidden="true">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.053 15.053 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 3.99c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.61c0-.55-.45-1-.99-1z"/>
@@ -71,7 +83,7 @@
                             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                         </svg>
                     </a>
-                    <a href="mailto:care@nutronyx.com" class="footer-social-circle" aria-label="Email Botanical Concierge">
+                    <a href="mailto:care@nutronyx.com" class="footer-social-circle" aria-label="Email Wellness Concierge">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                             <polyline points="22,6 12,13 2,6"></polyline>
@@ -79,16 +91,6 @@
                     </a>
                 </div>
             </div>
-        </div>
-
-        <!-- 3. Policy Links Row (from Reference Image 1) -->
-        <div class="footer-middle-divider" aria-hidden="true"></div>
-
-        <div class="footer-policy-tier">
-            <a href="privacy-policy.php" class="footer-policy-link">Privacy Policy</a>
-            <a href="shipping-policy.php" class="footer-policy-link">Shipping Policy</a>
-            <a href="refund-policy.php" class="footer-policy-link">Refund Policy</a>
-            <a href="terms-and-conditions.php" class="footer-policy-link">Terms &amp; Conditions</a>
         </div>
 
         <div class="footer-middle-divider" aria-hidden="true"></div>

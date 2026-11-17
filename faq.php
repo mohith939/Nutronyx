@@ -21,7 +21,7 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle) ?></title>
-    <meta name="description" content="Explore frequently asked questions about NUTRONYX ABC+, whole-plant botanical sourcing, daily wellness preparation, purity guarantees, and order fulfillment.">
+    <meta name="description" content="Explore frequently asked questions about NUTRONYX ABC+, whole-plant natural sourcing, daily wellness preparation, purity guarantees, and order fulfillment.">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -212,7 +212,7 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                 </div>
                                 <div class="concierge-content">
                                     <h3 class="concierge-title">Have a specific question?</h3>
-                                    <p class="concierge-text">Our botanical wellness concierge is on hand to guide your daily ritual and address personal preferences.</p>
+                                    <p class="concierge-text">Our wellness concierge is on hand to guide your daily ritual and address personal preferences.</p>
                                     <a href="contact.php" class="concierge-link" style="margin-bottom: 8px;">
                                         <span>Contact Ritual Concierge</span>
                                         <span class="concierge-arrow" aria-hidden="true">↗</span>
@@ -245,11 +245,11 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-1" role="region" aria-labelledby="faq-btn-1">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                NUTRONYX ABC+ is a daily botanical wellness blend crafted from five pure whole-food ingredients: Amla (Indian Gooseberry), Beetroot, Carrot, Ginger, and Lemon. Formulated into a finely soluble powder, it delivers everyday vitality, sustained energy, and digestive harmony without synthetic vitamins, artificial sweeteners, or fillers.
+                                                NUTRONYX ABC+ is a daily wellness blend crafted from five pure whole-food ingredients: Amla (Indian Gooseberry), Beetroot, Carrot, Ginger, and Lemon. Formulated into a finely soluble powder, it delivers everyday vitality, sustained energy, and digestive harmony without synthetic vitamins, artificial sweeteners, or fillers.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
-                                                <span>Five whole botanicals · Zero synthetic additives</span>
+                                                <span>Five whole ingredients · Zero synthetic additives</span>
                                             </div>
                                         </div>
                                     </div>
@@ -272,7 +272,7 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-2" role="region" aria-labelledby="faq-btn-2">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                ABC+ contains exactly five unadulterated botanicals: fresh organic Amla for natural Vitamin C and immunity; Beetroot for natural nitrates and healthy blood circulation; Carrot for beta-carotene and antioxidant protection; Ginger for digestive warmth and gut comfort; and Lemon for gentle daily cleansing and natural freshness. Nothing else is added.
+                                                ABC+ contains exactly five unadulterated ingredients: fresh organic Amla for natural Vitamin C and immunity; Beetroot for natural nitrates and healthy blood circulation; Carrot for beta-carotene and antioxidant protection; Ginger for digestive warmth and gut comfort; and Lemon for gentle daily cleansing and natural freshness. Nothing else is added.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
@@ -326,7 +326,7 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-4" role="region" aria-labelledby="faq-btn-4">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                Preparation is a calm three-step ritual: Add one level scoop (approx. 10g) of ABC+ powder into a glass, pour 200ml of room temperature or lukewarm water (or blend into your favorite smoothie), and stir gently until dissolved into a rich, deep ruby elixir. Drink fresh and savor the natural earthy-botanical notes.
+                                                Preparation is a calm three-step ritual: Add one level scoop (approx. 10g) of ABC+ powder into a glass, pour 200ml of room temperature or lukewarm water (or blend into your favorite smoothie), and stir gently until dissolved into a rich, deep ruby elixir. Drink fresh and savor the natural earthy notes.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
@@ -384,7 +384,7 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
-                                                <span>Gentle food-grade botanical nutrition · Safe daily</span>
+                                                <span>Gentle food-grade nutrition · Safe daily</span>
                                             </div>
                                         </div>
                                     </div>
@@ -434,7 +434,7 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-8" role="region" aria-labelledby="faq-btn-8">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                ABC+ is available exclusively through our official online boutique at nutronyx.in and select wellness partners. Ordering directly guarantees that you receive fresh small-batch craftsmanship, authentic botanical packaging, and direct support from our ritual concierge team.
+                                                ABC+ is available exclusively through our official online boutique at nutronyx.in and select wellness partners. Ordering directly guarantees that you receive fresh small-batch craftsmanship, authentic packaging, and direct support from our ritual concierge team.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>

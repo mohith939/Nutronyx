@@ -217,7 +217,7 @@ $currentPage = 'partner';
 
                                 <div class="plaque-stat-box">
                                     <span class="stat-top">100%</span>
-                                    <span class="stat-title">WHOLE BOTANICALS</span>
+                                    <span class="stat-title">WHOLE FOODS</span>
                                     <span class="stat-code">N&deg; 2026.01</span>
                                 </div>
                             </div>

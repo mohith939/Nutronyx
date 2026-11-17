@@ -51,7 +51,7 @@ class AnnouncementService
                     'store_nutronyx_in', 1,
                     'Delivery from ₹75 — charged by weight, never on what you spend', 'truck',
                     'No chemicals, no preservatives — freshness guaranteed', 'shield',
-                    'Sourced directly from farmers — 100% whole-food botanicals', 'leaf',
+                    'Sourced directly from farmers — 100% whole-food ingredients', 'leaf',
                     '#0D2F1F', '#FAF6ED', 28
                 )
             ");
@@ -85,7 +85,7 @@ class AnnouncementService
                 'icon_1' => 'truck',
                 'sentence_2' => 'No chemicals, no preservatives — freshness guaranteed',
                 'icon_2' => 'shield',
-                'sentence_3' => 'Sourced directly from farmers — 100% whole-food botanicals',
+                'sentence_3' => 'Sourced directly from farmers — 100% whole-food ingredients',
                 'icon_3' => 'leaf',
                 'bg_color' => '#0D2F1F',
                 'text_color' => '#FAF6ED',

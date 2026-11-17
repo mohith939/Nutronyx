@@ -154,9 +154,9 @@ $currentPage = 'cart';
                         </svg>
                     </div>
                     <h2 class="cart-empty-title">Your Wellness Cart is Empty</h2>
-                    <p class="cart-empty-text">It seems you haven't added any pure botanicals to your ritual yet. Explore our cold-milled single-origin powders and revitalize your daily routine.</p>
+                    <p class="cart-empty-text">It seems you haven't added any items to your ritual yet. Explore our cold-milled single-origin powders and revitalize your daily routine.</p>
                     <a href="shop.php" class="btn-cart-proceed" style="display:inline-flex; width:auto; padding:12px 28px;">
-                        Explore Botanical Collection
+                        Explore Products
                     </a>
                 </div>
             <?php else: ?>
@@ -449,8 +449,6 @@ $currentPage = 'cart';
     }
 
     function removeCartItem(variantId) {
-        if (!confirm('Remove this botanical item from your ritual?')) return;
-
         fetch('api/cart.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

@@ -56,7 +56,7 @@ foreach ($catalogProducts as $cProd) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The NUTRONYX Collection &mdash; Nature, Made Part of Your Everyday</title>
-    <meta name="description" content="Discover thoughtfully created wellness essentials inspired by nature and designed for everyday rituals. Explore the NUTRONYX ABC+ botanical collection.">
+    <meta name="description" content="Discover thoughtfully created wellness essentials inspired by nature and designed for everyday rituals. Explore the NUTRONYX ABC+ collection.">
     
     <!-- Google Fonts: Cormorant Garamond, Playfair Display & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -124,14 +124,14 @@ foreach ($catalogProducts as $cProd) {
                         <div class="flagship-main-img-wrap">
                             <img id="flagshipActiveImg" 
                                  src="assets/images/product-showcase-botanical.png" 
-                                 alt="NUTRONYX ABC+ Daily Wellness Powder with fresh whole botanicals" 
+                                 alt="NUTRONYX ABC+ Daily Wellness Powder with fresh whole foods" 
                                  class="flagship-main-img" 
                                  loading="eager">
                         </div>
 
                         <!-- Minimal Carousel Dots Indicator -->
                         <div class="flagship-dots" role="tablist" aria-label="Product Image Navigation Dots">
-                            <button type="button" class="flagship-dot active" onclick="setFlagshipIndex(0)" role="tab" aria-selected="true" aria-label="Image 1 of 3: Botanical Plinth"></button>
+                            <button type="button" class="flagship-dot active" onclick="setFlagshipIndex(0)" role="tab" aria-selected="true" aria-label="Image 1 of 3: Product Plinth"></button>
                             <button type="button" class="flagship-dot" onclick="setFlagshipIndex(1)" role="tab" aria-selected="false" aria-label="Image 2 of 3: Front Pouch Packaging"></button>
                             <button type="button" class="flagship-dot" onclick="setFlagshipIndex(2)" role="tab" aria-selected="false" aria-label="Image 3 of 3: Back Pouch Nutrition Information"></button>
                         </div>
@@ -143,7 +143,7 @@ foreach ($catalogProducts as $cProd) {
                         <h3 class="dossier-title">NUTRONYX ABC+</h3>
                         
                         <p class="dossier-desc">
-                            A thoughtful blend of Amla, Beetroot, Carrot, Ginger and Lemon for a simple, nourishing daily routine. Crafted with 100% whole raw botanicals and zero refined sugars.
+                            A thoughtful blend of Amla, Beetroot, Carrot, Ginger and Lemon for a simple, nourishing daily routine. Crafted with 100% whole raw foods and zero refined sugars.
                         </p>
 
                         <!-- Authentic Specifications Bar -->
@@ -157,9 +157,9 @@ foreach ($catalogProducts as $cProd) {
                             </div>
                         </div>
 
-                        <!-- Five Whole-Food Botanicals Breakdown -->
+                        <!-- Five Whole-Food Ingredients Breakdown -->
                         <div class="dossier-ingredients-box">
-                            <span class="dossier-ing-label">Five Whole-Food Botanicals:</span>
+                            <span class="dossier-ing-label">Five Whole-Food Ingredients:</span>
                             <div class="dossier-ingredients-list">
                                 <span class="dossier-ing-chip"><img src="assets/images/amla.png" alt="Amla" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Amla</strong> Immunity</span>
                                 <span class="dossier-ing-chip"><img src="assets/images/beetroot.png" alt="Beetroot" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Beetroot</strong> Stamina</span>
@@ -229,7 +229,7 @@ foreach ($catalogProducts as $cProd) {
                             </div>
                             <div class="guarantee-note">
                                 <span class="check-icon">&check;</span>
-                                <span>100% Raw Botanicals &bull; Zero Additives</span>
+                                <span>100% Raw Ingredients &bull; Zero Additives</span>
                             </div>
                         </div>
                     </div>
@@ -404,7 +404,7 @@ foreach ($catalogProducts as $cProd) {
                                         </div>
 
                                         <h3 class="product-card-name"><?= htmlspecialchars($cProduct['title']) ?></h3>
-                                        <p class="product-card-tagline"><?= htmlspecialchars($cProduct['short_description'] ?: 'Pure botanical nutrition designed for simple everyday wellness rituals.') ?></p>
+                                        <p class="product-card-tagline"><?= htmlspecialchars($cProduct['short_description'] ?: 'Pure nutrition designed for simple everyday wellness rituals.') ?></p>
 
                                         <!-- SKU / Size Selection Pills -->
                                         <?php if (!empty($cProduct['variants']) && count($cProduct['variants']) > 1): ?>
