@@ -18,7 +18,7 @@
             <div class="footer-col footer-col-brand">
                 <div class="footer-brand-logo-wrap">
                     <a href="index.php">
-                        <img src="assets/images/nutronyx-full-brand-logo.png" alt="NUTRONYX &mdash; Daily Wellness, Made Easy" class="footer-brand-logo" loading="lazy">
+                        <img src="assets/images/nutronyx-full-brand-logo.png?v=20261119_v1" alt="NUTRONYX &mdash; Daily Wellness, Made Easy" class="footer-brand-logo" loading="lazy">
                     </a>
                 </div>
                 <span class="col-accent-dash" aria-hidden="true"></span>

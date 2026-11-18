@@ -71,7 +71,7 @@ $isAnnouncementActive = (!empty($announcement) && !empty($announcement['is_enabl
         <div class="header-container">
             <!-- Brand Logo -->
             <a href="<?= !$isHome ? 'index.php' : '#home' ?>" class="brand-logo" aria-label="Nutronyx Home">
-                <img src="assets/images/logo.png" alt="Nutronyx Logo" class="logo-img">
+                <img src="assets/images/logo.png?v=20261119_v1" alt="Nutronyx Logo" class="logo-img">
                 <span class="logo-tagline">DAILY WELLNESS, MADE EASY</span>
             </a>
 

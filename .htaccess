@@ -37,8 +37,8 @@ Options -Indexes
         Header set Cache-Control "public, max-age=3600, must-revalidate"
     </FilesMatch>
 
-    # Manifesto Image Freshness: Ensure clients revalidate
-    <FilesMatch "manifesto-nature\.(png|jpg)$">
+    # Brand Image Freshness: Ensure clients revalidate
+    <FilesMatch "(manifesto-nature\.(png|jpg)|logo\.png|nutronyx-full-brand-logo\.png)$">
         Header set Cache-Control "no-cache, must-revalidate"
     </FilesMatch>
 </IfModule>
