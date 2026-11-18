@@ -28,7 +28,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css?v=20261119_v1">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261119_v2">
 </head>
 <body class="nutronyx-body">
 
@@ -954,100 +954,36 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
 
     <!-- ========================================== -->
     <!-- SECTION 6: THE NUTRONYX BRAND MANIFESTO    -->
-    <!-- Cinematic Emotional Brand Storytelling     -->
+    <!-- Designed matching Section 6.5              -->
     <!-- ========================================== -->
-    <section class="section-manifesto" id="manifesto" aria-label="The Nutronyx Brand Manifesto">
-        <!-- Ambient Sunbeam & Mist Atmospherics -->
-        <div class="manifesto-bg-ambience" aria-hidden="true">
-            <div class="manifesto-ambient-glow"></div>
-            <div class="manifesto-sunbeam-bloom"></div>
+    <section class="section-manifesto" id="manifesto" aria-label="Inspired by Nature — Made for Everyday Life">
+        <!-- Clean Nature Background Canvas (Asset: manifesto-nature.png) -->
+        <div class="manifesto-bg-stage" aria-hidden="true">
+            <img src="assets/images/manifesto-nature.png?v=20261118_v6" alt="Sunlit rolling green hills bathed in golden morning light" class="manifesto-bg-img" loading="lazy">
         </div>
 
+        <!-- Foreground Editorial Content -->
         <div class="manifesto-container">
-            <!-- 1. EDITORIAL OPENING HEADER -->
-            <div class="manifesto-header">
-                <div class="manifesto-eyebrow-wrapper">
-                    <span class="manifesto-eyebrow-line"></span>
+            <div class="manifesto-content-panel">
+                <div class="manifesto-eyebrow-wrap">
                     <span class="manifesto-eyebrow">THE STORY</span>
-                    <span class="manifesto-eyebrow-line"></span>
                 </div>
 
                 <h2 class="manifesto-headline">
-                    <span class="manifesto-headline-main">Inspired by Nature.</span>
-                    <span class="manifesto-headline-sub">Made for Everyday Life.</span>
+                    <span class="manifesto-title-line">Inspired by Nature.</span>
+                    <span class="manifesto-title-line">Made for <em class="manifesto-italic">Everyday Life.</em></span>
                 </h2>
-
-                <p class="manifesto-intro">
+                
+                <p class="manifesto-sub">
                     NUTRONYX began with a simple belief: natural nutrition should be thoughtful, accessible, and easy to include in everyday life.
                 </p>
-            </div>
 
-            <!-- 2. CINEMATIC STORY CANVAS -->
-            <div class="manifesto-canvas">
-                <!-- Large Immersive Nature Visual Window -->
-                <div class="manifesto-visual-frame">
-                    <div class="manifesto-visual-inner">
-                        <img src="assets/images/manifesto-nature.png?v=20261118_v6" alt="Sunlit rolling green hills bathed in golden morning light" class="manifesto-nature-img" loading="lazy">
-                    </div>
-                    <div class="manifesto-visual-overlay" aria-hidden="true"></div>
-                    <div class="manifesto-film-badge" aria-hidden="true">
-                        <span class="film-rec-dot"></span>
-                        <span class="film-tag-text">A BRAND FILM BY NUTRONYX</span>
-                    </div>
+                <div class="manifesto-cta-wrap">
+                    <a href="about.php" class="btn-manifesto-story" aria-label="Discover our Story">
+                        <span>Discover our Story</span>
+                        <span class="manifesto-arrow" aria-hidden="true">&rarr;</span>
+                    </a>
                 </div>
-
-                <!-- Sequential Manifesto Storytelling Moments -->
-                <div class="manifesto-moments-track">
-                    <!-- STATEMENT 01 -->
-                    <div class="manifesto-moment moment-st-1">
-                        <div class="moment-num-col">
-                            <span class="moment-index">01</span>
-                            <span class="moment-rule"></span>
-                        </div>
-                        <div class="moment-content-col">
-                            <h3 class="manifesto-title">Nature First</h3>
-                            <p class="manifesto-text">
-                                Inspired by the goodness of natural ingredients.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- STATEMENT 02 -->
-                    <div class="manifesto-moment moment-st-2">
-                        <div class="moment-num-col">
-                            <span class="moment-index">02</span>
-                            <span class="moment-rule"></span>
-                        </div>
-                        <div class="moment-content-col">
-                            <h3 class="manifesto-title">Thoughtfully Crafted</h3>
-                            <p class="manifesto-text">
-                                A considered approach to everyday nutrition.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- STATEMENT 03 -->
-                    <div class="manifesto-moment moment-st-3">
-                        <div class="moment-num-col">
-                            <span class="moment-index">03</span>
-                            <span class="moment-rule"></span>
-                        </div>
-                        <div class="moment-content-col">
-                            <h3 class="manifesto-title">Everyday Simplicity</h3>
-                            <p class="manifesto-text">
-                                Making natural nutrition easier to embrace.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CTA: Discover Our Story -->
-            <div class="manifesto-cta-wrap">
-                <a href="about.php" class="btn-manifesto-story" aria-label="Discover our Story">
-                    <span>Discover our Story</span>
-                    <span class="btn-icon" aria-hidden="true">&rarr;</span>
-                </a>
             </div>
         </div>
     </section>
@@ -1549,7 +1485,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     
     <!-- Interaction & Motion Script -->
-    <script src="assets/js/main.js?v=20261117_v2"></script>
+    <script src="assets/js/main.js?v=20261119_v1"></script>
     <script>
     function onShowcasePillClick(variantId, price, btn) {
         if (arguments.length === 4) {

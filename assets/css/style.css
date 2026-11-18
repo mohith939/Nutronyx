@@ -2778,412 +2778,218 @@ button {
 
 /* ==========================================================================
    NUTRONYX — SECTION 06: THE NUTRONYX BRAND MANIFESTO
-   Cinematic Emotional Brand Storytelling
+   Editorial Storytelling Matching Section 6.5 Reference Design
+   Asset: manifesto-nature.png
    ========================================================================== */
-
 .section-manifesto {
     position: relative;
+    background-color: #F7E8DA;
+    background-image: 
+        linear-gradient(to right, #F7E8DA 0%, #F7E8DA 36%, rgba(247, 232, 218, 0.85) 54%, rgba(247, 232, 218, 0) 72%), 
+        url('../images/manifesto-nature.png');
+    background-attachment: scroll;
+    background-size: auto 100%;
+    background-position: right center;
+    background-repeat: no-repeat;
     width: 100%;
-    min-height: 100vh;
-    background-color: #FAF8F5;
-    background: radial-gradient(ellipse 90% 70% at 50% 35%, #F4FBF5 0%, #FAF8F5 70%);
-    padding: 110px 0 125px 0;
+    min-height: clamp(440px, 38vw, 560px);
+    display: flex;
+    align-items: center;
     overflow: hidden;
-    z-index: 28;
+    padding: clamp(48px, 5.5vw, 84px) 0;
+    z-index: 5;
 }
 
-/* Ambient Lighting & Atmosphere */
-.manifesto-bg-ambience {
+.manifesto-bg-stage {
+    display: none;
+}
+
+.manifesto-bg-img {
     position: absolute;
+    right: 0;
     top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
-    z-index: 1;
-    overflow: hidden;
-}
-
-.manifesto-ambient-glow {
-    position: absolute;
-    width: 650px;
-    height: 650px;
-    top: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 246, 225, 0.45) 0%, rgba(215, 245, 228, 0.15) 50%, rgba(250, 248, 245, 0) 70%);
-    filter: blur(80px);
-}
-
-.manifesto-sunbeam-bloom {
-    position: absolute;
-    width: 750px;
-    height: 450px;
-    bottom: 5%;
-    right: 5%;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(165, 222, 190, 0.22) 0%, rgba(250, 248, 245, 0) 70%);
-    filter: blur(85px);
+    object-fit: cover;
+    object-position: right center;
+    display: block;
 }
 
 .manifesto-container {
-    position: relative;
-    z-index: 5;
-    max-width: 1380px;
+    width: 100%;
+    max-width: 1240px;
     margin: 0 auto;
-    padding: 0 4vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 0 clamp(24px, 5vw, 64px);
+    position: relative;
+    z-index: 3;
+    display: block;
 }
 
-/* --- 1. Editorial Opening Header --- */
-.manifesto-header {
-    text-align: center;
-    max-width: 840px;
-    margin: 0 auto 10px auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.manifesto-content-panel {
+    max-width: 480px;
 }
 
-.manifesto-eyebrow-wrapper {
+.manifesto-eyebrow-wrap {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 18px;
-}
-
-.manifesto-eyebrow-line {
-    width: 32px;
-    height: 1px;
-    background-color: #82AF8F;
+    gap: 12px;
+    margin-bottom: 12px;
 }
 
 .manifesto-eyebrow {
+    font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.26em;
-    color: #275E3D;
+    letter-spacing: 0.18em;
+    color: #1E5736;
     text-transform: uppercase;
 }
 
 .manifesto-headline {
     font-family: var(--font-serif);
-    font-size: clamp(42px, 5vw, 70px);
-    line-height: 1.1;
-    letter-spacing: -0.015em;
-    margin-bottom: 22px;
-}
-
-.manifesto-headline-main {
-    display: block;
-    color: #123020;
-    font-weight: 600;
-}
-
-.manifesto-headline-sub {
-    display: block;
-    color: #1E5736;
-    font-style: italic;
+    font-size: clamp(32px, 3.4vw, 48px);
     font-weight: 500;
+    line-height: 1.15;
+    color: #111A15;
+    letter-spacing: -0.015em;
+    margin: 0 0 16px 0;
 }
 
-.manifesto-intro {
-    font-size: clamp(16px, 1.2vw, 18.5px);
-    line-height: 1.7;
-    color: #536658;
-    max-width: 660px;
-    margin: 0 auto;
-}
-
-/* --- 2. Cinematic Story Canvas --- */
-.manifesto-canvas {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 1280px;
-    width: 100%;
-    margin: 55px auto 70px auto;
-    gap: 48px;
-}
-
-.manifesto-visual-frame {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    max-height: 580px;
-    border-radius: 30px;
-    overflow: hidden;
-    box-shadow: 0 35px 85px rgba(20, 42, 28, 0.13);
-    border: 1.5px solid rgba(215, 235, 222, 0.85);
-    background-color: #0E291B;
-    transform-origin: center center;
-    will-change: transform, clip-path;
-}
-
-.manifesto-visual-inner {
-    width: 100%;
-    height: 100%;
-    will-change: transform;
-}
-
-.manifesto-nature-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.manifesto-title-line {
     display: block;
-    transform: scale(1.08);
-    transition: transform 0.6s var(--ease-smooth);
 }
 
-.manifesto-visual-frame:hover .manifesto-nature-img {
-    transform: scale(1.11);
-}
-
-.manifesto-visual-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 60%, rgba(12, 35, 22, 0.3) 100%);
-    pointer-events: none;
-}
-
-.manifesto-film-badge {
-    position: absolute;
-    top: 22px;
-    left: 24px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    padding: 7px 16px;
-    border-radius: 9999px;
-    box-shadow: 0 6px 18px rgba(25, 20, 15, 0.08);
-}
-
-.film-rec-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: #27794A;
-    box-shadow: 0 0 6px rgba(39, 121, 74, 0.6);
-}
-
-.film-tag-text {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    color: #173B25;
-    text-transform: uppercase;
-}
-
-/* Sequential Manifesto Moments Grid */
-.manifesto-moments-track {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
-    width: 100%;
-    max-width: 1220px;
-}
-
-.manifesto-moment {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: 34px 30px;
-    background: rgba(255, 255, 255, 0.85);
-    border: 1.5px solid rgba(214, 236, 222, 0.8);
-    border-radius: 24px;
-    box-shadow: 0 14px 34px rgba(18, 42, 26, 0.04);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: transform 0.35s var(--ease-smooth), box-shadow 0.35s ease, border-color 0.35s ease;
-    will-change: transform, opacity;
-}
-
-.manifesto-moment:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 46px rgba(18, 42, 26, 0.09);
-    border-color: #9FD6B3;
-}
-
-.moment-num-col {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 16px;
-}
-
-.moment-index {
+.manifesto-italic {
     font-family: var(--font-serif);
-    font-size: 26px;
-    font-weight: 600;
-    color: #28774C;
-    line-height: 1;
-}
-
-.moment-rule {
-    width: 24px;
-    height: 1.5px;
-    background-color: #8DBCA0;
-    margin-top: 10px;
-    border-radius: 1px;
-}
-
-.moment-content-col {
-    display: flex;
-    flex-direction: column;
-}
-
-.manifesto-title {
-    font-family: var(--font-serif);
-    font-size: clamp(22px, 1.8vw, 26px);
-    font-weight: 600;
-    color: #112E1E;
-    margin-bottom: 10px;
-    line-height: 1.25;
-}
-
-.manifesto-text {
-    font-size: 14.5px;
-    color: #536658;
-    line-height: 1.65;
+    font-style: italic;
     font-weight: 400;
+    color: #1E5736;
 }
 
-/* --- 3. Discover Our Story CTA --- */
+.manifesto-sub {
+    font-family: var(--font-sans);
+    font-size: clamp(14px, 1.05vw, 15.5px);
+    font-weight: 400;
+    color: #4A5E52;
+    line-height: 1.62;
+    max-width: 430px;
+    margin: 0 0 28px 0;
+}
+
 .manifesto-cta-wrap {
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-top: 44px;
-    position: relative;
-    z-index: 5;
+    margin: 0;
 }
 
 .btn-manifesto-story {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px 38px;
-    border-radius: 999px;
-    background: #143D24;
+    gap: 10px;
+    background: #174529;
     color: #FFFFFF;
     text-decoration: none;
-    font-size: 15px;
+    border-radius: 100px;
+    padding: 13px 30px;
+    font-family: var(--font-sans);
+    font-size: 14.5px;
     font-weight: 600;
-    letter-spacing: 0.02em;
-    box-shadow: 0 8px 24px rgba(20, 61, 36, 0.22);
-    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: 0.015em;
+    box-shadow: 0 4px 16px rgba(23, 69, 41, 0.22);
+    transition: background-color 0.3s ease, transform 0.25s ease, box-shadow 0.3s ease;
 }
 
 .btn-manifesto-story:hover {
-    background: #0D2817;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(20, 61, 36, 0.32);
+    background: #0E2E1A;
     color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(23, 69, 41, 0.32);
 }
 
-.btn-manifesto-story .btn-icon {
-    font-size: 17px;
+.manifesto-arrow {
+    display: inline-block;
+    font-size: 15px;
     line-height: 1;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.btn-manifesto-story:hover .btn-icon {
+.btn-manifesto-story:hover .manifesto-arrow {
     transform: translateX(4px);
 }
 
-.manifesto-footer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-top: 10px;
-}
-
-.manifesto-footer-accent {
-    width: 48px;
-    height: 1.5px;
-    background-color: #2A794C;
-    margin-bottom: 22px;
-    border-radius: 1px;
-}
-
-.manifesto-closing-brand {
-    font-family: var(--font-serif);
-    font-size: clamp(32px, 3.6vw, 50px);
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: #112F1F;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    line-height: 1.1;
-}
-
-.manifesto-closing-perspective {
-    font-family: var(--font-serif);
-    font-size: clamp(22px, 2.2vw, 30px);
-    font-style: italic;
-    color: #225A3A;
-    font-weight: 500;
-}
-
-/* --- 4. Responsive Design for Section 6 --- */
-@media (max-width: 1023px) {
+/* Responsive adjustments for Section 6 */
+@media (max-width: 992px) {
     .section-manifesto {
-        padding: 85px 0 95px 0;
+        min-height: 440px;
+        padding: 48px 0;
+        background-image: 
+            linear-gradient(to right, #F7E8DA 0%, #F7E8DA 42%, rgba(247, 232, 218, 0.88) 60%, rgba(247, 232, 218, 0) 80%),
+            url('../images/manifesto-nature.png');
+        background-position: right center;
+        background-size: auto 100%;
+        background-attachment: scroll;
     }
-    .manifesto-canvas {
-        gap: 36px;
-        margin: 40px auto 55px auto;
-    }
-    .manifesto-moments-track {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        max-width: 580px;
-    }
-}
-
-@media (max-width: 767px) {
-    .section-manifesto {
-        padding: 70px 0 80px 0;
-    }
-    .manifesto-eyebrow-wrapper {
-        margin-bottom: 14px;
+    .manifesto-content-panel {
+        max-width: 430px;
     }
     .manifesto-headline {
-        font-size: clamp(34px, 8vw, 44px);
-        margin-bottom: 16px;
+        font-size: clamp(30px, 3.8vw, 42px);
     }
-    .manifesto-intro {
+}
+
+@media (max-width: 768px) {
+    .section-manifesto {
+        min-height: auto;
+        padding: 44px 0 52px 0;
+        background-image: none !important;
+        background-color: #F7E8DA;
+        display: block;
+    }
+    .manifesto-bg-stage {
+        display: block;
+        width: 100%;
+        max-width: 480px;
+        height: 250px;
+        margin: 0 auto 24px auto;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+    .manifesto-bg-img {
+        position: static;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: right center;
+        display: block;
+    }
+    .manifesto-container {
+        padding: 0 20px;
+    }
+    .manifesto-content-panel {
+        max-width: 100%;
+        text-align: center;
+    }
+    .manifesto-eyebrow-wrap {
+        justify-content: center;
+    }
+    .manifesto-headline {
+        font-size: clamp(28px, 6vw, 36px);
+        margin-bottom: 14px;
+    }
+    .manifesto-sub {
+        max-width: 100%;
+        margin: 0 auto 24px auto;
         font-size: 14.5px;
-        line-height: 1.6;
     }
-    .manifesto-visual-frame {
-        border-radius: 20px;
+    .manifesto-cta-wrap {
+        justify-content: center;
     }
-    .manifesto-moments-track {
-        gap: 16px;
-    }
-    .manifesto-moment {
-        padding: 26px 22px;
-        border-radius: 18px;
-    }
-    .manifesto-title {
-        font-size: 20px;
-    }
-    .manifesto-text {
-        font-size: 14px;
-    }
-    .manifesto-closing-brand {
-        font-size: 30px;
-    }
-    .manifesto-closing-perspective {
-        font-size: 20px;
+    .btn-manifesto-story {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+        padding: 14px 24px;
     }
 }
 
