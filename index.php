@@ -987,7 +987,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
                 <!-- Large Immersive Nature Visual Window -->
                 <div class="manifesto-visual-frame">
                     <div class="manifesto-visual-inner">
-                        <img src="assets/images/manifesto-nature.png" alt="Cinematic misty temperate rainforest bathed in golden sunbeams" class="manifesto-nature-img" loading="lazy">
+                        <img src="assets/images/manifesto-nature.png?v=20261118_v6" alt="Sunlit rolling green hills bathed in golden morning light" class="manifesto-nature-img" loading="lazy">
                     </div>
                     <div class="manifesto-visual-overlay" aria-hidden="true"></div>
                     <div class="manifesto-film-badge" aria-hidden="true">

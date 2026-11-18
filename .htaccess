@@ -2,6 +2,9 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Redirect old manifesto-nature.jpg requests to manifesto-nature.png
+    RewriteRule ^assets/images/manifesto-nature\.jpg$ assets/images/manifesto-nature.png [R=301,L]
+
     # Allow clean, extensionless URLs (e.g., /admin/login -> /admin/login.php, /shop -> /shop.php)
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
@@ -32,5 +35,10 @@ Options -Indexes
     # Versioned CSS & JS: Revalidate to avoid stale styles
     <FilesMatch "\.(css|js)$">
         Header set Cache-Control "public, max-age=3600, must-revalidate"
+    </FilesMatch>
+
+    # Manifesto Image Freshness: Ensure clients revalidate
+    <FilesMatch "manifesto-nature\.(png|jpg)$">
+        Header set Cache-Control "no-cache, must-revalidate"
     </FilesMatch>
 </IfModule>
