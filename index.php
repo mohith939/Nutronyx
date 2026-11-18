@@ -28,7 +28,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css?v=20261119_v3">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261119_v4">
 </head>
 <body class="nutronyx-body">
 
@@ -983,6 +983,51 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
                         <span>Discover our Story</span>
                         <span class="manifesto-arrow" aria-hidden="true">&rarr;</span>
                     </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 6.1: BRAND COMMITMENTS / PILLARS   -->
+    <!-- Matching Reference Design media_1795027377778.png -->
+    <!-- ========================================== -->
+    <section class="section-manifesto-pillars" id="brand-pillars" aria-label="Our Core Commitments">
+        <div class="manifesto-pillars-container">
+            <div class="manifesto-pillars-grid">
+                <!-- Pillar 1: ROOTED IN NATURE -->
+                <div class="manifesto-pillar-card">
+                    <div class="pillar-icon-badge" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1D4F32" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                        </svg>
+                    </div>
+                    <h3 class="pillar-title">ROOTED IN NATURE</h3>
+                    <p class="pillar-text">Inspired by nature, we carefully bring together natural ingredients for everyday wellness.</p>
+                </div>
+
+                <!-- Pillar 2: SIMPLICITY IN EVERYDAY WELLNESS -->
+                <div class="manifesto-pillar-card">
+                    <div class="pillar-icon-badge" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1D4F32" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="pillar-title">SIMPLICITY IN<br>EVERYDAY WELLNESS</h3>
+                    <p class="pillar-text">We believe wellness should fit naturally into your daily routine, without unnecessary complexity.</p>
+                </div>
+
+                <!-- Pillar 3: THOUGHTFULLY CRAFTED -->
+                <div class="manifesto-pillar-card">
+                    <div class="pillar-icon-badge" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1D4F32" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <h3 class="pillar-title">THOUGHTFULLY<br>CRAFTED</h3>
+                    <p class="pillar-text">Every ingredient is thoughtfully selected to create a convenient, natural wellness blend.</p>
                 </div>
             </div>
         </div>

@@ -3000,6 +3000,143 @@ button {
 }
 
 /* ==========================================================================
+   NUTRONYX — SECTION 6.1: BRAND COMMITMENTS / PILLARS
+   Matching Reference Design media_1795027377778.png
+   ========================================================================== */
+
+.section-manifesto-pillars {
+    position: relative;
+    width: 100%;
+    background-color: #F6F3EE;
+    padding: clamp(40px, 4.5vw, 64px) 0 clamp(48px, 5.5vw, 76px) 0;
+    z-index: 28;
+}
+
+.manifesto-pillars-container {
+    width: 100%;
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 0 28px;
+    box-sizing: border-box;
+}
+
+.manifesto-pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(20px, 2.4vw, 32px);
+    align-items: stretch;
+}
+
+.manifesto-pillar-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    border: 1px solid rgba(22, 60, 35, 0.08);
+    box-shadow: 0 8px 28px rgba(22, 60, 35, 0.03);
+    padding: clamp(32px, 3.2vw, 42px) clamp(24px, 2.6vw, 36px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+
+.manifesto-pillar-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(22, 60, 35, 0.07);
+    border-color: rgba(22, 60, 35, 0.16);
+}
+
+.pillar-icon-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #ECF1EC;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.manifesto-pillar-card:hover .pillar-icon-badge {
+    background-color: #E2ECE3;
+    transform: scale(1.05);
+}
+
+.pillar-icon-badge svg {
+    display: block;
+}
+
+.pillar-title {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.35;
+    text-transform: uppercase;
+    color: #173B28;
+    margin: 0 0 14px 0;
+}
+
+.pillar-text {
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    line-height: 1.62;
+    color: #5D7063;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .manifesto-pillars-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    .manifesto-pillar-card:last-child {
+        grid-column: span 2;
+        max-width: 600px;
+        margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 680px) {
+    .section-manifesto-pillars {
+        padding: 36px 0 44px 0;
+    }
+    .manifesto-pillars-container {
+        padding: 0 18px;
+    }
+    .manifesto-pillars-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .manifesto-pillar-card:last-child {
+        grid-column: auto;
+        max-width: 100%;
+    }
+    .manifesto-pillar-card {
+        padding: 28px 22px;
+        border-radius: 20px;
+    }
+    .pillar-icon-badge {
+        width: 44px;
+        height: 44px;
+        margin-bottom: 18px;
+    }
+    .pillar-title {
+        font-size: 14.5px;
+        margin-bottom: 10px;
+    }
+    .pillar-text {
+        font-size: 14px;
+    }
+}
+
+/* ==========================================================================
    NUTRONYX — SECTION 07: FEATURED PRODUCT SHOWCASE
    Premium Botanical Presentation Matching Reference Design
    ========================================================================== */
