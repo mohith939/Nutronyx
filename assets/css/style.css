@@ -6193,18 +6193,20 @@ button {
    ========================================================================== */
 .section-generational-promise {
     position: relative;
-    background-color: #FAF5ED;
-    background-image: linear-gradient(to right, rgba(250, 245, 237, 0.95) 0%, rgba(250, 245, 237, 0.82) 42%, rgba(250, 245, 237, 0.15) 70%, rgba(250, 245, 237, 0) 100%), url('../images/a-q.png');
-    background-attachment: fixed;
-    background-size: cover;
+    background-color: #FDF6ED;
+    background-image: 
+        linear-gradient(to right, #FDF6ED 0%, #FDF6ED 36%, rgba(253, 246, 237, 0.85) 54%, rgba(253, 246, 237, 0) 72%), 
+        url('../images/a-q.png');
+    background-attachment: scroll;
+    background-size: auto 100%;
     background-position: right center;
     background-repeat: no-repeat;
     width: 100%;
-    min-height: clamp(520px, 60vh, 660px);
+    min-height: clamp(480px, 42vw, 640px);
     display: flex;
     align-items: center;
     overflow: hidden;
-    padding: clamp(60px, 7vw, 96px) 0;
+    padding: clamp(52px, 6vw, 92px) 0;
 }
 
 .generational-bg-stage {
@@ -6325,35 +6327,74 @@ button {
 /* Responsive adjustments */
 @media (max-width: 992px) {
     .section-generational-promise {
-        min-height: 500px;
-        padding: 60px 0;
-    }
-    .generational-family-img {
-        object-position: 75% center;
+        min-height: 480px;
+        padding: 50px 0;
+        background-image: 
+            linear-gradient(to right, #FDF6ED 0%, #FDF6ED 42%, rgba(253, 246, 237, 0.88) 60%, rgba(253, 246, 237, 0) 80%),
+            url('../images/a-q.png');
+        background-position: right center;
+        background-size: auto 100%;
+        background-attachment: scroll;
     }
     .generational-content-panel {
-        max-width: 420px;
+        max-width: 440px;
+    }
+    .generational-headline {
+        font-size: clamp(32px, 4vw, 44px);
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .section-generational-promise {
         min-height: auto;
-        padding: 50px 0 60px 0;
+        padding: 44px 0 52px 0;
+        background-image: none !important;
+        background-color: #FDF6ED;
+        display: block;
+    }
+    .generational-bg-stage {
+        display: block;
+        width: 100%;
+        max-width: 480px;
+        height: 250px;
+        margin: 0 auto 24px auto;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
     .generational-family-img {
-        opacity: 0.35;
-        object-position: 80% center;
+        position: static;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: right center;
+        display: block;
+    }
+    .generational-container {
+        padding: 0 20px;
     }
     .generational-content-panel {
         max-width: 100%;
-        text-align: left;
+        text-align: center;
+    }
+    .generational-eyebrow-wrap {
+        justify-content: center;
     }
     .generational-headline {
-        font-size: 2.2rem;
+        font-size: clamp(28px, 6vw, 36px);
+        margin-bottom: 14px;
+    }
+    .generational-sub {
+        max-width: 100%;
+        margin: 0 auto 24px auto;
+        font-size: 14.5px;
+    }
+    .generational-cta-wrap {
+        justify-content: center;
     }
     .btn-generational-promise {
         width: 100%;
+        max-width: 300px;
         justify-content: center;
         padding: 14px 24px;
     }
