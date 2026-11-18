@@ -112,24 +112,7 @@ $currentPage = 'cart';
                 </div>
             </div>
 
-            <!-- Free Shipping Progress Indicator (Matching Reference Image 1) -->
-            <div class="cart-unlocked-card" id="freeShippingBanner">
-                <div class="unlocked-content-row">
-                    <div class="unlocked-left" id="freeShippingMsg">
-                        <?php if ($cart['is_free_shipping']): ?>
-                            <span class="unlocked-check-circle">&#10003;</span>
-                            <span>Complimentary express delivery unlocked! Your order qualifies for free doorstep shipping.</span>
-                        <?php else: ?>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                            <span>Add <strong>₹<span id="freeShippingNeeded"><?= number_format($cart['needed_for_free_shipping'], 2) ?></span></strong> more to unlock <strong>FREE Express Shipping</strong>.</span>
-                        <?php endif; ?>
-                    </div>
-                    <div class="unlocked-pct" id="freeShippingPctText"><?= $cart['free_shipping_percent'] ?>%</div>
-                </div>
-                <div class="unlocked-progress-bar-bg">
-                    <div class="unlocked-progress-bar-fill" id="freeShippingBar" style="width: <?= $cart['free_shipping_percent'] ?>%;"></div>
-                </div>
-            </div>
+
 
             <!-- Notifications -->
             <?php if (!empty($notice)): ?>
@@ -366,21 +349,7 @@ $currentPage = 'cart';
             return;
         }
 
-        // Update shipping progress
-        const bar = document.getElementById('freeShippingBar');
-        const pctText = document.getElementById('freeShippingPctText');
-        const msg = document.getElementById('freeShippingMsg');
 
-        if (bar) bar.style.width = cart.free_shipping_percent + '%';
-        if (pctText) pctText.textContent = cart.free_shipping_percent + '%';
-
-        if (msg) {
-            if (cart.is_free_shipping) {
-                msg.innerHTML = '<span class="unlocked-check-circle">&#10003;</span><span>Complimentary express delivery unlocked! Your order qualifies for free doorstep shipping.</span>';
-            } else {
-                msg.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg><span>Add <strong>₹' + cart.needed_for_free_shipping.toFixed(2) + '</strong> more to unlock <strong>FREE Express Shipping</strong>.</span>';
-            }
-        }
 
         // Update each item line total
         cart.items.forEach(it => {
