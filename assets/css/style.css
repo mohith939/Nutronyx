@@ -178,26 +178,26 @@ button {
 
 /* Brand Logo */
 .brand-logo {
-    display: flex;
-    flex-direction: column;
+    display: inline-flex;
     align-items: center;
-    gap: 3px;
     text-decoration: none;
 }
 
 .logo-img {
-    height: 40px;
+    height: 52px;
     width: auto;
     object-fit: contain;
+    display: block;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.logo-img:hover {
+    opacity: 0.94;
+    transform: scale(1.02);
 }
 
 .logo-tagline {
-    font-size: 7.5px;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    color: var(--color-primary-green);
-    text-transform: uppercase;
-    text-align: center;
+    display: none;
 }
 
 /* Center Navigation */
@@ -958,8 +958,14 @@ button {
     .header-main-nav {
         padding: 12px 4vw;
     }
+    .logo-img {
+        height: 42px;
+    }
     .site-header.scrolled .header-main-nav {
         padding: 8px 4vw;
+    }
+    .site-header.scrolled .logo-img {
+        height: 38px;
     }
     .announcement-ticker-bar {
         font-size: 11px;
@@ -5583,16 +5589,21 @@ button {
 }
 
 /* Column 1: Brand */
+.footer-col-brand .col-accent-dash {
+    display: none !important;
+}
+
 .footer-brand-logo-wrap {
-    margin-bottom: 14px;
+    margin-bottom: 22px;
 }
 
 .footer-brand-logo {
-    width: 175px;
+    width: 195px;
     max-width: 100%;
     height: auto;
     object-fit: contain;
     display: block;
+    image-rendering: -webkit-optimize-contrast;
 }
 
 .footer-brand-headline {
