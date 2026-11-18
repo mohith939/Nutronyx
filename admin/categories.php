@@ -249,30 +249,44 @@ $endNum = min($page * $perPage, $totalCategories);
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/admin.css">
     <style>
-        .cat-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13.5px;
+        .product-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
-        .cat-table th {
-            background: #F9FAFB;
-            color: #4B5563;
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            padding: 12px 16px;
-            border-bottom: 1px solid #E5E7EB;
-            text-align: left;
-        }
-        .cat-table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid #F3F4F6;
-            vertical-align: middle;
+        .product-page-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 30px;
+            font-weight: 700;
             color: #111827;
+            margin: 0;
+            letter-spacing: -0.01em;
         }
-        .cat-table tr:hover td {
+        .product-page-subtitle {
+            font-size: 13.5px;
+            color: #6B7280;
+            margin-top: 4px;
+            margin-bottom: 0;
+        }
+        .category-thumb-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
             background: #F9FAFB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .category-thumb-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .cat-grid-container {
             display: grid;
@@ -303,15 +317,15 @@ $endNum = min($page * $perPage, $totalCategories);
     <div class="admin-layout-container">
         <?php include __DIR__ . '/includes/sidebar.php'; ?>
 
-        <main class="admin-main-stage">
+        <main class="admin-main-stage" style="padding: 28px 32px; background: #F9FAFB;">
 
             <!-- ==================================================================
-                 PAGE HEADER (MATCHING MOCKUP EXACTLY)
+                 TOP PAGE HEADER (MATCHING PRODUCTS PAGE EXACTLY)
                  ================================================================== -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+            <div class="product-page-header">
                 <div>
-                    <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #111827; margin: 0 0 4px;">Categories</h1>
-                    <p style="font-size: 14px; color: #6B7280; margin: 0;">Manage your product categories and organize your catalog.</p>
+                    <h1 class="product-page-title">Categories</h1>
+                    <p class="product-page-subtitle">Manage your product categories and organize your catalog.</p>
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
@@ -326,7 +340,7 @@ $endNum = min($page * $perPage, $totalCategories);
                     </button>
 
                     <button type="button" class="btn-emerald-brand" onclick="window.NutronyxCategory.openCreateModal()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         <span>Create Category</span>
                     </button>
                 </div>
@@ -348,62 +362,44 @@ $endNum = min($page * $perPage, $totalCategories);
             <?php endif; ?>
 
             <!-- ==================================================================
-                 SEARCH & FILTER TOOLBAR (MATCHING MOCKUP EXACTLY)
+                 SEARCH & FILTER TOOLBAR (MATCHING PRODUCTS PAGE EXACTLY)
                  ================================================================== -->
-            <div class="cat-filter-card">
-                <div class="cat-filter-left">
+            <div class="catalog-filter-card">
+                <form method="GET" action="categories.php" id="catFilterForm" style="display: flex; gap: 12px; align-items: center; flex: 1; flex-wrap: wrap;">
+                    <input type="hidden" name="view" value="<?= htmlspecialchars($viewMode) ?>">
                     <!-- Search Input -->
-                    <div class="cat-search-box">
+                    <div class="catalog-search-wrap">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        <input type="text" id="catSearchInput" placeholder="Search categories..." value="<?= htmlspecialchars($search) ?>" onkeydown="if(event.key==='Enter'){ const url = new URL(window.location.href); url.searchParams.set('search', this.value); url.searchParams.set('page', '1'); window.location.href = url.toString(); }">
+                        <input type="text" name="search" class="catalog-search-input" placeholder="Search categories..." value="<?= htmlspecialchars($search ?? '') ?>" onkeydown="if(event.key === 'Enter') this.form.submit();">
                     </div>
 
                     <!-- Status Filter -->
-                    <div class="cat-filter-item">
-                        <label class="cat-filter-label">Status</label>
-                        <select class="cat-filter-select" onchange="window.NutronyxCategory.updateStatusFilter(this.value)">
-                            <option value="" <?= ($status === '' || $status === 'all') ? 'selected' : '' ?>>All Status</option>
+                    <div>
+                        <select name="status" class="catalog-select" onchange="this.form.submit()">
+                            <option value="">All Status</option>
                             <option value="ACTIVE" <?= ($status === 'ACTIVE') ? 'selected' : '' ?>>Active</option>
                             <option value="DRAFT" <?= ($status === 'DRAFT') ? 'selected' : '' ?>>Draft</option>
                         </select>
                     </div>
 
                     <!-- Featured Filter -->
-                    <div class="cat-filter-item">
-                        <label class="cat-filter-label">Featured</label>
-                        <select class="cat-filter-select" onchange="window.NutronyxCategory.updateFeaturedFilter(this.value)">
-                            <option value="" <?= ($featuredRaw === '' || $featuredRaw === 'all') ? 'selected' : '' ?>>All</option>
-                            <option value="1" <?= ($featuredRaw === '1') ? 'selected' : '' ?>>Featured</option>
+                    <div>
+                        <select name="featured" class="catalog-select" onchange="this.form.submit()">
+                            <option value="">All Featured</option>
+                            <option value="1" <?= ($featuredRaw === '1') ? 'selected' : '' ?>>Featured Only</option>
                             <option value="0" <?= ($featuredRaw === '0') ? 'selected' : '' ?>>Not Featured</option>
                         </select>
                     </div>
 
-                    <!-- Sort Filter -->
-                    <div class="cat-filter-item">
-                        <label class="cat-filter-label">Sort by</label>
-                        <select class="cat-filter-select" onchange="window.NutronyxCategory.updateSort(this.value)">
-                            <option value="newest" <?= ($sortBy === 'newest') ? 'selected' : '' ?>>Newest</option>
-                            <option value="oldest" <?= ($sortBy === 'oldest') ? 'selected' : '' ?>>Oldest</option>
-                            <option value="name_asc" <?= ($sortBy === 'name_asc') ? 'selected' : '' ?>>Name (A–Z)</option>
-                            <option value="name_desc" <?= ($sortBy === 'name_desc') ? 'selected' : '' ?>>Name (Z–A)</option>
-                            <option value="products_desc" <?= ($sortBy === 'products_desc') ? 'selected' : '' ?>>Most Products</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- View Mode Switcher -->
-                <div class="view-toggle-group">
-                    <button type="button" class="view-toggle-btn <?= ($viewMode !== 'grid') ? 'active' : '' ?>" title="Table View" onclick="window.NutronyxCategory.switchView('table')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-                    </button>
-                    <button type="button" class="view-toggle-btn <?= ($viewMode === 'grid') ? 'active' : '' ?>" title="Grid View" onclick="window.NutronyxCategory.switchView('grid')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    </button>
-                </div>
+                    <!-- Reset Button -->
+                    <a href="categories.php" class="btn-emerald-outline" style="padding: 9px 12px; height: 40px; display: inline-flex; align-items: center; justify-content: center;" title="Reset filters">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                    </a>
+                </form>
             </div>
 
             <!-- ==================================================================
-                 BULK ACTIONS TOOLBAR (MATCHING MOCKUP EXACTLY)
+                 BULK ACTIONS & CONTROLS TOOLBAR (MATCHING PRODUCTS PAGE EXACTLY)
                  ================================================================== -->
             <div class="catalog-bulk-bar">
                 <div class="bulk-actions-left">
@@ -416,34 +412,54 @@ $endNum = min($page * $perPage, $totalCategories);
                     <!-- Bulk action buttons (hidden until at least 1 checkbox selected) -->
                     <div id="catBulkButtonsGroup" style="display: none; align-items: center; gap: 8px; flex-wrap: wrap;">
                         <button type="button" class="btn-bulk-action" onclick="window.NutronyxCategory.bulkAction('make_featured')">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                             <span>Make Featured</span>
                         </button>
 
                         <button type="button" class="btn-bulk-action" onclick="window.NutronyxCategory.bulkAction('remove_featured')">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
                             <span>Remove Featured</span>
                         </button>
 
                         <button type="button" class="btn-bulk-action" onclick="window.NutronyxCategory.bulkAction('activate')">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                             <span>Activate</span>
                         </button>
 
                         <button type="button" class="btn-bulk-action" onclick="window.NutronyxCategory.bulkAction('deactivate')">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
                             <span>Deactivate</span>
                         </button>
 
                         <button type="button" class="btn-bulk-action danger" onclick="window.NutronyxCategory.bulkAction('delete')">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                             <span>Delete</span>
                         </button>
                     </div>
                 </div>
 
-                <div style="font-size: 13px; color: #6B7280;">
-                    Total: <strong><?= $totalCategories ?></strong> categories
+                <div class="bulk-actions-right">
+                    <!-- Sort By Selector -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 13px; color: #6B7280;">Sort by:</span>
+                        <select name="sort" class="catalog-select" style="height: 34px; padding-top: 0; padding-bottom: 0;" onchange="window.NutronyxCategory.updateSort(this.value)">
+                            <option value="newest" <?= ($sortBy === 'newest') ? 'selected' : '' ?>>Newest</option>
+                            <option value="oldest" <?= ($sortBy === 'oldest') ? 'selected' : '' ?>>Oldest</option>
+                            <option value="name_asc" <?= ($sortBy === 'name_asc') ? 'selected' : '' ?>>Name (A–Z)</option>
+                            <option value="name_desc" <?= ($sortBy === 'name_desc') ? 'selected' : '' ?>>Name (Z–A)</option>
+                            <option value="products_desc" <?= ($sortBy === 'products_desc') ? 'selected' : '' ?>>Most Products</option>
+                        </select>
+                    </div>
+
+                    <!-- View Mode Switcher -->
+                    <div class="view-mode-group">
+                        <button type="button" class="view-mode-btn <?= ($viewMode !== 'grid') ? 'active' : '' ?>" title="Table View" onclick="window.NutronyxCategory.switchView('table')">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        </button>
+                        <button type="button" class="view-mode-btn <?= ($viewMode === 'grid') ? 'active' : '' ?>" title="Grid View" onclick="window.NutronyxCategory.switchView('grid')">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -518,29 +534,29 @@ $endNum = min($page * $perPage, $totalCategories);
 
             <?php else: ?>
                 <!-- ==============================================================
-                     TABLE / LIST VIEW (MATCHING MOCKUP EXACTLY)
+                     TABLE / LIST VIEW (MATCHING PRODUCTS CATALOG EXACTLY)
                      ============================================================== -->
-                <div class="category-table-card">
-                    <table class="cat-table">
+                <div class="catalog-table-wrap">
+                    <table class="catalog-table">
                         <thead>
                             <tr>
                                 <th style="width: 40px; text-align: center;"></th>
-                                <th style="width: 380px;">Category</th>
-                                <th style="width: 120px; text-align: center;">Products</th>
-                                <th style="width: 130px; text-align: center;">Status</th>
-                                <th style="width: 100px; text-align: center;">Featured</th>
-                                <th style="width: 70px; text-align: right; padding-right: 20px;">Actions</th>
+                                <th>Category</th>
+                                <th style="text-align: center;">Products</th>
+                                <th style="text-align: center;">Status</th>
+                                <th style="text-align: center;">Featured</th>
+                                <th style="text-align: right; padding-right: 20px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($categories)): ?>
                                 <tr>
-                                    <td colspan="6" style="text-align: center; padding: 60px 20px;">
-                                        <div style="width: 48px; height: 48px; border-radius: 50%; background: #F3F4F6; color: #9CA3AF; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
-                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    <td colspan="6" style="text-align: center; padding: 48px 20px;">
+                                        <div style="width: 56px; height: 56px; border-radius: 50%; background: #F3F4F6; display: inline-flex; align-items: center; justify-content: center; color: #9CA3AF; margin-bottom: 12px;">
+                                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                                         </div>
                                         <div style="font-weight: 600; font-size: 16px; color: #111827;">No matching categories found</div>
-                                        <p style="font-size: 13.5px; color: #6B7280; margin: 6px auto 16px;">Try adjusting your search criteria, clearing active filters, or creating a new category.</p>
+                                        <p style="font-size: 13.5px; color: #6B7280; max-width: 420px; margin: 6px auto 16px;">Try adjusting your search criteria, clearing active filters, or creating a new category.</p>
                                         <a href="categories.php" class="btn-emerald-outline" style="font-size: 13px;">Clear All Filters</a>
                                     </td>
                                 </tr>
@@ -565,10 +581,10 @@ $endNum = min($page * $perPage, $totalCategories);
                                                     <img src="<?= htmlspecialchars($thumbSrc) ?>" alt="<?= htmlspecialchars($cat['name']) ?>" onerror="this.onerror=null; this.src='../assets/images/about-commitment-still-life.jpg';">
                                                 </div>
                                                 <div>
-                                                    <div style="font-weight: 700; color: #111827; font-size: 14.5px; cursor: pointer;" onclick="window.NutronyxCategory.openEditFromRow('<?= htmlspecialchars($cat['id']) ?>')">
+                                                    <div style="font-weight: 600; color: #111827; font-size: 14px; cursor: pointer;" onclick="window.NutronyxCategory.openEditFromRow('<?= htmlspecialchars($cat['id']) ?>')">
                                                         <?= htmlspecialchars($cat['name']) ?>
                                                     </div>
-                                                    <div style="font-size: 12.5px; color: #6B7280; margin-top: 2px;">
+                                                    <div style="font-size: 12px; color: #6B7280; margin-top: 2px;">
                                                         <?= htmlspecialchars($cat['description'] ?? 'No description provided') ?>
                                                     </div>
                                                 </div>
@@ -577,7 +593,9 @@ $endNum = min($page * $perPage, $totalCategories);
 
                                         <!-- Products Count -->
                                         <td style="text-align: center; font-weight: 600; color: #111827; font-size: 14px;">
-                                            <?= (int)$cat['product_count'] ?>
+                                            <a href="products.php?category_id=<?= urlencode($cat['id']) ?>" style="color: #111827; text-decoration: underline; text-decoration-color: #D1D5DB; text-underline-offset: 3px;">
+                                                <?= (int)$cat['product_count'] ?> products
+                                            </a>
                                         </td>
 
                                         <!-- Status Badge -->
@@ -590,7 +608,7 @@ $endNum = min($page * $perPage, $totalCategories);
 
                                         <!-- Featured Star Toggle -->
                                         <td style="text-align: center;">
-                                            <button type="button" class="star-toggle-btn star-btn-<?= htmlspecialchars($cat['id']) ?>" onclick="window.NutronyxCategory.toggleFeatured('<?= htmlspecialchars($cat['id']) ?>', this)" title="<?= $isFeat ? 'Featured category (click to unmark)' : 'Click to make featured' ?>">
+                                            <button type="button" class="star-toggle-btn star-btn-<?= htmlspecialchars($cat['id']) ?>" onclick="window.NutronyxCategory.toggleFeatured('<?= htmlspecialchars($cat['id']) ?>', this)" title="<?= $isFeat ? 'Featured category (click to unmark)' : 'Click to make featured' ?>" style="background: none; border: none; cursor: pointer; padding: 4px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; transition: transform 0.15s ease;">
                                                 <?php if ($isFeat): ?>
                                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                                                 <?php else: ?>
@@ -612,8 +630,12 @@ $endNum = min($page * $perPage, $totalCategories);
                                                         <span>Edit Category</span>
                                                     </button>
                                                     <a href="products.php?category_id=<?= urlencode($cat['id']) ?>" class="action-menu-item">
-                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                                                         <span>View Products (<?= (int)$cat['product_count'] ?>)</span>
+                                                    </a>
+                                                    <a href="../shop.php?category=<?= urlencode($cat['slug']) ?>" target="_blank" class="action-menu-item">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                                        <span>Preview Storefront</span>
                                                     </a>
                                                     <button type="button" class="action-menu-item" onclick="window.NutronyxCategory.toggleStatus('<?= htmlspecialchars($cat['id']) ?>', this)">
                                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -830,14 +852,18 @@ $endNum = min($page * $perPage, $totalCategories);
         </div>
     </div>
 
-    <!-- Close action dropdowns when clicking outside -->
+    <script src="../assets/js/admin.js"></script>
     <script>
+    // Close action dropdowns when clicking outside
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('.action-dropdown-btn') && !e.target.closest('.action-dropdown-menu')) {
-            document.querySelectorAll('.action-dropdown-menu.show').forEach(m => m.classList.remove('show'));
+        if (!e.target.closest('.action-dropdown-wrap')) {
+            document.querySelectorAll('.action-dropdown-menu.show').forEach(m => {
+                m.classList.remove('show');
+                m.style.top = '';
+                m.style.bottom = '';
+            });
         }
     });
     </script>
-    <script src="../assets/js/admin.js"></script>
 </body>
 </html>

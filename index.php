@@ -6,6 +6,14 @@ require_once __DIR__ . '/src/bootstrap.php';
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
+
+use Nutronyx\Services\ProductService;
+
+$flagshipProduct = ProductService::getProduct('prod_abc_powder', true);
+$flagshipVariants = array_column($flagshipProduct['variants'] ?? [], null, 'id');
+$showShowcase = ($flagshipProduct !== null && !empty($flagshipVariants));
+$defaultVariantKey = isset($flagshipVariants['var_abc_250g']) ? 'var_abc_250g' : (array_key_first($flagshipVariants) ?? 'var_abc_250g');
+$defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round(($flagshipVariants[$defaultVariantKey]['sale_price_amount'] ?? 29900) / 100) : 299;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -402,6 +410,7 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     <!-- ========================================== -->
     <!-- NUTRONYX ABC+ Botanical Product Showcase   -->
     <!-- ========================================== -->
+    <?php if ($showShowcase): ?>
     <section class="section-showcase" id="product-showcase" aria-label="Featured Product Showcase — NUTRONYX ABC+">
         <div class="showcase-container">
             <!-- Two-Column Editorial Stage -->
@@ -439,17 +448,21 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                         <div class="spec-item spec-variant-item" style="display:inline-flex; align-items:center; gap:8px;">
                             <span style="font-size:12px; font-weight:700; color:#526458; text-transform:uppercase; letter-spacing:0.5px;">Size:</span>
                             <div class="showcase-size-pills-row" style="display:inline-flex; gap:6px;">
-                                <button type="button" class="showcase-size-pill active" id="scPill250" onclick="onShowcasePillClick('var_abc_250g', 299, this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #143D24; background:#143D24; color:#fff; font-size:12px; font-weight:700; cursor:pointer;">
-                                    200gm
-                                </button>
-                                <button type="button" class="showcase-size-pill" id="scPill500" onclick="onShowcasePillClick('var_abc_500g', 499, this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #D1D5DB; background:#fff; color:#374151; font-size:12px; font-weight:700; cursor:pointer;">
-                                    400gm
-                                </button>
+                                <?php if (isset($flagshipVariants['var_abc_250g'])): ?>
+                                    <button type="button" class="showcase-size-pill <?= ($defaultVariantKey === 'var_abc_250g') ? 'active' : '' ?>" id="scPill250" onclick="onShowcasePillClick('var_abc_250g', <?= (int)round(($flagshipVariants['var_abc_250g']['sale_price_amount'] ?? 29900) / 100) ?>, this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #143D24; background:<?= ($defaultVariantKey === 'var_abc_250g') ? '#143D24' : '#fff' ?>; color:<?= ($defaultVariantKey === 'var_abc_250g') ? '#fff' : '#374151' ?>; font-size:12px; font-weight:700; cursor:pointer;">
+                                        200gm
+                                    </button>
+                                <?php endif; ?>
+                                <?php if (isset($flagshipVariants['var_abc_500g'])): ?>
+                                    <button type="button" class="showcase-size-pill <?= ($defaultVariantKey === 'var_abc_500g') ? 'active' : '' ?>" id="scPill500" onclick="onShowcasePillClick('var_abc_500g', <?= (int)round(($flagshipVariants['var_abc_500g']['sale_price_amount'] ?? 49900) / 100) ?>, this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid <?= ($defaultVariantKey === 'var_abc_500g') ? '#143D24' : '#D1D5DB' ?>; background:<?= ($defaultVariantKey === 'var_abc_500g') ? '#143D24' : '#fff' ?>; color:<?= ($defaultVariantKey === 'var_abc_500g') ? '#fff' : '#374151' ?>; font-size:12px; font-weight:700; cursor:pointer;">
+                                        400gm
+                                    </button>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <span class="spec-divider" aria-hidden="true">|</span>
                         <div class="spec-item spec-price">
-                            <span class="spec-value" id="showcasePriceVal">₹299</span>
+                            <span class="spec-value" id="showcasePriceVal">₹<?= $defaultVariantPrice ?></span>
                         </div>
                     </div>
 
@@ -533,7 +546,7 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
 
                     <!-- Primary Action CTA -->
                     <div class="showcase-cta-wrap">
-                        <a href="shop.php?variant=var_abc_250g" class="btn-shop-abc" id="showcaseCtaBtn">
+                        <a href="shop.php?variant=<?= urlencode($defaultVariantKey) ?>" class="btn-shop-abc" id="showcaseCtaBtn">
                             <span>SHOP ABC+</span>
                             <span class="btn-arrow" aria-hidden="true">→</span>
                         </a>
@@ -542,6 +555,7 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
             </div>
         </div>
     </section>
+    <?php endif; ?>
 
     <!-- ========================================== -->
     <!-- SECTION 3: EVERY MINUTE MATTERS            -->

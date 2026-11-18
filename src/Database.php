@@ -545,7 +545,7 @@ class Database
         $db->exec("
             INSERT OR IGNORE INTO shipping_methods (id, website_id, name, charge_amount, min_order_free_amount, estimated_days, is_active) VALUES
             ('ship_std', 'web_nutronyx_d2c', 'Standard Express Ground', 9900, 99900, '3-5 Business Days', 1),
-            ('ship_prio', 'web_nutronyx_d2c', 'Priority Botanical Courier', 19900, 199900, '1-2 Business Days', 1),
+            ('ship_prio', 'web_nutronyx_d2c', 'Priority Courier', 19900, 199900, '1-2 Business Days', 1),
             ('ship_bulk', 'web_partner_portal', 'Wholesale Freight Dispatch', 49900, 499900, '4-7 Business Days', 1);
         ");
 

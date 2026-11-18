@@ -522,15 +522,29 @@
         },
 
         toggleActionMenu: function(menuId, event) {
-            if (event) event.stopPropagation();
+            if (event) {
+                event.stopPropagation();
+            }
             const targetMenu = document.getElementById(menuId);
             const isShown = targetMenu && targetMenu.classList.contains('show');
 
-            // Close all open action menus
-            document.querySelectorAll('.action-dropdown-menu.show').forEach(m => m.classList.remove('show'));
+            // Close all open action menus and reset inline positions
+            document.querySelectorAll('.action-dropdown-menu.show').forEach(m => {
+                m.classList.remove('show');
+                m.style.top = '';
+                m.style.bottom = '';
+            });
 
             if (!isShown && targetMenu) {
                 targetMenu.classList.add('show');
+                const rect = targetMenu.getBoundingClientRect();
+                if (rect.bottom > window.innerHeight - 20) {
+                    targetMenu.style.top = 'auto';
+                    targetMenu.style.bottom = 'calc(100% + 4px)';
+                } else {
+                    targetMenu.style.top = 'calc(100% + 4px)';
+                    targetMenu.style.bottom = 'auto';
+                }
             }
         },
 
@@ -1276,12 +1290,26 @@
         },
 
         toggleActionMenu: function(menuId, event) {
-            if (event) event.stopPropagation();
+            if (event) {
+                event.stopPropagation();
+            }
             const targetMenu = document.getElementById(menuId);
             const isShown = targetMenu && targetMenu.classList.contains('show');
-            document.querySelectorAll('.action-dropdown-menu.show').forEach(m => m.classList.remove('show'));
+            document.querySelectorAll('.action-dropdown-menu.show').forEach(m => {
+                m.classList.remove('show');
+                m.style.top = '';
+                m.style.bottom = '';
+            });
             if (!isShown && targetMenu) {
                 targetMenu.classList.add('show');
+                const rect = targetMenu.getBoundingClientRect();
+                if (rect.bottom > window.innerHeight - 20) {
+                    targetMenu.style.top = 'auto';
+                    targetMenu.style.bottom = 'calc(100% + 4px)';
+                } else {
+                    targetMenu.style.top = 'calc(100% + 4px)';
+                    targetMenu.style.bottom = 'auto';
+                }
             }
         },
 

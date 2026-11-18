@@ -39,15 +39,20 @@ if (count($storeReviews) < 3) {
 }
 $ratingStats = ReviewService::getProductRatingStats('prod_abc_powder');
 
-// Fetch all active products and their variants for the catalog section
-$catalogProducts = ProductService::getProducts(null, 'ACTIVE');
+// Fetch all active products and their variants for the catalog section (only storefront visible)
+$catalogProducts = ProductService::getProducts(null, 'ACTIVE', null, true);
 $catalogProductsWithDetails = [];
 foreach ($catalogProducts as $cProd) {
-    $pDet = ProductService::getProductDetails($cProd['id']);
-    if ($pDet) {
+    $pDet = ProductService::getProductDetails($cProd['id'], true);
+    if ($pDet && !empty($pDet['variants'])) {
         $catalogProductsWithDetails[] = $pDet;
     }
 }
+
+// Fetch flagship product (only if visible on storefront)
+$flagshipProduct = ProductService::getProduct('prod_abc_powder', true);
+$flagshipVariants = array_column($flagshipProduct['variants'] ?? [], null, 'id');
+$showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
 ?>
 
 <!DOCTYPE html>
@@ -104,6 +109,7 @@ foreach ($catalogProducts as $cProd) {
                 </div>
 
                 <!-- 2. FLAGSHIP ASYMMETRICAL EDITORIAL STAGE (ABC+) -->
+                <?php if ($showFlagship): ?>
                 <div class="flagship-editorial-stage">
 
                     <!-- A. Left Side: Oversized Product Stage -->
@@ -173,33 +179,41 @@ foreach ($catalogProducts as $cProd) {
                         <div class="dossier-size-selector-wrap" aria-label="Select Size">
                             <div class="size-selector-header">
                                 <span class="size-selector-title">Select Size</span>
-                                <span class="size-selector-guide" id="sizeServingsGuide"><?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? '2 Months Ritual (Save 17%)' : '1 Month Ritual' ?></span>
+                                <span class="size-selector-guide" id="sizeServingsGuide"><?= (($_GET['variant'] ?? '') === 'var_abc_500g' && isset($flagshipVariants['var_abc_500g'])) ? '2 Months Ritual (Save 17%)' : '1 Month Ritual' ?></span>
                             </div>
                             <div class="size-pills-row" role="radiogroup" aria-label="Choose product size">
-                                <button type="button" 
-                                        class="size-pill-btn <?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? '' : 'active' ?>" 
-                                        id="pill_var_abc_250g" 
-                                        role="radio"
-                                        aria-checked="<?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? 'false' : 'true' ?>"
-                                        onclick="selectDossierSize('var_abc_250g', 299, '1 Month Ritual', this)">
-                                    <span class="pill-weight">200gm</span>
-                                    <span class="pill-badge">Standard Pack</span>
-                                </button>
-                                <button type="button" 
-                                        class="size-pill-btn <?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? 'active' : '' ?>" 
-                                        id="pill_var_abc_500g" 
-                                        role="radio"
-                                        aria-checked="<?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? 'true' : 'false' ?>"
-                                        onclick="selectDossierSize('var_abc_500g', 499, '2 Months Ritual (Save 17%)', this)">
-                                    <span class="pill-weight">400gm</span>
-                                    <span class="pill-badge pill-badge-value">Best Value</span>
-                                </button>
+                                <?php if (isset($flagshipVariants['var_abc_250g'])): ?>
+                                    <button type="button" 
+                                            class="size-pill-btn <?= (($_GET['variant'] ?? '') === 'var_abc_500g' && isset($flagshipVariants['var_abc_500g'])) ? '' : 'active' ?>" 
+                                            id="pill_var_abc_250g" 
+                                            role="radio"
+                                            aria-checked="<?= (($_GET['variant'] ?? '') === 'var_abc_500g' && isset($flagshipVariants['var_abc_500g'])) ? 'false' : 'true' ?>"
+                                            onclick="selectDossierSize('var_abc_250g', <?= (int)($flagshipVariants['var_abc_250g']['price_amount']/100) ?>, '1 Month Ritual', this)">
+                                        <span class="pill-weight"><?= htmlspecialchars($flagshipVariants['var_abc_250g']['title'] ?: '200gm') ?></span>
+                                        <span class="pill-badge">Standard Pack</span>
+                                    </button>
+                                <?php endif; ?>
+                                <?php if (isset($flagshipVariants['var_abc_500g'])): ?>
+                                    <button type="button" 
+                                            class="size-pill-btn <?= ((($_GET['variant'] ?? '') === 'var_abc_500g') || !isset($flagshipVariants['var_abc_250g'])) ? 'active' : '' ?>" 
+                                            id="pill_var_abc_500g" 
+                                            role="radio"
+                                            aria-checked="<?= ((($_GET['variant'] ?? '') === 'var_abc_500g') || !isset($flagshipVariants['var_abc_250g'])) ? 'true' : 'false' ?>"
+                                            onclick="selectDossierSize('var_abc_500g', <?= (int)($flagshipVariants['var_abc_500g']['price_amount']/100) ?>, '2 Months Ritual (Save 17%)', this)">
+                                        <span class="pill-weight"><?= htmlspecialchars($flagshipVariants['var_abc_500g']['title'] ?: '400gm') ?></span>
+                                        <span class="pill-badge pill-badge-value">Best Value</span>
+                                    </button>
+                                <?php endif; ?>
                             </div>
                         </div>
 
                         <!-- Actual Price Display -->
                         <div class="dossier-price-row">
-                            <span class="dossier-price-val" id="dossierPriceDisplay"><?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? '₹499' : '₹299' ?></span>
+                            <?php
+                                $firstVisibleVar = $flagshipVariants['var_abc_250g'] ?? reset($flagshipVariants);
+                                $defPrice = (int)($firstVisibleVar['price_amount'] / 100);
+                            ?>
+                            <span class="dossier-price-val" id="dossierPriceDisplay"><?= (($_GET['variant'] ?? '') === 'var_abc_500g' && isset($flagshipVariants['var_abc_500g'])) ? '₹499' : '₹' . $defPrice ?></span>
                             <span class="dossier-price-sub" id="dossierPriceSub">Inclusive of all taxes</span>
                         </div>
 
@@ -217,7 +231,7 @@ foreach ($catalogProducts as $cProd) {
                                     <line x1="3" y1="6" x2="21" y2="6"></line>
                                     <path d="M16 10a4 4 0 0 1-8 0"></path>
                                 </svg>
-                                <span>ADD TO CART &bull; <span id="dossierTotalBtnPrice"><?= (($_GET['variant'] ?? '') === 'var_abc_500g') ? '₹499' : '₹299' ?></span></span>
+                                <span>ADD TO CART &bull; <span id="dossierTotalBtnPrice"><?= (($_GET['variant'] ?? '') === 'var_abc_500g' && isset($flagshipVariants['var_abc_500g'])) ? '₹499' : '₹' . $defPrice ?></span></span>
                             </button>
                         </div>
 
@@ -234,6 +248,12 @@ foreach ($catalogProducts as $cProd) {
                         </div>
                     </div>
                 </div>
+                <?php elseif (empty($catalogProductsWithDetails)): ?>
+                    <div style="padding: 60px 20px; text-align: center; background: #FFF; border: 1px solid #E5E7EB; border-radius: 16px; margin: 30px 0;">
+                        <h3 style="font-size: 20px; font-weight: 600; color: #111827; margin-bottom: 8px;">Catalog Updating</h3>
+                        <p style="font-size: 14.5px; color: #6B7280; max-width: 480px; margin: 0 auto;">Our products are currently being freshly crafted. Please check back soon or contact our wellness concierge.</p>
+                    </div>
+                <?php endif; ?>
 
                 <!-- ==========================================================
                      1. THE PURITY & VALUE BADGES RIBBON

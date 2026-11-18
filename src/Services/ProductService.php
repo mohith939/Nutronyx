@@ -12,12 +12,13 @@ class ProductService
     /**
      * Backwards-compatible getProducts method
      */
-    public static function getProducts(?string $categoryId = null, ?string $status = null, ?string $search = null): array
+    public static function getProducts(?string $categoryId = null, ?string $status = null, ?string $search = null, bool $visibleStorefrontOnly = false): array
     {
         $res = self::getProductsAdvanced([
             'category_id' => $categoryId,
             'status' => $status,
             'search' => $search,
+            'visible_storefront_only' => $visibleStorefrontOnly,
             'per_page' => 1000
         ]);
         return $res['products'];
@@ -67,6 +68,10 @@ class ProductService
         if ($status) {
             $sql .= " AND p.status = :status";
             $params[':status'] = $status;
+        }
+
+        if (!empty($filters['visible_storefront_only'])) {
+            $sql .= " AND p.is_visible_storefront = 1";
         }
 
         if ($search) {
@@ -156,7 +161,7 @@ class ProductService
             $productIds = array_column($products, 'id');
             $inClause = implode(',', array_fill(0, count($productIds), '?'));
             
-            $varStmt = $db->prepare("
+            $varSql = "
                 SELECT pv.*, 
                        COALESCE(inv.quantity_on_hand, 0) as stock_quantity,
                        COALESCE(inv.quantity_reserved, 0) as quantity_reserved,
@@ -164,8 +169,12 @@ class ProductService
                 FROM product_variants pv
                 LEFT JOIN inventory_stocks inv ON inv.variant_id = pv.id
                 WHERE pv.product_id IN ({$inClause}) AND pv.website_id = ?
-                ORDER BY pv.price_amount ASC
-            ");
+            ";
+            if (!empty($filters['visible_storefront_only'])) {
+                $varSql .= " AND pv.is_visible = 1";
+            }
+            $varSql .= " ORDER BY pv.price_amount ASC";
+            $varStmt = $db->prepare($varSql);
             $varParams = array_merge($productIds, [$websiteId]);
             $varStmt->execute($varParams);
             $allVariants = $varStmt->fetchAll();
@@ -213,12 +222,12 @@ class ProductService
     /**
      * Get single product with variants and primary attributes
      */
-    public static function getProduct(string $id): ?array
+    public static function getProduct(string $id, bool $visibleStorefrontOnly = false): ?array
     {
         $db = Database::getConnection();
         $websiteId = Context::getWebsiteId();
 
-        $stmt = $db->prepare("
+        $sql = "
             SELECT p.*, c.name as category_name,
                    (SELECT pv.sku FROM product_variants pv WHERE pv.product_id = p.id ORDER BY pv.created_at ASC LIMIT 1) as primary_sku,
                    (SELECT pv.price_amount FROM product_variants pv WHERE pv.product_id = p.id ORDER BY pv.created_at ASC LIMIT 1) as primary_price_amount,
@@ -231,13 +240,17 @@ class ProductService
             FROM products p
             LEFT JOIN categories c ON p.category_id = c.id
             WHERE p.id = :id AND p.website_id = :wid
-        ");
+        ";
+        if ($visibleStorefrontOnly) {
+            $sql .= " AND p.is_visible_storefront = 1 AND p.status = 'ACTIVE'";
+        }
+        $stmt = $db->prepare($sql);
         $stmt->execute([':id' => $id, ':wid' => $websiteId]);
         $prod = $stmt->fetch();
         if (!$prod) return null;
 
         // Fetch all variants
-        $vStmt = $db->prepare("
+        $vSql = "
             SELECT pv.*, 
                    COALESCE(inv.quantity_on_hand, 0) as quantity_on_hand, 
                    COALESCE(inv.quantity_reserved, 0) as quantity_reserved, 
@@ -245,8 +258,12 @@ class ProductService
             FROM product_variants pv
             LEFT JOIN inventory_stocks inv ON inv.variant_id = pv.id
             WHERE pv.product_id = :pid AND pv.website_id = :wid
-            ORDER BY pv.price_amount ASC
-        ");
+        ";
+        if ($visibleStorefrontOnly) {
+            $vSql .= " AND pv.is_visible = 1";
+        }
+        $vSql .= " ORDER BY pv.price_amount ASC";
+        $vStmt = $db->prepare($vSql);
         $vStmt->execute([':pid' => $id, ':wid' => $websiteId]);
         $prod['variants'] = $vStmt->fetchAll();
 
@@ -256,9 +273,9 @@ class ProductService
     /**
      * Get comprehensive product details drawer payload (including relations & audit logs)
      */
-    public static function getProductDetails(string $id): ?array
+    public static function getProductDetails(string $id, bool $visibleStorefrontOnly = false): ?array
     {
-        $prod = self::getProduct($id);
+        $prod = self::getProduct($id, $visibleStorefrontOnly);
         if (!$prod) return null;
 
         $db = Database::getConnection();

@@ -59,7 +59,7 @@ class CartService
         $db = Database::getConnection();
         $stmt = $db->prepare("
             SELECT pv.id as variant_id, pv.sku, pv.title as variant_title, pv.price_amount, 
-                   p.title as product_title, p.image_url
+                   p.title as product_title, p.image_url, p.is_visible_storefront, pv.is_visible, p.status
             FROM product_variants pv
             JOIN products p ON pv.product_id = p.id
             WHERE pv.id = :vid LIMIT 1
@@ -67,8 +67,8 @@ class CartService
         $stmt->execute([':vid' => $variantId]);
         $prod = $stmt->fetch();
 
-        if (!$prod) {
-            return ['success' => false, 'error' => 'Product variant not found.'];
+        if (!$prod || (int)$prod['is_visible_storefront'] !== 1 || (int)$prod['is_visible'] !== 1 || strtoupper($prod['status']) !== 'ACTIVE') {
+            return ['success' => false, 'error' => 'This product is currently unavailable.'];
         }
 
         $_SESSION['nutronyx_cart'][$variantId] = [
