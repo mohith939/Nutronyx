@@ -6202,11 +6202,11 @@ button {
     background-position: right center;
     background-repeat: no-repeat;
     width: 100%;
-    min-height: clamp(480px, 42vw, 640px);
+    min-height: clamp(440px, 38vw, 560px);
     display: flex;
     align-items: center;
     overflow: hidden;
-    padding: clamp(52px, 6vw, 92px) 0;
+    padding: clamp(48px, 5.5vw, 84px) 0;
 }
 
 .generational-bg-stage {
@@ -6226,9 +6226,9 @@ button {
 
 .generational-container {
     width: 100%;
-    max-width: 1320px;
+    max-width: 1240px;
     margin: 0 auto;
-    padding: 0 clamp(28px, 6vw, 84px);
+    padding: 0 clamp(24px, 5vw, 64px);
     position: relative;
     z-index: 3;
 }
@@ -6237,30 +6237,30 @@ button {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .generational-eyebrow {
     font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
     color: #1E5736;
     text-transform: uppercase;
 }
 
 .generational-content-panel {
-    max-width: 520px;
+    max-width: 480px;
 }
 
 .generational-headline {
     font-family: var(--font-serif);
-    font-size: clamp(36px, 4.2vw, 56px);
+    font-size: clamp(32px, 3.4vw, 48px);
     font-weight: 500;
-    line-height: 1.1;
+    line-height: 1.15;
     color: #111A15;
-    letter-spacing: -0.02em;
-    margin: 0 0 18px 0;
+    letter-spacing: -0.015em;
+    margin: 0 0 16px 0;
 }
 
 .gen-title-line {
@@ -6276,12 +6276,12 @@ button {
 
 .generational-sub {
     font-family: var(--font-sans);
-    font-size: clamp(14px, 1.15vw, 16px);
+    font-size: clamp(14px, 1.05vw, 15.5px);
     font-weight: 400;
     color: #4A5E52;
-    line-height: 1.6;
-    max-width: 440px;
-    margin: 0 0 32px 0;
+    line-height: 1.62;
+    max-width: 430px;
+    margin: 0 0 28px 0;
 }
 
 .generational-cta-wrap {
@@ -6292,17 +6292,17 @@ button {
 .btn-generational-promise {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: #174529;
     color: #FFFFFF;
     text-decoration: none;
     border-radius: 100px;
-    padding: 15px 34px;
+    padding: 13px 30px;
     font-family: var(--font-sans);
-    font-size: 15px;
+    font-size: 14.5px;
     font-weight: 600;
-    letter-spacing: 0.02em;
-    box-shadow: 0 6px 20px rgba(23, 69, 41, 0.24);
+    letter-spacing: 0.015em;
+    box-shadow: 0 4px 16px rgba(23, 69, 41, 0.22);
     transition: background-color 0.3s ease, transform 0.25s ease, box-shadow 0.3s ease;
 }
 
@@ -6310,16 +6310,18 @@ button {
     background: #0E2E1A;
     color: #FFFFFF;
     transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(23, 69, 41, 0.34);
+    box-shadow: 0 8px 24px rgba(23, 69, 41, 0.32);
 }
 
 .promise-arrow {
     display: inline-block;
+    font-size: 15px;
+    line-height: 1;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-generational-promise:hover .promise-arrow {
-    transform: translateX(5px);
+    transform: translateX(4px);
 }
 
 
@@ -6327,8 +6329,8 @@ button {
 /* Responsive adjustments */
 @media (max-width: 992px) {
     .section-generational-promise {
-        min-height: 480px;
-        padding: 50px 0;
+        min-height: 440px;
+        padding: 48px 0;
         background-image: 
             linear-gradient(to right, #FDF6ED 0%, #FDF6ED 42%, rgba(253, 246, 237, 0.88) 60%, rgba(253, 246, 237, 0) 80%),
             url('../images/a-q.png');
@@ -6337,10 +6339,10 @@ button {
         background-attachment: scroll;
     }
     .generational-content-panel {
-        max-width: 440px;
+        max-width: 430px;
     }
     .generational-headline {
-        font-size: clamp(32px, 4vw, 44px);
+        font-size: clamp(30px, 3.8vw, 42px);
     }
 }
 

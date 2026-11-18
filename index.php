@@ -28,7 +28,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css?v=20261118_v4">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261118_v5">
 </head>
 <body class="nutronyx-body">
 
@@ -987,7 +987,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
                 <!-- Large Immersive Nature Visual Window -->
                 <div class="manifesto-visual-frame">
                     <div class="manifesto-visual-inner">
-                        <img src="assets/images/manifesto-nature.jpg" alt="Cinematic misty temperate rainforest bathed in golden sunbeams" class="manifesto-nature-img" loading="lazy">
+                        <img src="assets/images/manifesto-nature.png" alt="Cinematic misty temperate rainforest bathed in golden sunbeams" class="manifesto-nature-img" loading="lazy">
                     </div>
                     <div class="manifesto-visual-overlay" aria-hidden="true"></div>
                     <div class="manifesto-film-badge" aria-hidden="true">
