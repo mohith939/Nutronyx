@@ -1335,8 +1335,14 @@ if (!empty($_GET['selected_id'])) {
                         </div>
 
                         <!-- Pagination Footer -->
+                        <?php
+                        $totalCoupons = count($promos);
+                        $perPage = 10;
+                        $totalPages = max(1, (int)ceil($totalCoupons / $perPage));
+                        $currentPage = 1;
+                        ?>
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid #F3F4F6; font-size: 12.5px; color: #6B7280;">
-                            <div>Showing 1&ndash;<?= min(10, count($promos)) ?> of <?= count($promos) ?> coupons</div>
+                            <div>Showing <?= $totalCoupons > 0 ? '1&ndash;' . min($perPage, $totalCoupons) : '0' ?> of <?= $totalCoupons ?> <?= $totalCoupons === 1 ? 'coupon' : 'coupons' ?></div>
                             <div style="display: flex; align-items: center; gap: 16px;">
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <span>Rows per page</span>
@@ -1347,11 +1353,13 @@ if (!empty($_GET['selected_id'])) {
                                     </select>
                                 </div>
                                 <div style="display: flex; gap: 4px;">
-                                    <button type="button" class="btn-header-secondary" style="padding: 4px 8px; font-size: 11px;">&lt;</button>
-                                    <button type="button" class="btn-header-primary" style="padding: 4px 10px; font-size: 11px; background: #166534;">1</button>
-                                    <button type="button" class="btn-header-secondary" style="padding: 4px 10px; font-size: 11px;">2</button>
-                                    <button type="button" class="btn-header-secondary" style="padding: 4px 10px; font-size: 11px;">3</button>
-                                    <button type="button" class="btn-header-secondary" style="padding: 4px 8px; font-size: 11px;">&gt;</button>
+                                    <button type="button" class="btn-header-secondary" style="padding: 4px 8px; font-size: 11px; opacity: 0.5; cursor: default;" disabled>&lt;</button>
+                                    <?php for ($pNum = 1; $pNum <= $totalPages; $pNum++): ?>
+                                        <button type="button" class="<?= ($pNum === $currentPage) ? 'btn-header-primary' : 'btn-header-secondary' ?>" style="padding: 4px 10px; font-size: 11px; <?= ($pNum === $currentPage) ? 'background: #166534;' : '' ?>">
+                                            <?= $pNum ?>
+                                        </button>
+                                    <?php endfor; ?>
+                                    <button type="button" class="btn-header-secondary" style="padding: 4px 8px; font-size: 11px; opacity: 0.5; cursor: default;" disabled>&gt;</button>
                                 </div>
                             </div>
                         </div>

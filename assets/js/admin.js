@@ -283,7 +283,13 @@
             };
             const setChecked = (id, val) => {
                 const el = document.getElementById(id);
-                if (el) el.checked = Boolean(val);
+                if (el) {
+                    if (el.type === 'checkbox') {
+                        el.checked = Boolean(val);
+                    } else {
+                        el.value = val ? '1' : '0';
+                    }
+                }
             };
 
             const titleEl = document.getElementById('productModalTitle');
@@ -346,7 +352,13 @@
             };
             const setChecked = (id, val) => {
                 const el = document.getElementById(id);
-                if (el) el.checked = Boolean(val);
+                if (el) {
+                    if (el.type === 'checkbox') {
+                        el.checked = Boolean(val);
+                    } else {
+                        el.value = val ? '1' : '0';
+                    }
+                }
             };
 
             const titleEl = document.getElementById('productModalTitle');

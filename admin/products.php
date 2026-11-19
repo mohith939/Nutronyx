@@ -866,46 +866,13 @@ $page = $pageNum;
                         </div>
                     </div>
 
-                    <!-- 6. ACCORDION: STOREFRONT VISIBILITY & AVAILABILITY -->
+                    <!-- Storefront Visibility Defaults (Hidden per user request) -->
+                    <input type="hidden" name="is_visible_storefront" id="productVisStore" value="1">
+                    <input type="hidden" name="is_visible_catalog" id="productVisCat" value="1">
+                    <input type="hidden" name="is_visible_search" id="productVisSearch" value="1">
+                    <input type="hidden" name="is_featured" id="productFeatured" value="0">
+
                     <div class="product-accordions">
-                        <div class="product-accordion-item open">
-                            <div class="product-accordion-header" onclick="window.NutronyxProduct.toggleAccordion(this)">
-                                <span class="product-accordion-title">Storefront Visibility &amp; Channels</span>
-                                <span class="product-accordion-chevron">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                                </span>
-                            </div>
-                            <div class="product-accordion-content">
-                                <div class="toggle-row" style="margin-bottom: 12px;">
-                                    <span class="toggle-label">Visible in Storefront (Public access)</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" name="is_visible_storefront" value="1" id="productVisStore" checked>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
-                                <div class="toggle-row" style="margin-bottom: 12px;">
-                                    <span class="toggle-label">Visible in Catalog / Collections Listing</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" name="is_visible_catalog" value="1" id="productVisCat" checked>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
-                                <div class="toggle-row" style="margin-bottom: 12px;">
-                                    <span class="toggle-label">Visible in Storefront Search Results</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" name="is_visible_search" value="1" id="productVisSearch" checked>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
-                                <div class="toggle-row">
-                                    <span class="toggle-label">Featured Product (Pinned to homepage &amp; spotlights)</span>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" name="is_featured" value="1" id="productFeatured">
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- 7. ACCORDION: VARIANT MATRIX GENERATOR -->
                         <div class="product-accordion-item">
@@ -1167,7 +1134,7 @@ $page = $pageNum;
         <input type="hidden" name="bulk_category_id" id="bulkCategoryIdField" value="">
     </form>
 
-    <script src="../assets/js/admin.js?v=20261119_v2"></script>
+    <script src="../assets/js/admin.js?v=20261119_v3"></script>
     <script>
         // Enhanced Product Controller Scripts
         document.addEventListener('click', function(e) {
