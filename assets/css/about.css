@@ -10,12 +10,12 @@
 
 .about-hero-section {
     position: relative;
-    padding: clamp(110px, 13vh, 145px) clamp(24px, 4.5vw, 64px) clamp(70px, 9vh, 110px);
+    padding: clamp(145px, 16vh, 180px) clamp(24px, 4.5vw, 64px) clamp(70px, 9vh, 110px);
     background: radial-gradient(ellipse at 25% 25%, #FAF7F2 0%, #F6F1E8 52%, #ECE4D6 100%);
     overflow: hidden;
-    min-height: calc(100vh - 80px);
+    min-height: auto;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 
 /* Atmospheric Botanical Sunlight Shadows (Top-Left) */

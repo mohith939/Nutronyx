@@ -15,10 +15,10 @@
         radial-gradient(ellipse 65% 55% at 72% 50%, rgba(220, 232, 214, 0.45) 0%, rgba(248, 245, 238, 0) 70%),
         radial-gradient(circle at 10% 20%, rgba(243, 238, 228, 0.6) 0%, transparent 40%);
     overflow: hidden;
-    padding-top: 120px;
+    padding-top: clamp(145px, 16vh, 180px);
     padding-bottom: 60px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 
 /* Background Botanical Drifting Overlays */

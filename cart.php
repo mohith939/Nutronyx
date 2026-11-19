@@ -97,9 +97,9 @@ $currentPage = 'cart';
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Global Base & Component Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css?v=20261117_v2">
-    <link rel="stylesheet" href="assets/css/shop.css?v=20261117_v2">
-    <link rel="stylesheet" href="assets/css/cart.css?v=20261117_v2">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261119_v5">
+    <link rel="stylesheet" href="assets/css/shop.css?v=20261119_v2">
+    <link rel="stylesheet" href="assets/css/cart.css?v=20261119_v1">
 </head>
 <body class="nutronyx-body">
 

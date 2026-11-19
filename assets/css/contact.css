@@ -28,8 +28,8 @@
 /* --- 2. MAIN CONTACT STAGE --- */
 .contact-experience-section {
     position: relative;
-    padding: clamp(110px, 12vh, 140px) 4vw clamp(80px, 8vw, 120px) 4vw;
-    min-height: calc(100vh - 90px);
+    padding: clamp(145px, 16vh, 180px) 4vw clamp(80px, 8vw, 120px) 4vw;
+    min-height: auto;
     background-color: #FAF7F2;
     background-image: url('../images/Better Wellness bg.png');
     background-size: cover;
@@ -37,7 +37,7 @@
     background-repeat: no-repeat;
     overflow: hidden;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 
 /* Background Dappled Botanical Shadows & Leaf Wraps - Removed per request */
