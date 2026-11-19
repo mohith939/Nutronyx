@@ -439,7 +439,7 @@
    ========================================================================== */
 .section-editorial-collection {
     position: relative;
-    padding: clamp(120px, 12vh, 140px) 5vw 60px 5vw;
+    padding: clamp(165px, 18vh, 205px) 5vw 60px 5vw;
     background: #FAF8F5;
     border-top: none;
     z-index: 2;
@@ -1252,7 +1252,7 @@
         justify-content: center;
     }
     .section-editorial-collection {
-        padding: 100px 5vw 90px 5vw;
+        padding: clamp(140px, 16vh, 165px) 5vw 90px 5vw;
     }
     .collection-header-stage {
         align-items: center;

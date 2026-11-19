@@ -159,7 +159,7 @@ $currentPage = 'checkout';
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="assets/css/style.css?v=20261119_v5">
-    <link rel="stylesheet" href="assets/css/shop.css?v=20261119_v2">
+    <link rel="stylesheet" href="assets/css/shop.css?v=20261119_v3">
     <link rel="stylesheet" href="assets/css/cart.css?v=20261119_v1">
 </head>
 <body class="nutronyx-body">

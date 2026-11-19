@@ -28,7 +28,7 @@
 /* --- 2. HERO SECTION CONTAINER & AMBIENCE --- */
 .partner-hero-section {
     position: relative;
-    padding: clamp(145px, 16vh, 180px) clamp(24px, 5vw, 64px) clamp(80px, 10vh, 120px);
+    padding: clamp(165px, 18vh, 195px) clamp(24px, 5vw, 64px) clamp(80px, 10vh, 120px);
     background: radial-gradient(circle at 60% 20%, #FFFDF9 0%, #F8F5EE 50%, #F2EEE5 100%);
     overflow: hidden;
     min-height: auto;

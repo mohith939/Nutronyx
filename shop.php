@@ -82,7 +82,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
     <!-- Global Base & Component Stylesheet -->
     <link rel="stylesheet" href="assets/css/style.css?v=20261119_v5">
     <!-- Scoped Shop Page Stylesheet -->
-    <link rel="stylesheet" href="assets/css/shop.css?v=20261119_v2">
+    <link rel="stylesheet" href="assets/css/shop.css?v=20261119_v3">
 </head>
 <body class="nutronyx-body shop-page-body">
 

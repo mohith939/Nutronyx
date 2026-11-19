@@ -46,7 +46,7 @@ $currentPage = 'partner';
     <!-- Global Base Stylesheet -->
     <link rel="stylesheet" href="assets/css/style.css?v=20261119_v5">
     <!-- Scoped Partner Page Stylesheet -->
-    <link rel="stylesheet" href="assets/css/partner.css?v=20261119_v1">
+    <link rel="stylesheet" href="assets/css/partner.css?v=20261119_v2">
 </head>
 <body class="nutronyx-body partner-page-body">
 
