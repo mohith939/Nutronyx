@@ -1167,7 +1167,7 @@ $page = $pageNum;
         <input type="hidden" name="bulk_category_id" id="bulkCategoryIdField" value="">
     </form>
 
-    <script src="../assets/js/admin.js"></script>
+    <script src="../assets/js/admin.js?v=20261119_v2"></script>
     <script>
         // Enhanced Product Controller Scripts
         document.addEventListener('click', function(e) {

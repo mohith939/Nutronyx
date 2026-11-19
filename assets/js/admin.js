@@ -93,6 +93,13 @@
         if (e.target.classList.contains('modal-overlay')) {
             window.NutronyxModal.close(e.target);
         }
+        if (!e.target.closest('.action-dropdown-wrap')) {
+            document.querySelectorAll('.action-dropdown-menu.show').forEach(m => {
+                m.classList.remove('show');
+                m.style.top = '';
+                m.style.bottom = '';
+            });
+        }
     });
 
     document.addEventListener('keydown', function(e) {
@@ -270,28 +277,60 @@
             const form = document.getElementById('productForm');
             if (form) form.reset();
 
-            document.getElementById('productModalTitle').textContent = 'Add product';
-            document.getElementById('productFormAction').value = 'create_product';
-            document.getElementById('productIdField').value = '';
-            document.getElementById('productSubmitBtn').textContent = 'Create product';
+            const setVal = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.value = (val !== null && val !== undefined) ? val : '';
+            };
+            const setChecked = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.checked = Boolean(val);
+            };
+
+            const titleEl = document.getElementById('productModalTitle');
+            if (titleEl) titleEl.textContent = 'Add product';
+            setVal('productFormAction', 'create_product');
+            setVal('productIdField', '');
+            const submitBtn = document.getElementById('productSubmitBtn');
+            if (submitBtn) submitBtn.textContent = 'Save Product';
 
             // Reset preview image
             const previewImg = document.getElementById('productPhotoPreview');
             if (previewImg) previewImg.src = '../assets/images/about-commitment-still-life.jpg';
-            const imgInput = document.getElementById('productImageUrl');
-            if (imgInput) imgInput.value = 'assets/images/about-commitment-still-life.jpg';
+            setVal('productImageUrl', 'assets/images/about-commitment-still-life.jpg');
 
-            // Default values
-            document.getElementById('productStatus').value = 'ACTIVE';
-            document.getElementById('productCurrency').value = 'INR';
-            document.getElementById('productTrackInv').checked = true;
-            document.getElementById('productBackorders').checked = false;
-            document.getElementById('productStockStatus').value = 'in_stock';
-            document.getElementById('productStockQty').value = '100';
-            document.getElementById('productLowStock').value = '5';
-            document.getElementById('productTaxRate').value = '0';
+            // Form Fields
+            setVal('productTitle', '');
+            setVal('productSlug', '');
+            setVal('productShortDesc', '');
+            setVal('productFullDesc', '');
+            setVal('productRegularPrice', '');
+            setVal('productSalePrice', '');
+            setVal('productCostPrice', '');
+            setVal('productSku', '');
+            setVal('productStatus', 'ACTIVE');
+            setVal('productStockQty', '100');
+            setChecked('productVisStore', true);
+            setChecked('productVisCat', true);
+            setChecked('productVisSearch', true);
+            setChecked('productFeatured', false);
 
-            this.updateSubcategories(document.getElementById('productCategory'));
+            // Optional extended fields
+            setVal('productCurrency', 'INR');
+            setChecked('productTrackInv', true);
+            setChecked('productBackorders', false);
+            setVal('productStockStatus', 'in_stock');
+            setVal('productLowStock', '5');
+            setVal('productTaxRate', '0');
+
+            const catEl = document.getElementById('productCategory');
+            if (catEl && typeof this.updateSubcategories === 'function') {
+                this.updateSubcategories(catEl);
+            }
+
+            const tbody = document.getElementById('variantsMatrixTbody');
+            const matrixContainer = document.getElementById('generatedVariantsContainer');
+            if (tbody) tbody.innerHTML = '';
+            if (matrixContainer) matrixContainer.style.display = 'none';
 
             window.NutronyxModal.open('productModal');
         },

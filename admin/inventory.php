@@ -103,7 +103,7 @@ $stockStatus = $_GET['stock_status'] ?? null;
 $stockHealth = $_GET['stock_health'] ?? null;
 $tab = $_GET['tab'] ?? 'all';
 $page = max(1, (int)($_GET['page'] ?? 1));
-$perPage = 10;
+$perPage = max(5, min(100, (int)($_GET['per_page'] ?? 10)));
 
 $inventoryData = InventoryService::getInventoryList(
     $search,
@@ -289,8 +289,8 @@ $activeProductDetails = $selectedProductId ? InventoryService::getProductInvento
                 
                 <!-- Master Column: Inventory Directory Table -->
                 <div class="inventory-master-column">
-                    <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-                        <div class="table-responsive">
+                    <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 14px; overflow: visible; box-shadow: 0 1px 3px rgba(0,0,0,0.02); position: relative;">
+                        <div class="table-responsive" style="overflow: visible;">
                             <table class="dash-table" style="margin: 0;">
                                 <thead>
                                     <tr style="background: #F9FAFB; border-bottom: 1px solid #E5E7EB;">
@@ -367,13 +367,23 @@ $activeProductDetails = $selectedProductId ? InventoryService::getProductInvento
                                                     </span>
                                                 </td>
                                                 <td style="text-align: right; padding-right: 16px;" onclick="event.stopPropagation()">
-                                                    <div style="position: relative; display: inline-block;">
-                                                        <button type="button" class="btn-bulk-item" onclick="toggleRowMenu('inv-menu-<?= htmlspecialchars($it['variant_id']) ?>')" style="padding: 4px 8px; border-radius: 6px;">
-                                                            •••
+                                                    <div class="action-dropdown-wrap">
+                                                        <button type="button" class="action-dots-btn" onclick="toggleInventoryRowMenu('inv-menu-<?= htmlspecialchars($it['variant_id']) ?>', event)" title="More options">
+                                                            &bull;&bull;&bull;
                                                         </button>
-                                                        <div id="inv-menu-<?= htmlspecialchars($it['variant_id']) ?>" class="inventory-row-dropdown" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 4px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08); width: 170px; z-index: 50; text-align: left; padding: 4px 0;">
-                                                            <button type="button" onclick="openAdjustModal('<?= htmlspecialchars($it['variant_id']) ?>')" style="width: 100%; padding: 7px 12px; border: none; background: none; font-size: 12.5px; text-align: left; color: #374151; cursor: pointer;">⇅ Adjust Stock</button>
-                                                            <a href="products.php?search=<?= urlencode($it['product_title']) ?>" style="display: block; padding: 7px 12px; font-size: 12.5px; color: #374151; text-decoration: none;">View in Products &rarr;</a>
+                                                        <div id="inv-menu-<?= htmlspecialchars($it['variant_id']) ?>" class="action-dropdown-menu" style="width: 185px;">
+                                                            <button type="button" class="action-menu-item" onclick="openAdjustModal('<?= htmlspecialchars($it['variant_id']) ?>')">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 10 12 15 17 10"></polyline><polyline points="17 14 12 9 7 14"></polyline></svg>
+                                                                <span>Adjust Stock</span>
+                                                            </button>
+                                                            <button type="button" class="action-menu-item" onclick="selectInventoryProduct('<?= htmlspecialchars($it['product_id']) ?>')">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                                                <span>View Details</span>
+                                                            </button>
+                                                            <a href="products.php?search=<?= urlencode($it['product_title']) ?>" class="action-menu-item">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                                                                <span>View in Products &rarr;</span>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -384,7 +394,7 @@ $activeProductDetails = $selectedProductId ? InventoryService::getProductInvento
                             </table>
                         </div>
 
-                        <!-- Footer Pagination (Matching Mockup) -->
+                        <!-- Footer Pagination -->
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-top: 1px solid #E5E7EB; font-size: 13px; color: #6B7280; flex-wrap: wrap; gap: 10px;">
                             <div>
                                 Showing <?= $inventoryData['from'] ?>–<?= $inventoryData['to'] ?> of <?= number_format($inventoryData['total_count']) ?> items
@@ -393,21 +403,30 @@ $activeProductDetails = $selectedProductId ? InventoryService::getProductInvento
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <div>
                                     Rows per page
-                                    <select style="border: 1px solid #D1D5DB; border-radius: 6px; padding: 3px 6px; font-size: 12px; margin-left: 4px; background: #FFFFFF;">
-                                        <option value="10">10 ⌄</option>
-                                        <option value="25">25 ⌄</option>
-                                        <option value="50">50 ⌄</option>
+                                    <select onchange="location.href='?<?= http_build_query(array_merge($_GET, ['page' => 1])) ?>&per_page=' + this.value" style="border: 1px solid #D1D5DB; border-radius: 6px; padding: 3px 6px; font-size: 12px; margin-left: 4px; background: #FFFFFF; cursor: pointer;">
+                                        <option value="10" <?= ($perPage == 10) ? 'selected' : '' ?>>10</option>
+                                        <option value="25" <?= ($perPage == 25) ? 'selected' : '' ?>>25</option>
+                                        <option value="50" <?= ($perPage == 50) ? 'selected' : '' ?>>50</option>
                                     </select>
                                 </div>
 
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <a href="?page=<?= max(1, $page - 1) ?>" class="page-num-btn" style="text-decoration: none;">&lt;</a>
-                                    <a href="?page=1" class="page-num-btn <?= ($page === 1) ? 'active' : '' ?>" style="text-decoration: none;">1</a>
-                                    <a href="?page=2" class="page-num-btn <?= ($page === 2) ? 'active' : '' ?>" style="text-decoration: none;">2</a>
-                                    <a href="?page=3" class="page-num-btn <?= ($page === 3) ? 'active' : '' ?>" style="text-decoration: none;">3</a>
-                                    <span>...</span>
-                                    <a href="?page=18" class="page-num-btn <?= ($page === 18) ? 'active' : '' ?>" style="text-decoration: none;">18</a>
-                                    <a href="?page=<?= min(18, $page + 1) ?>" class="page-num-btn" style="text-decoration: none;">&gt;</a>
+                                    <?php $totalPages = max(1, (int)($inventoryData['total_pages'] ?? 1)); ?>
+                                    <?php if ($page > 1): ?>
+                                        <a href="?<?= http_build_query(array_merge($_GET, ['page' => $page - 1])) ?>" class="page-num-btn" style="text-decoration: none;" title="Previous">&lt;</a>
+                                    <?php else: ?>
+                                        <span class="page-num-btn" style="opacity: 0.4; cursor: not-allowed; text-decoration: none;">&lt;</span>
+                                    <?php endif; ?>
+
+                                    <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+                                        <a href="?<?= http_build_query(array_merge($_GET, ['page' => $p])) ?>" class="page-num-btn <?= ($page === $p) ? 'active' : '' ?>" style="text-decoration: none;"><?= $p ?></a>
+                                    <?php endfor; ?>
+
+                                    <?php if ($page < $totalPages): ?>
+                                        <a href="?<?= http_build_query(array_merge($_GET, ['page' => $page + 1])) ?>" class="page-num-btn" style="text-decoration: none;" title="Next">&gt;</a>
+                                    <?php else: ?>
+                                        <span class="page-num-btn" style="opacity: 0.4; cursor: not-allowed; text-decoration: none;">&gt;</span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -928,13 +947,33 @@ $activeProductDetails = $selectedProductId ? InventoryService::getProductInvento
             if (target) target.style.display = 'block';
         }
 
-        function toggleRowMenu(menuId) {
+        function toggleInventoryRowMenu(menuId, event) {
+            if (event) event.stopPropagation();
             const menu = document.getElementById(menuId);
             if (!menu) return;
-            const isVisible = (menu.style.display === 'block');
-            document.querySelectorAll('.inventory-row-dropdown').forEach(m => m.style.display = 'none');
-            menu.style.display = isVisible ? 'none' : 'block';
+            const isShown = menu.classList.contains('show');
+
+            document.querySelectorAll('.action-dropdown-menu.show').forEach(m => {
+                m.classList.remove('show');
+                m.style.top = '';
+                m.style.bottom = '';
+            });
+
+            if (!isShown) {
+                menu.classList.add('show');
+                const rect = menu.getBoundingClientRect();
+                const masterCol = menu.closest('.inventory-master-column') || document.body;
+                const colRect = masterCol.getBoundingClientRect();
+                if (rect.bottom > window.innerHeight - 20 || (rect.bottom > colRect.bottom - 20 && rect.top > 160)) {
+                    menu.style.top = 'auto';
+                    menu.style.bottom = 'calc(100% + 4px)';
+                } else {
+                    menu.style.top = 'calc(100% + 4px)';
+                    menu.style.bottom = 'auto';
+                }
+            }
         }
+        window.toggleRowMenu = toggleInventoryRowMenu;
 
         // Checkbox & Bulk Actions
         function toggleAllInventoryCheckboxes(checked) {
@@ -1016,6 +1055,6 @@ $activeProductDetails = $selectedProductId ? InventoryService::getProductInvento
             }
         });
     </script>
-    <script src="../assets/js/admin.js"></script>
+    <script src="../assets/js/admin.js?v=20261119_v2"></script>
 </body>
 </html>
