@@ -222,13 +222,13 @@ $filterProducts = $distinctProdStmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=20261119_v1">
     <style>
     :root {
         --color-forest: #144D29;
         --color-forest-dark: #0F3B1F;
         --color-forest-light: #EAF4EE;
-        --color-cream: #FAF9F6;
+        --color-cream: #F9FAFB;
         --color-border: #E5E7EB;
         --color-text-main: #111827;
         --color-text-muted: #6B7280;
@@ -247,7 +247,7 @@ $filterProducts = $distinctProdStmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     body.admin-body {
-        background-color: var(--color-cream);
+        background-color: #F9FAFB !important;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         color: var(--color-text-main);
     }

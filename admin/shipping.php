@@ -242,7 +242,7 @@ $initRate = EkartLogisticsService::getRateEstimate([
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=20261119_v1">
     <style>
         :root {
             --brand-green: #144D29;
@@ -253,7 +253,7 @@ $initRate = EkartLogisticsService::getRateEstimate([
         }
 
         .admin-main-stage {
-            background: #FAFAFA;
+            background: #F9FAFB;
             min-height: calc(100vh - 68px);
             padding: clamp(20px, 2.5vw, 36px) clamp(24px, 3.5vw, 48px);
         }
