@@ -426,27 +426,24 @@ if (!empty($_GET['selected_id'])) {
             box-shadow: 0 2px 6px rgba(20, 77, 41, 0.25);
         }
 
-        /* 2-Column Main Workspace */
+        /* 1-Column Spacious Main Workspace */
         .promo-workspace-grid {
-            display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 20px;
-            align-items: start;
-        }
-
-        @media (max-width: 1150px) {
-            .promo-workspace-grid {
-                grid-template-columns: 1fr;
-            }
+            display: block;
+            width: 100%;
         }
 
         /* Left Table Card */
         .coupons-table-card {
             background: #FFFFFF;
-            border: 1px solid #EAE6DF;
+            border: 1px solid #E5E7EB;
             border-radius: 14px;
             padding: 22px 24px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            overflow: visible;
+        }
+
+        .coupon-overview-card {
+            display: none !important;
         }
 
         .table-card-header {
@@ -851,7 +848,7 @@ if (!empty($_GET['selected_id'])) {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(17, 24, 39, 0.6);
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(5px);
             z-index: 9999;
             align-items: center;
             justify-content: center;
@@ -860,21 +857,68 @@ if (!empty($_GET['selected_id'])) {
         .modal-card-custom {
             background: #FFFFFF;
             width: 100%;
-            max-width: 680px;
+            max-width: 620px;
             max-height: 90vh;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            border-radius: 18px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
         }
         .modal-header-custom {
-            padding: 18px 24px;
+            padding: 20px 24px;
             border-bottom: 1px solid #E5E7EB;
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
+            background: #FFFFFF;
+        }
+
+        /* Segmented Discount Type Pills */
+        .discount-pill-btn {
+            display: flex;
             align-items: center;
-            background: #FAFBF9;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #FFFFFF;
+            border: 1.5px solid #E5E7EB;
+            color: #4B5563;
+            transition: all 0.15s ease;
+        }
+        .discount-pill-btn:hover {
+            border-color: #9CA3AF;
+            color: #111827;
+            background: #F9FAFB;
+        }
+        .discount-pill-btn.active {
+            background: #144D29;
+            border-color: #144D29;
+            color: #FFFFFF;
+            box-shadow: 0 2px 6px rgba(20, 77, 41, 0.2);
+        }
+
+        .coupon-form-group-card {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 16px;
+        }
+        .coupon-form-group-title {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #111827;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .modal-body-custom {
             padding: 24px;
@@ -1127,11 +1171,12 @@ if (!empty($_GET['selected_id'])) {
 
                             <select class="filter-select" id="filterCampaign" onchange="window.filterCouponsTable()">
                                 <option value="ALL">Campaign: All</option>
-                                <option value="New Year Sale">New Year Sale</option>
-                                <option value="Welcome Offer">Welcome Offer</option>
-                                <option value="Freedom Week">Freedom Week</option>
-                                <option value="Festive Sale">Festive Sale</option>
-                                <option value="Summer Care">Summer Care</option>
+                                <?php 
+                                $uniqueCamps = array_unique(array_filter(array_map(fn($item) => $item['campaign_name'] ?? '', $promos)));
+                                foreach ($uniqueCamps as $camp): 
+                                ?>
+                                    <option value="<?= htmlspecialchars($camp) ?>"><?= htmlspecialchars($camp) ?></option>
+                                <?php endforeach; ?>
                             </select>
 
                             <button type="button" class="btn-header-secondary" onclick="window.resetCouponFilters()" title="Reset Filters" style="padding: 8px 10px;">
@@ -1245,19 +1290,41 @@ if (!empty($_GET['selected_id'])) {
                                             <?php endif; ?>
                                         </td>
 
-                                        <td style="text-align: right;" onclick="event.stopPropagation();">
-                                            <div style="position: relative; display: inline-block;">
-                                                <button type="button" class="btn-header-secondary" onclick="window.toggleRowMenu('<?= $p['id'] ?>', event)" style="padding: 4px 8px; font-size: 12px;">•••</button>
-                                                <div id="rowMenu_<?= $p['id'] ?>" class="row-dropdown-menu" style="display: none; position: absolute; right: 0; bottom: 30px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); width: 170px; z-index: 100; text-align: left;">
-                                                    <a href="javascript:void(0)" onclick="window.openCouponDetailsDrawer('<?= $p['id'] ?>')" style="display: block; padding: 8px 12px; font-size: 12px; color: #111827; text-decoration: none;">View Details</a>
-                                                    <a href="javascript:void(0)" onclick="window.openEditCouponModal('<?= $p['id'] ?>')" style="display: block; padding: 8px 12px; font-size: 12px; color: #111827; text-decoration: none;">Edit Coupon</a>
-                                                    <a href="javascript:void(0)" onclick="window.duplicateCouponAction('<?= $p['id'] ?>')" style="display: block; padding: 8px 12px; font-size: 12px; color: #111827; text-decoration: none;">Duplicate</a>
-                                                    <a href="javascript:void(0)" onclick="window.shareCouponLink('<?= $p['code'] ?>')" style="display: block; padding: 8px 12px; font-size: 12px; color: #111827; text-decoration: none;">Share Link</a>
-                                                    <div style="height: 1px; background: #F3F4F6; margin: 3px 0;"></div>
-                                                    <a href="javascript:void(0)" onclick="window.toggleCouponStatus('<?= $p['id'] ?>', <?= $p['is_active'] ? 0 : 1 ?>)" style="display: block; padding: 8px 12px; font-size: 12px; color: <?= $p['is_active'] ? '#DC2626' : '#166534' ?>; text-decoration: none;">
-                                                        <?= $p['is_active'] ? 'Disable Coupon' : 'Enable Coupon' ?>
-                                                    </a>
-                                                    <a href="javascript:void(0)" onclick="window.deleteCouponAction('<?= $p['id'] ?>', '<?= $p['code'] ?>')" style="display: block; padding: 8px 12px; font-size: 12px; color: #991B1B; text-decoration: none;">Delete</a>
+                                        <td style="text-align: right; padding-right: 16px;" onclick="event.stopPropagation();">
+                                            <div class="action-dropdown-wrap">
+                                                <button type="button" class="action-dots-btn" onclick="window.toggleRowMenu('<?= $p['id'] ?>', event)" title="More options">
+                                                    &bull;&bull;&bull;
+                                                </button>
+                                                <div id="rowMenu_<?= $p['id'] ?>" class="action-dropdown-menu" style="width: 185px;">
+                                                    <button type="button" class="action-menu-item" onclick="window.openCouponDetailsDrawer('<?= $p['id'] ?>')">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                                        <span>View Details</span>
+                                                    </button>
+                                                    <button type="button" class="action-menu-item" onclick="window.openEditCouponModal('<?= $p['id'] ?>')">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                                        <span>Edit Coupon</span>
+                                                    </button>
+                                                    <button type="button" class="action-menu-item" onclick="window.duplicateCouponAction('<?= $p['id'] ?>')">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                                        <span>Duplicate</span>
+                                                    </button>
+                                                    <button type="button" class="action-menu-item" onclick="window.copyToClipboard('<?= htmlspecialchars($p['code']) ?>', event)">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                                        <span>Copy Code</span>
+                                                    </button>
+                                                    <button type="button" class="action-menu-item" onclick="window.shareCouponLink('<?= htmlspecialchars($p['code']) ?>')">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                                                        <span>Share Link</span>
+                                                    </button>
+                                                    <div style="height: 1px; background: #F3F4F6; margin: 4px 0;"></div>
+                                                    <button type="button" class="action-menu-item" onclick="window.toggleCouponStatus('<?= $p['id'] ?>', <?= $p['is_active'] ? 0 : 1 ?>)">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                                        <span><?= $p['is_active'] ? 'Disable Coupon' : 'Enable Coupon' ?></span>
+                                                    </button>
+                                                    <button type="button" class="action-menu-item danger" onclick="window.deleteCouponAction('<?= $p['id'] ?>', '<?= htmlspecialchars(addslashes($p['code'])) ?>')">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                        <span>Delete Coupon</span>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </td>
@@ -1883,114 +1950,182 @@ if (!empty($_GET['selected_id'])) {
         <input type="hidden" name="active" id="formActiveVal">
     </form>
 
-    <!-- MODAL 1: CREATE COUPON (SECTIONS A-G) -->
+    <!-- MODAL 1: CREATE / EDIT COUPON (CLEAN MODERN UI) -->
     <div class="modal-backdrop-custom" id="createCouponModal">
-        <div class="modal-card-custom">
-            <div class="modal-header-custom">
+        <div class="modal-card-custom" style="max-width: 620px; border-radius: 18px; box-shadow: 0 25px 60px rgba(0,0,0,0.18);">
+            <div class="modal-header-custom" style="padding: 20px 24px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: flex-start; background: #FFFFFF; border-top-left-radius: 18px; border-top-right-radius: 18px;">
                 <div>
-                    <h3 style="font-size: 18px; font-weight: 800; color: #111827; margin: 0;">Create Promotional Coupon</h3>
-                    <p style="font-size: 12.5px; color: #6B7280; margin: 2px 0 0 0;">Configure discount benefits, customer eligibility, and usage restrictions.</p>
+                    <h3 id="modalCouponTitle" style="font-family: 'Playfair Display', Georgia, serif; font-size: 21px; font-weight: 700; color: #111827; margin: 0; letter-spacing: -0.01em;">Create Discount Coupon</h3>
+                    <p style="font-size: 13px; color: #6B7280; margin: 4px 0 0 0;">Create a promotional discount code for your customers to use at checkout.</p>
                 </div>
-                <button type="button" onclick="window.closeCreateCouponModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #9CA3AF;">&times;</button>
+                <button type="button" onclick="window.closeCreateCouponModal()" style="background: none; border: none; font-size: 24px; line-height: 1; cursor: pointer; color: #9CA3AF; padding: 4px; border-radius: 6px; transition: color 0.15s;" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#9CA3AF'">&times;</button>
             </div>
 
-            <form method="POST" action="promotions.php">
-                <input type="hidden" name="action" value="create_coupon">
-                <div class="modal-body-custom">
+            <form method="POST" action="promotions.php" id="createCouponForm" oninput="window.updateCouponLiveSummary()">
+                <input type="hidden" name="action" id="modalCouponAction" value="create_coupon">
+                <input type="hidden" name="id" id="modalCouponId" value="">
+
+                <div class="modal-body-custom" style="padding: 22px 24px; max-height: calc(88vh - 140px); overflow-y: auto;">
                     
-                    <!-- Section A: Coupon Information -->
-                    <h4 class="form-section-title">
-                        <span>🏷</span> Section A: Coupon Information
-                    </h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px;">Coupon Name *</label>
-                            <input type="text" name="name" required placeholder="e.g. Winter Immunity 15%" class="form-control" style="border-radius: 8px;">
+                    <!-- Card 1: Coupon Code & Name -->
+                    <div class="coupon-form-group-card">
+                        <div class="coupon-form-group-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                            <span>Coupon Code &amp; Details</span>
                         </div>
-                        <div>
-                            <label style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px;">
-                                <span>Coupon Code *</span>
-                                <a href="javascript:void(0)" onclick="window.autoGenCode()" style="color: #166534; font-size: 11px; text-decoration: underline;">Auto-Generate</a>
-                            </label>
-                            <input type="text" name="code" id="couponCodeInp" required placeholder="e.g. IMMUNITY15" class="form-control" style="border-radius: 8px; font-family: monospace; text-transform: uppercase;">
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 14px;">
-                        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px;">Campaign Association</label>
-                        <select name="campaign_name" class="form-control" style="border-radius: 8px;">
-                            <option value="New Year Sale &bull; Jan Campaign">New Year Sale &bull; Jan Campaign</option>
-                            <option value="Welcome Offer &bull; New Customer">Welcome Offer &bull; New Customer</option>
-                            <option value="Freedom Week &bull; Special Campaign">Freedom Week &bull; Special Campaign</option>
-                            <option value="Festive Sale &bull; Diwali Campaign">Festive Sale &bull; Diwali Campaign</option>
-                            <option value="Health Essentials &bull; Product Campaign">Health Essentials &bull; Product Campaign</option>
-                            <option value="Summer Care &bull; Seasonal Campaign">Summer Care &bull; Seasonal Campaign</option>
-                            <option value="General Storewide Promotion">General Storewide Promotion</option>
-                        </select>
-                    </div>
 
-                    <!-- Section B: Discount Configuration -->
-                    <h4 class="form-section-title">
-                        <span>💰</span> Section B: Discount Configuration
-                    </h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px;">Discount Type *</label>
-                            <select name="discount_type" id="modalDiscountType" class="form-control" style="border-radius: 8px;" onchange="window.updateDiscountTypeUI(this.value)">
-                                <option value="PERCENTAGE">Percentage Discount (% OFF)</option>
-                                <option value="FIXED_AMOUNT">Flat Rupee Amount (₹ OFF)</option>
-                                <option value="FREE_SHIPPING">Free Shipping</option>
-                                <option value="BUY_X_GET_Y">Buy X Get Y (Free Product)</option>
-                            </select>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 5px;">Coupon Code *</label>
+                        <div style="display: flex; gap: 8px; align-items: stretch; margin-bottom: 14px;">
+                            <input type="text" name="code" id="couponCodeInp" required placeholder="e.g. WELLNESS15" class="form-control" style="font-family: monospace; font-size: 15px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 10px; padding: 10px 14px; border: 1.5px solid #D1D5DB; background: #FAF9F6; flex: 1;">
+                            <button type="button" onclick="window.autoGenCode()" class="btn-header-secondary" style="font-size: 12.5px; font-weight: 600; white-space: nowrap; border-radius: 10px; padding: 0 16px; background: #F3F4F6; border: 1px solid #D1D5DB; color: #144D29; display: flex; align-items: center; gap: 6px;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                <span>Generate Code</span>
+                            </button>
                         </div>
-                        <div id="modalDiscountValBox">
-                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px;" id="modalDiscountValLabel">Discount Value (% or ₹) *</label>
-                            <input type="number" name="discount_value" id="modalDiscountValInput" value="15" min="0" required class="form-control" style="border-radius: 8px;">
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                            <div>
+                                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Internal Name / Label</label>
+                                <input type="text" name="name" id="couponNameInp" placeholder="e.g. Winter Immunity 15%" class="form-control" style="border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #D1D5DB;">
+                                <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">For admin reference</span>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Campaign Association</label>
+                                <select name="campaign_name" id="couponCampaignSelect" class="form-control" style="border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #D1D5DB; background: #FFFFFF;">
+                                    <option value="General Storewide Promotion">General Storewide Promotion</option>
+                                    <?php if (!empty($campaigns)): ?>
+                                        <?php foreach ($campaigns as $camp): ?>
+                                            <option value="<?= htmlspecialchars($camp['name']) ?>"><?= htmlspecialchars($camp['name']) ?></option>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <option value="New Year Sale">New Year Sale</option>
+                                        <option value="Welcome Offer">Welcome Offer</option>
+                                        <option value="Festive Sale">Festive Sale</option>
+                                    <?php endif; ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Section C: Eligibility Rules -->
-                    <h4 class="form-section-title">
-                        <span>🎯</span> Section C: Eligibility &amp; Basket Thresholds
-                    </h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px;">Minimum Cart Value (₹)</label>
-                            <input type="number" name="minimum_order_rupees" value="499" min="0" class="form-control" style="border-radius: 8px;">
+                    <!-- Card 2: Discount Benefit (Segmented Buttons) -->
+                    <div class="coupon-form-group-card">
+                        <div class="coupon-form-group-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v12M15 9.5H10.5a2 2 0 0 0 0 4h3a2 2 0 0 1 0 4H9"></path></svg>
+                            <span>Discount Benefit *</span>
                         </div>
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px;">Per-Customer Usage Limit</label>
-                            <input type="number" name="per_customer_limit" value="1" min="1" class="form-control" style="border-radius: 8px;">
+                        
+                        <!-- Segmented Pill Selector -->
+                        <input type="hidden" name="discount_type" id="modalDiscountType" value="PERCENTAGE">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px;" id="discountTypeSelectorGroup">
+                            <button type="button" class="discount-pill-btn active" data-type="PERCENTAGE" onclick="window.selectDiscountType('PERCENTAGE')">
+                                <span style="font-size: 15px; font-weight: 700;">%</span>
+                                <span>Percentage</span>
+                            </button>
+                            <button type="button" class="discount-pill-btn" data-type="FIXED_AMOUNT" onclick="window.selectDiscountType('FIXED_AMOUNT')">
+                                <span style="font-size: 15px; font-weight: 700;">₹</span>
+                                <span>Fixed Amount</span>
+                            </button>
+                            <button type="button" class="discount-pill-btn" data-type="FREE_SHIPPING" onclick="window.selectDiscountType('FREE_SHIPPING')">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                <span>Free Shipping</span>
+                            </button>
+                        </div>
+
+                        <!-- Dynamic Discount Value Input -->
+                        <div id="modalDiscountValBox" style="display: block;">
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;" id="modalDiscountValLabel">Discount Percentage (% OFF)</label>
+                            <div style="position: relative; max-width: 220px;">
+                                <input type="number" name="discount_value" id="modalDiscountValInput" value="15" min="1" max="100" required class="form-control" style="border-radius: 8px; font-size: 16px; font-weight: 700; padding: 8px 55px 8px 12px; border: 1px solid #D1D5DB;">
+                                <span id="modalDiscountUnitAddon" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12.5px; font-weight: 700; color: #6B7280; pointer-events: none;">% OFF</span>
+                            </div>
+                        </div>
+
+                        <div id="modalFreeShippingNotice" style="display: none; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #065F46; align-items: center; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Applies 100% free delivery to customer carts at checkout.</span>
                         </div>
                     </div>
 
-                    <!-- Section D: Redemption Limits & Schedule -->
-                    <h4 class="form-section-title">
-                        <span>📅</span> Section D: Total Redemption Cap &amp; Expiry
-                    </h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px;">Total Store Redemption Cap</label>
-                            <input type="number" name="usage_limit" value="500" min="0" placeholder="0 = Unlimited" class="form-control" style="border-radius: 8px;">
+                    <!-- Card 3: Requirements & Usage Limits -->
+                    <div class="coupon-form-group-card">
+                        <div class="coupon-form-group-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                            <span>Usage Limits &amp; Requirements</span>
                         </div>
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px;">Expiry Date</label>
-                            <input type="date" name="expires_at" value="<?= date('Y-m-d', strtotime('+60 days')) ?>" class="form-control" style="border-radius: 8px;">
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px;">
+                            <div>
+                                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Minimum Cart Value</label>
+                                <div style="position: relative;">
+                                    <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 600; color: #6B7280;">₹</span>
+                                    <input type="number" name="minimum_order_rupees" id="couponMinCartInp" value="499" min="0" class="form-control" style="border-radius: 8px; padding-left: 24px; font-size: 13px; border: 1px solid #D1D5DB;">
+                                </div>
+                                <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Enter 0 for no minimum</span>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Total Redemptions Cap</label>
+                                <input type="number" name="usage_limit" id="couponUsageLimitInp" value="500" min="0" placeholder="0 = Unlimited" class="form-control" style="border-radius: 8px; font-size: 13px; border: 1px solid #D1D5DB;">
+                                <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Storewide limit (0 = Unlimited)</span>
+                            </div>
+                        </div>
+
+                        <!-- Per-Customer Checkbox -->
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px 12px; background: #F9FAFB; border-radius: 8px; border: 1px solid #E5E7EB; margin: 0;">
+                            <input type="checkbox" id="couponPerCustomerLimit" checked onchange="document.getElementById('couponPerCustomerLimitVal').value = this.checked ? '1' : '0'" style="width: 16px; height: 16px; accent-color: #144D29; cursor: pointer;">
+                            <input type="hidden" name="per_customer_limit" id="couponPerCustomerLimitVal" value="1">
+                            <div>
+                                <div style="font-size: 13px; font-weight: 600; color: #1F2937;">Limit to 1 use per customer</div>
+                                <div style="font-size: 11.5px; color: #6B7280;">Prevents a customer from redeeming this code repeatedly</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Card 4: Validity & Status -->
+                    <div class="coupon-form-group-card">
+                        <div class="coupon-form-group-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            <span>Schedule &amp; Status</span>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                            <div>
+                                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Expiry Date</label>
+                                <input type="date" name="expires_at" id="couponExpiryInp" value="<?= date('Y-m-d', strtotime('+60 days')) ?>" class="form-control" style="border-radius: 8px; font-size: 13px; border: 1px solid #D1D5DB;">
+                                <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Expires at midnight</span>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Status</label>
+                                <select name="status" id="couponStatusSelect" class="form-control" style="border-radius: 8px; font-size: 13px; border: 1px solid #D1D5DB; background: #FFFFFF;">
+                                    <option value="ACTIVE">● Active (Live at Checkout)</option>
+                                    <option value="SCHEDULED">⏱ Scheduled (Future Launch)</option>
+                                    <option value="INACTIVE">○ Draft / Disabled</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 14px;">
-                        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px;">Initial Coupon Status</label>
-                        <select name="status" class="form-control" style="border-radius: 8px;">
-                            <option value="ACTIVE">Active (Live at Checkout)</option>
-                            <option value="SCHEDULED">Scheduled (Activates on Start Date)</option>
-                            <option value="INACTIVE">Draft / Inactive</option>
-                        </select>
+                    <!-- Live Summary Preview Banner -->
+                    <div style="background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 12px; padding: 12px 16px; display: flex; align-items: flex-start; gap: 12px;">
+                        <div style="width: 28px; height: 28px; border-radius: 6px; background: #E5E7EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #144D29;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                        </div>
+                        <div>
+                            <div style="font-size: 10.5px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Summary Preview</div>
+                            <div id="couponLiveSummaryText" style="font-size: 13px; color: #1F2937; line-height: 1.45;">
+                                Customers get <strong>15% OFF</strong> on orders over <strong>₹499</strong> using code <strong style="font-family: monospace; color: #144D29; background: #E5E7EB; padding: 2px 6px; border-radius: 4px;">IMMUNITY15</strong>.
+                            </div>
+                        </div>
                     </div>
 
                 </div>
-                <div class="modal-footer-custom">
-                    <button type="button" class="btn-header-secondary" onclick="window.closeCreateCouponModal()">Cancel</button>
-                    <button type="submit" class="btn-header-primary">Publish Coupon</button>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer-custom" style="padding: 16px 24px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; align-items: center; gap: 10px; background: #FAFBF9; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;">
+                    <button type="button" class="btn-header-secondary" onclick="window.closeCreateCouponModal()" style="padding: 9px 18px; font-size: 13px; border-radius: 10px;">Cancel</button>
+                    <button type="submit" class="btn-header-primary" style="padding: 9px 22px; font-size: 13px; border-radius: 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span id="modalSubmitBtnText">Publish Coupon</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -2112,6 +2247,9 @@ if (!empty($_GET['selected_id'])) {
 
     <!-- Interactive JavaScript Logic -->
     <script>
+    // 0. Coupons Data Source for Instant Edit Modal
+    window.COUPONS_DATA = <?= json_encode(array_column($promos, null, 'id'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?> || {};
+
     // 1. Toast Notification Helper
     window.showToast = function(msg) {
         const toast = document.getElementById('promoToast');
@@ -2143,59 +2281,193 @@ if (!empty($_GET['selected_id'])) {
 
     // 4. Auto Generate Coupon Code
     window.autoGenCode = function() {
-        const prefixes = ['NUX', 'SAVE', 'WELL', 'NUTR', 'SPECIAL'];
+        const prefixes = ['NUX', 'SAVE', 'WELL', 'NUTR', 'SPECIAL', 'DEAL'];
         const p = prefixes[Math.floor(Math.random() * prefixes.length)];
         const num = Math.floor(10 + Math.random() * 90);
         const code = p + num;
-        document.getElementById('couponCodeInp').value = code;
+        const inp = document.getElementById('couponCodeInp');
+        if (inp) {
+            inp.value = code;
+            window.updateCouponLiveSummary();
+        }
     };
 
-    // 5. Discount Type Toggle in Modal
-    window.updateDiscountTypeUI = function(type) {
+    // 5. Discount Type Segmented Pills Selector
+    window.selectDiscountType = function(type) {
+        const hiddenType = document.getElementById('modalDiscountType');
+        if (hiddenType) hiddenType.value = type;
+
+        document.querySelectorAll('.discount-pill-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-type') === type);
+        });
+
         const valBox = document.getElementById('modalDiscountValBox');
+        const notice = document.getElementById('modalFreeShippingNotice');
         const lbl = document.getElementById('modalDiscountValLabel');
         const inp = document.getElementById('modalDiscountValInput');
+        const addon = document.getElementById('modalDiscountUnitAddon');
+
         if (type === 'FREE_SHIPPING') {
-            valBox.style.display = 'none';
-            inp.required = false;
+            if (valBox) valBox.style.display = 'none';
+            if (notice) notice.style.display = 'flex';
+            if (inp) inp.required = false;
         } else {
-            valBox.style.display = 'block';
-            inp.required = true;
+            if (valBox) valBox.style.display = 'block';
+            if (notice) notice.style.display = 'none';
+            if (inp) inp.required = true;
+
             if (type === 'PERCENTAGE') {
-                lbl.textContent = 'Discount Percentage (% OFF) *';
-                inp.max = 100;
+                if (lbl) lbl.textContent = 'Discount Percentage (% OFF)';
+                if (addon) addon.textContent = '% OFF';
+                if (inp) {
+                    inp.max = 100;
+                    if (!inp.value || parseInt(inp.value, 10) > 100) inp.value = 15;
+                }
             } else if (type === 'FIXED_AMOUNT') {
-                lbl.textContent = 'Flat Rupee Amount (₹ OFF) *';
-                inp.removeAttribute('max');
-            } else if (type === 'BUY_X_GET_Y') {
-                lbl.textContent = 'Free Items Quantity (Y) *';
-                inp.value = 1;
+                if (lbl) lbl.textContent = 'Flat Rupee Amount (₹ OFF)';
+                if (addon) addon.textContent = '₹ OFF';
+                if (inp) {
+                    inp.removeAttribute('max');
+                    if (!inp.value || parseInt(inp.value, 10) === 15) inp.value = 150;
+                }
             }
         }
+        window.updateCouponLiveSummary();
     };
 
-    // 6. Select coupon row and update overview panel
-    window.selectCouponRow = function(id) {
-        document.querySelectorAll('.coupon-row').forEach(r => r.classList.remove('selected-row'));
-        const row = document.querySelector(`.coupon-row[data-id="${id}"]`);
-        if (row) {
-            row.classList.add('selected-row');
-            const code = row.getAttribute('data-code');
-            const campaign = row.getAttribute('data-campaign');
-            const type = row.getAttribute('data-type');
-            const status = row.getAttribute('data-status');
+    // 6. Real-Time Dynamic Summary Preview
+    window.updateCouponLiveSummary = function() {
+        const code = (document.getElementById('couponCodeInp')?.value || 'COUPON').trim().toUpperCase();
+        const type = document.getElementById('modalDiscountType')?.value || 'PERCENTAGE';
+        const val = document.getElementById('modalDiscountValInput')?.value || '15';
+        const minCart = parseInt(document.getElementById('couponMinCartInp')?.value || '0', 10);
+        const expDate = document.getElementById('couponExpiryInp')?.value;
+        const summaryEl = document.getElementById('couponLiveSummaryText');
+        if (!summaryEl) return;
 
-            document.getElementById('ovCode').textContent = code;
-            document.getElementById('ovCampaign').textContent = campaign.split('•')[0];
-            document.getElementById('ovStatusBadge').innerHTML = '<span style="width: 5px; height: 5px; border-radius: 50%; background: #10B981;"></span> ' + status;
-            
-            // Update switch
-            const sw = document.getElementById('ovToggleInput');
-            if (sw) sw.checked = (status === 'ACTIVE');
+        let discountTxt = (type === 'PERCENTAGE') ? `<strong>${val}% OFF</strong>` :
+                          (type === 'FIXED_AMOUNT') ? `<strong>₹${val} OFF</strong>` :
+                          (type === 'FREE_SHIPPING') ? `<strong>FREE Delivery</strong>` : `<strong>Discount</strong>`;
+        let minTxt = minCart > 0 ? ` on orders over <strong>₹${minCart.toLocaleString('en-IN')}</strong>` : ' with no minimum order';
+        let expTxt = expDate ? ` • Expires ${expDate}` : '';
+
+        summaryEl.innerHTML = `Customers get ${discountTxt}${minTxt} using code <strong style="font-family: monospace; color: #144D29; background: #E5E7EB; padding: 2px 6px; border-radius: 4px;">${code}</strong>${expTxt}.`;
+    };
+
+    // 7. Open Create Coupon Modal
+    window.openCreateCouponModal = function() {
+        const form = document.getElementById('createCouponForm');
+        if (form) form.reset();
+
+        document.getElementById('modalCouponAction').value = 'create_coupon';
+        document.getElementById('modalCouponId').value = '';
+
+        const title = document.getElementById('modalCouponTitle');
+        if (title) title.textContent = 'Create Discount Coupon';
+
+        const submitBtn = document.getElementById('modalSubmitBtnText');
+        if (submitBtn) submitBtn.textContent = 'Publish Coupon';
+
+        // Defaults
+        window.autoGenCode();
+        window.selectDiscountType('PERCENTAGE');
+        if (document.getElementById('modalDiscountValInput')) document.getElementById('modalDiscountValInput').value = '15';
+        if (document.getElementById('couponMinCartInp')) document.getElementById('couponMinCartInp').value = '499';
+        if (document.getElementById('couponUsageLimitInp')) document.getElementById('couponUsageLimitInp').value = '500';
+        if (document.getElementById('couponPerCustomerLimit')) document.getElementById('couponPerCustomerLimit').checked = true;
+        if (document.getElementById('couponPerCustomerLimitVal')) document.getElementById('couponPerCustomerLimitVal').value = '1';
+        if (document.getElementById('couponStatusSelect')) document.getElementById('couponStatusSelect').value = 'ACTIVE';
+
+        window.updateCouponLiveSummary();
+        document.getElementById('createCouponModal').style.display = 'flex';
+    };
+
+    // 8. Open Edit Coupon Modal
+    window.openEditCouponModal = function(id) {
+        const coupon = window.COUPONS_DATA ? window.COUPONS_DATA[id] : null;
+        if (!coupon) {
+            console.warn('Coupon not found:', id);
+            return;
+        }
+
+        const form = document.getElementById('createCouponForm');
+        if (form) form.reset();
+
+        document.getElementById('modalCouponAction').value = 'update_coupon';
+        document.getElementById('modalCouponId').value = id;
+
+        const title = document.getElementById('modalCouponTitle');
+        if (title) title.textContent = 'Edit Discount Coupon';
+
+        const submitBtn = document.getElementById('modalSubmitBtnText');
+        if (submitBtn) submitBtn.textContent = 'Save Changes';
+
+        // Populate fields
+        if (document.getElementById('couponCodeInp')) document.getElementById('couponCodeInp').value = coupon.code || '';
+        if (document.getElementById('couponNameInp')) document.getElementById('couponNameInp').value = coupon.name || '';
+        if (document.getElementById('couponCampaignSelect')) {
+            document.getElementById('couponCampaignSelect').value = coupon.campaign_name || 'General Storewide Promotion';
+        }
+
+        const dType = coupon.discount_type || 'PERCENTAGE';
+        window.selectDiscountType(dType);
+        if (document.getElementById('modalDiscountValInput')) {
+            document.getElementById('modalDiscountValInput').value = coupon.discount_value || 0;
+        }
+
+        if (document.getElementById('couponMinCartInp')) {
+            document.getElementById('couponMinCartInp').value = coupon.minimum_order_rupees || 0;
+        }
+        if (document.getElementById('couponUsageLimitInp')) {
+            document.getElementById('couponUsageLimitInp').value = coupon.usage_limit || 0;
+        }
+
+        const perCust = parseInt(coupon.per_customer_limit || 1, 10);
+        const perCustCb = document.getElementById('couponPerCustomerLimit');
+        if (perCustCb) {
+            perCustCb.checked = perCust > 0;
+            document.getElementById('couponPerCustomerLimitVal').value = perCust > 0 ? '1' : '0';
+        }
+
+        if (coupon.expires_at) {
+            const expDate = coupon.expires_at.split(' ')[0];
+            if (document.getElementById('couponExpiryInp')) {
+                document.getElementById('couponExpiryInp').value = expDate;
+            }
+        }
+
+        if (document.getElementById('couponStatusSelect')) {
+            document.getElementById('couponStatusSelect').value = coupon.status || 'ACTIVE';
+        }
+
+        window.updateCouponLiveSummary();
+        document.getElementById('createCouponModal').style.display = 'flex';
+    };
+
+    window.closeCreateCouponModal = function() {
+        document.getElementById('createCouponModal').style.display = 'none';
+    };
+
+    window.openCreateCampaignModal = function() {
+        document.getElementById('createCampaignModal').style.display = 'flex';
+    };
+
+    window.openCreateAutoDiscountModal = function() {
+        document.getElementById('createAutoModal').style.display = 'flex';
+    };
+
+    // 9. Row Actions Dropdown Toggle
+    window.toggleRowMenu = function(id, e) {
+        if (e) e.stopPropagation();
+        const menu = document.getElementById('rowMenu_' + id);
+        const isShown = menu && menu.classList.contains('show');
+        document.querySelectorAll('.action-dropdown-menu.show').forEach(m => m.classList.remove('show'));
+        if (!isShown && menu) {
+            menu.classList.add('show');
         }
     };
 
-    // 7. Toggle coupon active/inactive
+    // 10. Toggle coupon active/inactive
     window.toggleCouponStatus = function(id, activeState) {
         document.getElementById('formActionVal').value = 'toggle_active';
         document.getElementById('formIdVal').value = id;
@@ -2203,14 +2475,14 @@ if (!empty($_GET['selected_id'])) {
         document.getElementById('actionForm').submit();
     };
 
-    // 8. Duplicate coupon
+    // 11. Duplicate coupon
     window.duplicateCouponAction = function(id) {
         document.getElementById('formActionVal').value = 'duplicate_coupon';
         document.getElementById('formIdVal').value = id;
         document.getElementById('actionForm').submit();
     };
 
-    // 9. Delete coupon
+    // 12. Delete coupon
     window.deleteCouponAction = function(id, code) {
         if (confirm('Are you sure you want to delete coupon "' + code + '"?')) {
             document.getElementById('formActionVal').value = 'delete_coupon';
@@ -2219,7 +2491,40 @@ if (!empty($_GET['selected_id'])) {
         }
     };
 
-    // 10. Filter table live
+    // 13. Details Drawer
+    window.openCouponDetailsDrawer = function(id) {
+        const coupon = window.COUPONS_DATA ? window.COUPONS_DATA[id] : null;
+        if (!coupon) return;
+
+        const code = coupon.code;
+        const campaign = coupon.campaign_name || 'General Promotion';
+        const type = coupon.discount_type || 'PERCENTAGE';
+        const status = coupon.status || 'ACTIVE';
+
+        document.getElementById('drawerTitle').textContent = 'Coupon: ' + code;
+        document.getElementById('drawerSub').textContent = 'Campaign: ' + campaign;
+        document.getElementById('drawerBody').innerHTML = `
+            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 16px; font-weight: 800; font-family: monospace;">${code}</span>
+                    <span class="badge-status-active">${status}</span>
+                </div>
+                <div style="font-size: 12.5px; color: #4B5563;">Discount Type: <strong>${type}</strong></div>
+                <div style="font-size: 12.5px; color: #4B5563; margin-top: 4px;">Associated Campaign: <strong>${campaign}</strong></div>
+            </div>
+            <h4 style="font-size: 13px; font-weight: 700; color: #111827; margin: 16px 0 8px 0;">Checkout Integration Code</h4>
+            <div style="background: #111827; color: #10B981; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px;">
+                https://nutronyx.in/apply-coupon.php?code=${encodeURIComponent(code)}
+            </div>
+            <div style="margin-top: 18px; display: flex; gap: 8px;">
+                <button type="button" class="btn-header-secondary" onclick="window.copyToClipboard('${code}')">Copy Promo Code</button>
+                <button type="button" class="btn-header-secondary" onclick="window.shareCouponLink('${code}')">Copy Share Link</button>
+            </div>
+        `;
+        document.getElementById('couponDetailsDrawer').style.display = 'flex';
+    };
+
+    // 14. Filter table live
     window.filterCouponsTable = function() {
         const q = (document.getElementById('couponSearchInp')?.value || '').toLowerCase().trim();
         const st = (document.getElementById('filterStatus')?.value || 'ALL');
@@ -2246,14 +2551,14 @@ if (!empty($_GET['selected_id'])) {
     };
 
     window.resetCouponFilters = function() {
-        document.getElementById('couponSearchInp').value = '';
-        document.getElementById('filterStatus').value = 'ALL';
-        document.getElementById('filterType').value = 'ALL';
-        document.getElementById('filterCampaign').value = 'ALL';
+        if (document.getElementById('couponSearchInp')) document.getElementById('couponSearchInp').value = '';
+        if (document.getElementById('filterStatus')) document.getElementById('filterStatus').value = 'ALL';
+        if (document.getElementById('filterType')) document.getElementById('filterType').value = 'ALL';
+        if (document.getElementById('filterCampaign')) document.getElementById('filterCampaign').value = 'ALL';
         window.filterCouponsTable();
     };
 
-    // 11. Export CSV
+    // 15. Export CSV
     window.exportCouponsCSV = function() {
         let csv = 'Coupon Code,Campaign,Discount Type,Status\n';
         document.querySelectorAll('#couponsTable tbody tr.coupon-row').forEach(row => {
@@ -2268,90 +2573,20 @@ if (!empty($_GET['selected_id'])) {
         window.showToast('Exported coupons CSV.');
     };
 
-    // 12. Modal Open/Close Helpers
-    window.openCreateCouponModal = function() {
-        document.getElementById('createCouponModal').style.display = 'flex';
-    };
-    window.closeCreateCouponModal = function() {
-        document.getElementById('createCouponModal').style.display = 'none';
-    };
-
-    window.openCreateCampaignModal = function() {
-        document.getElementById('createCampaignModal').style.display = 'flex';
-    };
-
-    window.openCreateAutoDiscountModal = function() {
-        document.getElementById('createAutoModal').style.display = 'flex';
-    };
-
-    window.openCouponDetailsDrawer = function(id) {
-        const row = document.querySelector(`.coupon-row[data-id="${id}"]`);
-        if (row) {
-            const code = row.getAttribute('data-code');
-            const campaign = row.getAttribute('data-campaign');
-            const type = row.getAttribute('data-type');
-            const status = row.getAttribute('data-status');
-
-            document.getElementById('drawerTitle').textContent = 'Coupon: ' + code;
-            document.getElementById('drawerSub').textContent = 'Campaign: ' + campaign;
-            document.getElementById('drawerBody').innerHTML = `
-                <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-size: 16px; font-weight: 800; font-family: monospace;">${code}</span>
-                        <span class="badge-status-active">${status}</span>
-                    </div>
-                    <div style="font-size: 12.5px; color: #4B5563;">Discount Type: <strong>${type}</strong></div>
-                    <div style="font-size: 12.5px; color: #4B5563; margin-top: 4px;">Associated Campaign: <strong>${campaign}</strong></div>
-                </div>
-                <h4 style="font-size: 13px; font-weight: 700; color: #111827; margin: 16px 0 8px 0;">Checkout Integration Code</h4>
-                <div style="background: #111827; color: #10B981; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px;">
-                    https://nutronyx.in/apply-coupon.php?code=${encodeURIComponent(code)}
-                </div>
-                <div style="margin-top: 18px; display: flex; gap: 8px;">
-                    <button type="button" class="btn-header-secondary" onclick="window.copyToClipboard('${code}')">Copy Promo Code</button>
-                    <button type="button" class="btn-header-secondary" onclick="window.shareCouponLink('${code}')">Copy Share Link</button>
-                </div>
-            `;
-            document.getElementById('couponDetailsDrawer').style.display = 'flex';
+    // Global Document Click Listener for Action Menus
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.action-dropdown-wrap')) {
+            document.querySelectorAll('.action-dropdown-menu.show').forEach(m => m.classList.remove('show'));
         }
-    };
-
-    window.openEditCouponModal = function(id) {
-        window.openCouponDetailsDrawer(id);
-    };
-
-    // 13. Dropdowns
-    window.toggleBulkMenu = function(e) {
-        e.stopPropagation();
-        const d = document.getElementById('bulkActionsDropdown');
-        d.style.display = (d.style.display === 'block') ? 'none' : 'block';
-    };
-
-    window.toggleRowMenu = function(id, e) {
-        e.stopPropagation();
-        document.querySelectorAll('.row-dropdown-menu').forEach(m => m.style.display = 'none');
-        const m = document.getElementById('rowMenu_' + id);
-        if (m) m.style.display = 'block';
-    };
-
-    window.toggleSelectAll = function(master) {
-        document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = master.checked);
-    };
-
-    window.bulkSetStatus = function(st) {
-        const selected = Array.from(document.querySelectorAll('.row-checkbox:checked')).map(cb => cb.value);
-        if (selected.length === 0) {
-            alert('Please select at least one coupon row.');
-            return;
-        }
-        window.showToast('Updated status for ' + selected.length + ' coupons.');
-        document.getElementById('bulkActionsDropdown').style.display = 'none';
-    };
-
-    document.addEventListener('click', function() {
         const bd = document.getElementById('bulkActionsDropdown');
-        if (bd) bd.style.display = 'none';
-        document.querySelectorAll('.row-dropdown-menu').forEach(m => m.style.display = 'none');
+        if (bd && !e.target.closest('#bulkActionsDropdown') && !e.target.closest('button[onclick*="toggleBulkMenu"]')) {
+            bd.style.display = 'none';
+        }
+    });
+
+    // Auto-initialize summary on load
+    document.addEventListener('DOMContentLoaded', function() {
+        window.updateCouponLiveSummary();
     });
     </script>
 </body>
