@@ -50,7 +50,7 @@ $target = in_array($redirect, ['shop.php', 'index.php', 'track-order.php'], true
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Applying Coupon &mdash; Nutronyx</title>
+    <title>NUTRONYX</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {

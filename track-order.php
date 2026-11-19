@@ -63,7 +63,7 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track Your Order &mdash; NUTRONYX Botanical Wellness</title>
+    <title>NUTRONYX</title>
     <!-- Favicon & Brand Icons -->
     <link rel=icon type=image/x-icon href="/favicon.ico">
     <link rel=icon type=image/png sizes="16x16" href="/favicon-16x16.png">

@@ -60,7 +60,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The NUTRONYX Collection &mdash; Nature, Made Part of Your Everyday</title>
+    <title>NUTRONYX</title>
     <!-- Favicon & Brand Icons -->
     <link rel=icon type=image/x-icon href="/favicon.ico">
     <link rel=icon type=image/png sizes="16x16" href="/favicon-16x16.png">

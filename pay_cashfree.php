@@ -178,7 +178,7 @@ $isRealCashfreeSession = !empty($sessionId) && !str_starts_with($sessionId, 'ses
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cashfree Secure Checkout &mdash; Order #<?= htmlspecialchars($order['order_number']) ?> &mdash; NUTRONYX</title>
+    <title>NUTRONYX</title>
     
     <!-- Official Cashfree JS SDK v3 -->
     <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
