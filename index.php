@@ -20,7 +20,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NUTRONYX &mdash; Daily Wellness, Made Easy</title>
+    <title>NUTRONYX</title>
     
     <!-- Favicon & Brand Icons (Google Search & Browsers) -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">

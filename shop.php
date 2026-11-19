@@ -80,9 +80,9 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Global Base & Component Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css?v=20261117_v2">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261119_v4">
     <!-- Scoped Shop Page Stylesheet -->
-    <link rel="stylesheet" href="assets/css/shop.css?v=20261117_v2">
+    <link rel="stylesheet" href="assets/css/shop.css?v=20261119_v1">
 </head>
 <body class="nutronyx-body shop-page-body">
 
@@ -156,8 +156,8 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
 
                     <!-- B. Right Side: Editorial Dossier & Direct Commerce -->
                     <div class="flagship-editorial-dossier">
-                        <span class="dossier-eyebrow">SIGNATURE DAILY WELLNESS POWDER</span>
-                        <h3 class="dossier-title">NUTRONYX ABC+</h3>
+                        <span class="dossier-eyebrow">DAILY WELLNESS POWDER</span>
+                        <h3 class="dossier-title">ABC+</h3>
                         
                         <p class="dossier-desc">
                             A thoughtful blend of Amla, Beetroot, Carrot, Ginger and Lemon for a simple, nourishing daily routine. Crafted with 100% whole raw foods and zero refined sugars.
@@ -201,7 +201,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                             aria-checked="<?= (($_GET['variant'] ?? '') === 'var_abc_500g' && isset($flagshipVariants['var_abc_500g'])) ? 'false' : 'true' ?>"
                                             onclick="selectDossierSize('var_abc_250g', <?= (int)($flagshipVariants['var_abc_250g']['price_amount']/100) ?>, '1 Month Ritual', this)">
                                         <span class="pill-weight"><?= htmlspecialchars($flagshipVariants['var_abc_250g']['title'] ?: '200gm') ?></span>
-                                        <span class="pill-badge">Standard Pack</span>
+                                        <span class="pill-badge">Most Popular</span>
                                     </button>
                                 <?php endif; ?>
                                 <?php if (isset($flagshipVariants['var_abc_500g'])): ?>
@@ -236,26 +236,22 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                 <button type="button" class="btn-dossier-qty" onclick="changeDossierQty(1)" aria-label="Increase quantity">&plus;</button>
                             </div>
 
-                            <button type="button" class="btn-dossier-add" onclick="addDossierToCart(this)" aria-label="Add NUTRONYX ABC+ to cart">
+                            <button type="button" class="btn-dossier-add" onclick="addDossierToCart(this)" aria-label="Add ABC+ to cart">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                                     <line x1="3" y1="6" x2="21" y2="6"></line>
                                     <path d="M16 10a4 4 0 0 1-8 0"></path>
-                                </svg>
+                                    </svg>
                                 <span>ADD TO CART &bull; <span id="dossierTotalBtnPrice"><?= (($_GET['variant'] ?? '') === 'var_abc_500g' && isset($flagshipVariants['var_abc_500g'])) ? '₹499' : '₹' . $defPrice ?></span></span>
                             </button>
                         </div>
 
-                        <!-- Purity Guarantees -->
-                        <div class="dossier-guarantees">
-                            <div class="guarantee-note">
-                                <span class="check-icon">&check;</span>
-                                <span>Pan-India Delivery &bull; Shipping Charges Apply</span>
-                            </div>
-                            <div class="guarantee-note">
-                                <span class="check-icon">&check;</span>
-                                <span>100% Raw Ingredients &bull; Zero Additives</span>
-                            </div>
+                        <!-- Trust Guarantees (Matching Reference media_1795062513378.png) -->
+                        <div class="dossier-trust-list">
+                            <div class="trust-list-item">FSSAI Certified</div>
+                            <div class="trust-list-item">Premium Packaging</div>
+                            <div class="trust-list-item">No Artificial Preservatives</div>
+                            <div class="trust-list-item">Secure Checkout</div>
                         </div>
                     </div>
                 </div>

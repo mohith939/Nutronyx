@@ -49,13 +49,21 @@ class AnnouncementService
                     bg_color, text_color, speed_seconds
                 ) VALUES (
                     'store_nutronyx_in', 1,
-                    'Delivery from ₹75 — charged by weight, never on what you spend', 'truck',
+                    'GET 10% OFF YOUR FIRST ORDER | USE CODE: FIRST10', 'tag',
                     'No chemicals, no preservatives — freshness guaranteed', 'shield',
                     'Sourced directly from farmers — 100% whole-food ingredients', 'leaf',
                     '#0D2F1F', '#FAF6ED', 28
                 )
             ");
             $insert->execute();
+        } else {
+            // Auto-migrate legacy sentence_1 text if it contains "75" or "Delivery from"
+            $db->exec("
+                UPDATE site_announcements 
+                SET sentence_1 = 'GET 10% OFF YOUR FIRST ORDER | USE CODE: FIRST10', 
+                    icon_1 = 'tag' 
+                WHERE sentence_1 LIKE '%75%' OR sentence_1 LIKE '%Delivery from%'
+            ");
         }
 
         self::$tableEnsured = true;
@@ -81,8 +89,8 @@ class AnnouncementService
             return [
                 'website_id' => $siteId,
                 'is_enabled' => 1,
-                'sentence_1' => 'Delivery from ₹75 — charged by weight, never on what you spend',
-                'icon_1' => 'truck',
+                'sentence_1' => 'GET 10% OFF YOUR FIRST ORDER | USE CODE: FIRST10',
+                'icon_1' => 'tag',
                 'sentence_2' => 'No chemicals, no preservatives — freshness guaranteed',
                 'icon_2' => 'shield',
                 'sentence_3' => 'Sourced directly from farmers — 100% whole-food ingredients',
