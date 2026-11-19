@@ -24,6 +24,17 @@ $currentPage = 'contact';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact NUTRONYX &mdash; Tell Us How We Can Help</title>
+    <!-- Favicon & Brand Icons -->
+    <link rel=icon type=image/x-icon href="/favicon.ico">
+    <link rel=icon type=image/png sizes="16x16" href="/favicon-16x16.png">
+    <link rel=icon type=image/png sizes="32x32" href="/favicon-32x32.png">
+    <link rel=icon type=image/png sizes="48x48" href="/favicon-48x48.png">
+    <link rel=icon type=image/png sizes="96x96" href="/favicon-96x96.png">
+    <link rel=icon type=image/png sizes="192x192" href="/favicon-192x192.png">
+    <link rel=apple-touch-icon sizes="180x180" href="/apple-touch-icon.png">
+    <link rel=manifest href="/site.webmanifest">
+    <meta name=theme-color content="#174529">
+
     <meta name="description" content="Connect with the NUTRONYX Botanical Concierge. Whether you have questions regarding NUTRONYX ABC+, need order assistance, or wish to explore a partnership, we're here to help.">
 
     <!-- Google Fonts: Cormorant Garamond, Playfair Display & Plus Jakarta Sans -->
