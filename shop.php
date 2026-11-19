@@ -160,7 +160,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                         <h3 class="dossier-title">ABC+</h3>
                         
                         <p class="dossier-desc">
-                            A thoughtful blend of Amla, Beetroot, Carrot, Ginger and Lemon for a simple, nourishing daily routine. Crafted with 100% whole raw foods and zero refined sugars.
+                            ABC+ is a carefully crafted blend of Beetroot, Carrot, Amla, Lemon, and Ginger, created to bring the goodness of five natural ingredients into your everyday routine. Rich in naturally occurring antioxidants and key nutrients, it provides Vitamin C, beta-carotene, and plant-based compounds that support everyday immunity, digestion, healthy circulation, and overall wellness. A simple, convenient way to make natural nutrition part of every day.
                         </p>
 
                         <!-- Authentic Specifications Bar -->
