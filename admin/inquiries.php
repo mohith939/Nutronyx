@@ -86,7 +86,7 @@ function getInquiryPageUrl(array $overrides = []): string {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="../assets/css/admin.css?v=20261119_v1">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=20261119_white">
     <style>
     :root {
         --color-forest: #143D24;
