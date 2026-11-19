@@ -101,6 +101,80 @@ if ($method === 'POST') {
                 ]);
                 break;
 
+            case 'calculate_shipping':
+                $pincode = trim((string)($data['pincode'] ?? ''));
+                if (strlen($pincode) !== 6 || !ctype_digit($pincode)) {
+                    http_response_code(422);
+                    echo json_encode(['success' => false, 'error' => 'Please enter a valid 6-digit PIN code.']);
+                    exit;
+                }
+
+                $cart = CartService::getCart();
+                $subtotalRupees = (float)$cart['subtotal_rupees'];
+                $appliedCoupon = $cart['applied_coupon'];
+                $isFreeShipping = false;
+
+                if (!empty($appliedCoupon) && ($appliedCoupon['discount_type'] ?? '') === 'FREE_SHIPPING') {
+                    $isFreeShipping = true;
+                } elseif ($subtotalRupees >= ($cart['free_shipping_threshold'] ?? 999.00)) {
+                    $isFreeShipping = true;
+                }
+
+                if ($isFreeShipping) {
+                    $shippingPaise = 0;
+                    $shippingRupees = 0.0;
+                    $courierName = 'Ekart Express Logistics (Free)';
+                    $zoneName = 'Nationwide Free Delivery';
+                } else {
+                    // Total weight of cart items in grams
+                    $weightGrams = 0;
+                    foreach ($cart['items'] as $it) {
+                        $vTitle = strtolower($it['variant_title'] ?? '');
+                        if (strpos($vTitle, '400') !== false) {
+                            $itemWeight = 400;
+                        } elseif (strpos($vTitle, '500') !== false) {
+                            $itemWeight = 500;
+                        } elseif (strpos($vTitle, '1000') !== false || strpos($vTitle, '1kg') !== false) {
+                            $itemWeight = 1000;
+                        } else {
+                            $itemWeight = 200; // default 200gm
+                        }
+                        $weightGrams += ($itemWeight * (int)$it['quantity']);
+                    }
+                    $weightGrams = max(200, $weightGrams);
+
+                    // Call Ekart rate estimate
+                    $estimate = \Nutronyx\Services\EkartLogisticsService::getRateEstimate([
+                        'dropPincode' => $pincode,
+                        'weight' => $weightGrams,
+                        'invoiceAmount' => $subtotalRupees
+                    ]);
+
+                    $shippingRupees = (float)($estimate['total'] ?? 50.00);
+                    $shippingPaise = (int)round($shippingRupees * 100);
+                    $courierName = 'Ekart Express Logistics';
+                    $zoneName = $estimate['zone'] ?? 'Standard Surface';
+                }
+
+                $_SESSION['checkout_shipping_pincode'] = $pincode;
+                $_SESSION['checkout_shipping_paise'] = $shippingPaise;
+                $_SESSION['checkout_shipping_zone'] = $zoneName ?? '';
+                $_SESSION['checkout_courier_name'] = $courierName ?? 'Ekart Express Logistics';
+
+                // Re-fetch cart with updated shipping applied
+                $updatedCart = CartService::getCart();
+
+                echo json_encode([
+                    'success' => true,
+                    'shipping_rupees' => $shippingRupees,
+                    'shipping_paise' => $shippingPaise,
+                    'is_free' => $isFreeShipping,
+                    'courier' => $courierName,
+                    'zone' => $zoneName ?? '',
+                    'cart' => $updatedCart
+                ]);
+                break;
+
             default:
                 http_response_code(400);
                 echo json_encode(['success' => false, 'error' => 'Unknown action.']);

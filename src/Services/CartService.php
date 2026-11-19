@@ -186,19 +186,36 @@ class CartService
 
         $discountRupees = $discountPaise / 100;
 
-        // Shipping calculation: Free above ₹999, else ₹99
+        // Shipping calculation: Free if coupon grants it or over free shipping threshold
         $freeShippingThreshold = 999.00;
-        $shippingPaise = 0;
-        if ($subtotalRupees > 0) {
-            $shippingPaise = ($subtotalRupees >= $freeShippingThreshold) ? 0 : 9900;
+        $isFreeShipping = false;
+        if (!empty($appliedCoupon) && ($appliedCoupon['discount_type'] ?? '') === 'FREE_SHIPPING') {
+            $isFreeShipping = true;
+        } elseif ($subtotalRupees >= $freeShippingThreshold) {
+            $isFreeShipping = true;
         }
+
+        $shippingPaise = 0;
+        $shippingCalculated = false;
+
+        if ($isFreeShipping) {
+            $shippingPaise = 0;
+            $shippingCalculated = true;
+        } elseif (isset($_SESSION['checkout_shipping_paise'])) {
+            $shippingPaise = (int)$_SESSION['checkout_shipping_paise'];
+            $shippingCalculated = true;
+        }
+
         $shippingRupees = $shippingPaise / 100;
 
-        // GST Tax: included or standard 5% on health powders (already included or 0)
-        $taxPaise = 0;
-        $taxRupees = 0;
+        // GST Tax: Included in product price (retail MRP standard in India)
+        $taxRate = 18.0;
+        $taxableRupees = round($subtotalRupees / (1 + ($taxRate / 100)), 2);
+        $taxRupees = round($subtotalRupees - $taxableRupees, 2);
+        $taxPaise = (int)round($taxRupees * 100);
 
-        $totalPaise = max(0, $subtotalPaise - $discountPaise + $shippingPaise + $taxPaise);
+        // Cart Total (in cart page before pincode, shipping is 0; at checkout, includes shipping)
+        $totalPaise = max(0, $subtotalPaise - $discountPaise + $shippingPaise);
         $totalRupees = $totalPaise / 100;
 
         $neededForFreeShipping = max(0, $freeShippingThreshold - $subtotalRupees);
@@ -214,15 +231,18 @@ class CartService
             'discount_rupees' => $discountRupees,
             'shipping_paise' => $shippingPaise,
             'shipping_rupees' => $shippingRupees,
+            'shipping_calculated' => $shippingCalculated,
+            'is_free_shipping' => $isFreeShipping,
             'tax_paise' => $taxPaise,
             'tax_rupees' => $taxRupees,
+            'taxable_rupees' => $taxableRupees,
+            'gst_rate' => $taxRate,
             'total_paise' => $totalPaise,
             'total_rupees' => $totalRupees,
             'applied_coupon' => $appliedCoupon,
             'free_shipping_threshold' => $freeShippingThreshold,
             'needed_for_free_shipping' => $neededForFreeShipping,
-            'free_shipping_percent' => $freeShippingPercent,
-            'is_free_shipping' => ($shippingPaise === 0 && $subtotalRupees > 0)
+            'free_shipping_percent' => $freeShippingPercent
         ];
     }
 }

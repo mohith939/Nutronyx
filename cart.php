@@ -56,6 +56,23 @@ $cart = CartService::getCart();
 $items = $cart['items'];
 $cartItemVids = array_column($items, 'variant_id');
 
+// Fetch active promo codes dynamically from database
+$activeCoupons = [];
+try {
+    $allPromos = \Nutronyx\Services\PromotionService::getPromotions();
+    $now = time();
+    foreach ($allPromos as $p) {
+        if (($p['status'] ?? '') === 'ACTIVE' && (int)($p['is_active'] ?? 1) === 1) {
+            if (!empty($p['expires_at']) && strtotime($p['expires_at']) < $now) {
+                continue;
+            }
+            $activeCoupons[] = $p;
+        }
+    }
+} catch (\Throwable $e) {
+    $activeCoupons = [];
+}
+
 // Fetch Complementary Botanical Add-Ons from Database
 $db = Database::getConnection();
 $crossSellQuery = "
@@ -99,12 +116,9 @@ $currentPage = 'cart';
     <!-- Global Base & Component Stylesheet -->
     <link rel="stylesheet" href="assets/css/style.css?v=20261119_v5">
     <link rel="stylesheet" href="assets/css/shop.css?v=20261119_v3">
-    <link rel="stylesheet" href="assets/css/cart.css?v=20261119_v1">
+    <link rel="stylesheet" href="assets/css/cart.css?v=20261119_v2">
 </head>
 <body class="nutronyx-body">
-
-    <!-- Top Right Corner Botanical Leaves (Matching Reference Design) -->
-    <img src="assets/images/about-top-branch.png" alt="" class="botanical-corner-tr" aria-hidden="true">
 
     <!-- Site Header -->
     <?php include __DIR__ . '/includes/header.php'; ?>
@@ -114,7 +128,6 @@ $currentPage = 'cart';
 
             <!-- Header Row -->
             <div class="cart-header-row">
-                <div class="cart-eyebrow">YOUR BOTANICAL SANCTUARY</div>
                 <div class="cart-title-row">
                     <h1 class="cart-title">Your Wellness Cart</h1>
                     <div class="cart-item-count-badge">
@@ -242,9 +255,22 @@ $currentPage = 'cart';
                             </div>
                         </div>
 
-                        <p class="coupon-hints">
-                            Use <strong onclick="quickApplyCoupon('WELCOME15')">WELCOME15</strong> (15% OFF) or <strong onclick="quickApplyCoupon('NUTRO10')">NUTRO10</strong> (10% OFF).
-                        </p>
+                        <?php if (!empty($activeCoupons)): ?>
+                            <p class="coupon-hints">
+                                Use 
+                                <?php 
+                                $hints = [];
+                                foreach (array_slice($activeCoupons, 0, 2) as $ac) {
+                                    $cCode = htmlspecialchars($ac['code']);
+                                    $cType = $ac['discount_type'] ?? 'PERCENTAGE';
+                                    $cVal = (int)($ac['discount_value'] ?? 0);
+                                    $cDesc = ($cType === 'PERCENTAGE') ? "{$cVal}% OFF" : (($cType === 'FIXED_AMOUNT') ? "₹{$cVal} OFF" : "Free Delivery");
+                                    $hints[] = "<strong onclick=\"quickApplyCoupon('{$cCode}')\" style=\"cursor:pointer;\">{$cCode}</strong> ({$cDesc})";
+                                }
+                                echo implode(' or ', $hints) . '.';
+                                ?>
+                            </p>
+                        <?php endif; ?>
 
                         <!-- Price Breakdown -->
                         <div class="summary-rows-wrap">
@@ -259,19 +285,16 @@ $currentPage = 'cart';
                             </div>
 
                             <div class="summary-data-row">
-                                <span>Express Shipping</span>
+                                <span>Shipping</span>
                                 <span id="cartShippingText">
-                                    <?php if ($cart['shipping_rupees'] === 0.0): ?>
-                                        ₹0.00
-                                    <?php else: ?>
+                                    <?php if ($cart['is_free_shipping']): ?>
+                                        <strong style="color:#10B981;">FREE</strong>
+                                    <?php elseif (!empty($cart['shipping_calculated']) && $cart['shipping_rupees'] > 0): ?>
                                         ₹<?= number_format($cart['shipping_rupees'], 2) ?>
+                                    <?php else: ?>
+                                        <span style="color:#6B7280; font-size:12.5px;">Calculated at checkout</span>
                                     <?php endif; ?>
                                 </span>
-                            </div>
-
-                            <div class="summary-data-row">
-                                <span>Estimated GST</span>
-                                <span>Included</span>
                             </div>
                         </div>
 
@@ -385,7 +408,13 @@ $currentPage = 'cart';
 
         const shippingEl = document.getElementById('cartShippingText');
         if (shippingEl) {
-            shippingEl.innerHTML = (cart.shipping_rupees === 0) ? '₹0.00' : ('₹' + cart.shipping_rupees.toFixed(2));
+            if (cart.is_free_shipping) {
+                shippingEl.innerHTML = '<strong style="color:#10B981;">FREE</strong>';
+            } else if (cart.shipping_calculated && cart.shipping_rupees > 0) {
+                shippingEl.innerHTML = '₹' + parseFloat(cart.shipping_rupees).toFixed(2);
+            } else {
+                shippingEl.innerHTML = '<span style="color:#6B7280; font-size:12.5px;">Calculated at checkout</span>';
+            }
         }
 
         const totalEl = document.getElementById('cartTotalText');

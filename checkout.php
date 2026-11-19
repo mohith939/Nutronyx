@@ -17,6 +17,25 @@ $cart = CartService::getCart();
 $placedOrder = null;
 $errorMessage = '';
 
+// Active promo codes from database (never show deleted codes like WELCOME15)
+$activeCoupons = [];
+try {
+    $allPromos = \Nutronyx\Services\PromotionService::getPromotions();
+    $now = time();
+    foreach ($allPromos as $p) {
+        if (($p['status'] ?? '') === 'ACTIVE' && (int)($p['is_active'] ?? 1) === 1) {
+            if (!empty($p['expires_at']) && strtotime($p['expires_at']) < $now) {
+                continue;
+            }
+            $activeCoupons[] = $p;
+        }
+    }
+} catch (\Throwable $e) {
+    $activeCoupons = [];
+}
+
+$gstAmount = round($cart['subtotal_rupees'] - ($cart['subtotal_rupees'] / 1.18), 2);
+
 // Check if user reached checkout directly with empty cart
 if (empty($cart['items']) && $_SERVER['REQUEST_METHOD'] !== 'POST' && empty($_GET['confirmed'])) {
     header('Location: cart.php');
@@ -50,6 +69,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $errorMessage = 'Your cart is empty. Please add items before placing an order.';
     } else {
         try {
+            // Calculate Ekart shipping for destination pincode if not free
+            if (!$cart['is_free_shipping']) {
+                $weightGrams = 0;
+                foreach ($cart['items'] as $it) {
+                    $vTitle = strtolower($it['variant_title'] ?? '');
+                    if (strpos($vTitle, '400') !== false) {
+                        $itemWeight = 400;
+                    } elseif (strpos($vTitle, '500') !== false) {
+                        $itemWeight = 500;
+                    } elseif (strpos($vTitle, '1000') !== false || strpos($vTitle, '1kg') !== false) {
+                        $itemWeight = 1000;
+                    } else {
+                        $itemWeight = 200;
+                    }
+                    $weightGrams += ($itemWeight * (int)$it['quantity']);
+                }
+                $weightGrams = max(200, $weightGrams);
+
+                $estimate = \Nutronyx\Services\EkartLogisticsService::getRateEstimate([
+                    'dropPincode' => $pincode,
+                    'weight' => $weightGrams,
+                    'invoiceAmount' => $cart['subtotal_rupees']
+                ]);
+                $shipRupees = (float)($estimate['total'] ?? 50.00);
+                $_SESSION['checkout_shipping_paise'] = (int)round($shipRupees * 100);
+                $_SESSION['checkout_shipping_pincode'] = $pincode;
+                $cart = CartService::getCart();
+            }
+
             $orderItems = [];
             foreach ($cart['items'] as $it) {
                 $orderItems[] = [
@@ -160,7 +208,7 @@ $currentPage = 'checkout';
     <!-- Stylesheets -->
     <link rel="stylesheet" href="assets/css/style.css?v=20261119_v5">
     <link rel="stylesheet" href="assets/css/shop.css?v=20261119_v3">
-    <link rel="stylesheet" href="assets/css/cart.css?v=20261119_v1">
+    <link rel="stylesheet" href="assets/css/cart.css?v=20261119_v2">
 </head>
 <body class="nutronyx-body">
 
@@ -459,8 +507,13 @@ $currentPage = 'checkout';
                                         <div class="input-icon-wrap">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>
                                             <input type="text" id="pincode" name="pincode" class="form-input-control" 
-                                                   placeholder="560001" pattern="[0-9]{6}" maxlength="6" required 
-                                                   value="<?= htmlspecialchars($_POST['pincode'] ?? '560001') ?>">
+                                                   placeholder="Enter 6-digit PIN Code" pattern="[0-9]{6}" maxlength="6" required 
+                                                   value="<?= htmlspecialchars($_POST['pincode'] ?? $_SESSION['checkout_shipping_pincode'] ?? '') ?>"
+                                                   oninput="onPincodeInput(this.value)">
+                                        </div>
+                                        <div id="pincodeEkartNotice" style="font-size: 11.5px; color: #166534; margin-top: 5px; display: <?= (!empty($_SESSION['checkout_shipping_pincode'])) ? 'flex' : 'none' ?>; align-items: center; gap: 4px;">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            <span id="pincodeEkartText"><?= htmlspecialchars($_SESSION['checkout_courier_name'] ?? 'Ekart Express Logistics') ?> • <?= ($cart['is_free_shipping']) ? 'FREE Delivery' : ('₹' . number_format($cart['shipping_rupees'], 2)) ?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -535,12 +588,25 @@ $currentPage = 'checkout';
                                     </div>
                                 </div>
 
-                                <p class="coupon-hints" style="font-size:11px; color:#7A766F; margin-top:6px; margin-bottom:0;">
-                                    Use <strong onclick="quickApplyCheckout('WELCOME15')" style="color:#175C31; cursor:pointer; text-decoration:underline;">WELCOME15</strong> (15% OFF) or <strong onclick="quickApplyCheckout('NUTRO10')" style="color:#175C31; cursor:pointer; text-decoration:underline;">NUTRO10</strong> (10% OFF).
-                                </p>
+                                <?php if (!empty($activeCoupons)): ?>
+                                    <p class="coupon-hints" style="font-size:11px; color:#7A766F; margin-top:6px; margin-bottom:0;">
+                                        Use 
+                                        <?php 
+                                        $hints = [];
+                                        foreach (array_slice($activeCoupons, 0, 2) as $ac) {
+                                            $cCode = htmlspecialchars($ac['code']);
+                                            $cType = $ac['discount_type'] ?? 'PERCENTAGE';
+                                            $cVal = (int)($ac['discount_value'] ?? 0);
+                                            $cDesc = ($cType === 'PERCENTAGE') ? "{$cVal}% OFF" : (($cType === 'FIXED_AMOUNT') ? "₹{$cVal} OFF" : "Free Delivery");
+                                            $hints[] = "<strong onclick=\"quickApplyCheckout('{$cCode}')\" style=\"color:#175C31; cursor:pointer; text-decoration:underline;\">{$cCode}</strong> ({$cDesc})";
+                                        }
+                                        echo implode(' or ', $hints) . '.';
+                                        ?>
+                                    </p>
+                                <?php endif; ?>
                             </div>
 
-                            <!-- Price Breakdown (Shipping charges line omitted per user request) -->
+                            <!-- Price Breakdown -->
                             <div class="summary-rows-wrap" style="border-top:1px solid #EBE6DC; padding-top:16px;">
                                 <div class="summary-data-row">
                                     <span>Items Subtotal</span>
@@ -553,8 +619,21 @@ $currentPage = 'checkout';
                                 </div>
 
                                 <div class="summary-data-row">
-                                    <span>Taxes (GST)</span>
-                                    <span>Included</span>
+                                    <span>Express Shipping (Ekart)</span>
+                                    <span id="checkoutShippingText">
+                                        <?php if ($cart['is_free_shipping']): ?>
+                                            <strong style="color: #10B981;">FREE</strong>
+                                        <?php elseif (!empty($cart['shipping_calculated']) && $cart['shipping_rupees'] > 0): ?>
+                                            ₹<?= number_format($cart['shipping_rupees'], 2) ?>
+                                        <?php else: ?>
+                                            <span style="color:#6B7280; font-size:12.5px;">Enter PIN code</span>
+                                        <?php endif; ?>
+                                    </span>
+                                </div>
+
+                                <div class="summary-data-row">
+                                    <span>GST (18% Included)</span>
+                                    <span id="checkoutGstText">₹<?= number_format($gstAmount, 2) ?></span>
                                 </div>
                             </div>
 
@@ -654,10 +733,77 @@ $currentPage = 'checkout';
         applyCheckoutCoupon();
     }
 
+    // Pincode & Ekart Logistics Rate Calculation
+    let pincodeTimer = null;
+    function onPincodeInput(val) {
+        const pin = val.replace(/\D/g, '');
+        clearTimeout(pincodeTimer);
+        if (pin.length === 6) {
+            pincodeTimer = setTimeout(() => {
+                calculateEkartShipping(pin);
+            }, 250);
+        }
+    }
+
+    function calculateEkartShipping(pincode) {
+        const noticeEl = document.getElementById('pincodeEkartNotice');
+        const noticeTxt = document.getElementById('pincodeEkartText');
+        const shipEl = document.getElementById('checkoutShippingText');
+
+        if (shipEl) shipEl.innerHTML = '<span style="color:#6B7280; font-size:12px;">Calculating...</span>';
+
+        fetch('api/cart.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'calculate_shipping', pincode: pincode })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.cart) {
+                updateCheckoutPriceUI(data.cart);
+                if (noticeEl && noticeTxt) {
+                    noticeEl.style.display = 'flex';
+                    noticeTxt.style.color = '#166534';
+                    const shipLabel = data.is_free ? 'FREE Delivery' : ('₹' + parseFloat(data.shipping_rupees).toFixed(2));
+                    noticeTxt.textContent = data.courier + ' (' + (data.zone || 'Express') + ') • ' + shipLabel;
+                }
+            } else if (data.error) {
+                if (shipEl) shipEl.innerHTML = '<span style="color:#DC2626; font-size:12px;">Check PIN</span>';
+                if (noticeEl && noticeTxt) {
+                    noticeEl.style.display = 'flex';
+                    noticeTxt.style.color = '#DC2626';
+                    noticeTxt.textContent = data.error;
+                }
+            }
+        })
+        .catch(err => {
+            console.error('Shipping calculation error:', err);
+        });
+    }
+
     function updateCheckoutPriceUI(cart) {
         // Subtotal
         const subtotalEl = document.getElementById('checkoutSubtotalText');
         if (subtotalEl) subtotalEl.textContent = '₹' + parseFloat(cart.subtotal_rupees).toFixed(2);
+
+        // Express Shipping (Ekart)
+        const shippingEl = document.getElementById('checkoutShippingText');
+        if (shippingEl) {
+            if (cart.is_free_shipping) {
+                shippingEl.innerHTML = '<strong style="color: #10B981;">FREE</strong>';
+            } else if (cart.shipping_calculated && cart.shipping_rupees > 0) {
+                shippingEl.textContent = '₹' + parseFloat(cart.shipping_rupees).toFixed(2);
+            } else {
+                shippingEl.innerHTML = '<span style="color:#6B7280; font-size:12.5px;">Enter PIN code</span>';
+            }
+        }
+
+        // GST (18% Included)
+        const gstEl = document.getElementById('checkoutGstText');
+        if (gstEl) {
+            const gstRupees = parseFloat(cart.tax_rupees || (cart.subtotal_rupees - (cart.subtotal_rupees / 1.18)));
+            gstEl.textContent = '₹' + gstRupees.toFixed(2);
+        }
 
         // Final Payable
         const finalEl = document.getElementById('checkoutFinalPayableText');
@@ -686,10 +832,15 @@ $currentPage = 'checkout';
         }
     }
 
-    // Auto-initialize character counter on load
+    // Auto-initialize character counter & pincode calculation on load
     document.addEventListener('DOMContentLoaded', () => {
         const noteEl = document.getElementById('customer_notes');
         if (noteEl) updateNoteCounter(noteEl);
+
+        const pinEl = document.getElementById('pincode');
+        if (pinEl && pinEl.value.trim().length === 6) {
+            calculateEkartShipping(pinEl.value.trim());
+        }
     });
     </script>
 </body>
