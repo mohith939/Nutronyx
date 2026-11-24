@@ -459,7 +459,7 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                 </span>
                 <h1 class="policy-hero-title">Shipping <span>Policy</span></h1>
                 <p class="policy-hero-subtext">
-                    Learn how we process, pack and deliver every Nutronyx order with care, transparency and reliability.
+                    Learn how NUTRONYX processes, packs, and delivers your orders with care, transparency, and reliability.
                 </p>
             </div>
         </header>
@@ -480,7 +480,7 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                                 <span class="faq-headline-line faq-headline-accent">Reliable Delivery.</span>
                             </h2>
                             <p class="faq-intro-subtext">
-                                Every order is packed with care and delivered with the same commitment to quality that goes into every Nutronyx product.
+                                Every NUTRONYX order is carefully packed and prepared for delivery, reflecting our commitment to quality and customer satisfaction.
                             </p>
 
                             <!-- Table of Contents Quick Nav -->
@@ -501,14 +501,14 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                                 <div class="concierge-icon-wrap" aria-hidden="true">
                                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="1" y="3" width="15" height="13"></rect>
-                                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                        <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
                                         <circle cx="5.5" cy="18.5" r="2.5"></circle>
                                         <circle cx="18.5" cy="18.5" r="2.5"></circle>
                                     </svg>
                                 </div>
                                 <div class="concierge-content">
                                     <h3 class="concierge-title">Track an Existing Order</h3>
-                                    <p class="concierge-text">Check your live dispatch and courier tracking status anytime.</p>
+                                    <p class="concierge-text">Track your order and check the latest shipping and delivery updates.</p>
                                     <a href="track-order" class="concierge-link">
                                         <span>Go to Order Tracker</span>
                                         <span class="concierge-arrow" aria-hidden="true">↗</span>
@@ -528,7 +528,7 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Order Processing</h2>
                                     <p class="policy-text">
-                                        Orders are processed within 1–2 business days after successful payment confirmation.
+                                        Orders are processed within 1–2 business days after order confirmation.
                                     </p>
                                     <p class="policy-text">
                                         Orders placed on Sundays or public holidays will be processed on the next business day.
@@ -542,7 +542,7 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Shipping Time</h2>
                                     <p class="policy-text">
-                                        Standard delivery typically takes 3–7 business days depending on your location.
+                                        Standard delivery typically takes 3–7 business days after dispatch, depending on your location.
                                     </p>
                                     <p class="policy-text">
                                         Delivery timelines may vary for remote or rural areas.
@@ -570,7 +570,10 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Order Tracking</h2>
                                     <p class="policy-text">
-                                        Once your order has been shipped, you will receive a confirmation via email and/or SMS/WhatsApp (where available) with your tracking details.
+                                        Once your order has been dispatched, you will receive a shipping confirmation along with tracking details via email, SMS, or WhatsApp, where available.
+                                    </p>
+                                    <p class="policy-text">
+                                        You can use the tracking details to monitor your shipment's delivery status.
                                     </p>
                                 </div>
                             </article>
@@ -581,7 +584,7 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Delivery Delays</h2>
                                     <p class="policy-text">
-                                        While we strive to deliver your order within the estimated timeframe, delays may occur due to:
+                                        While we strive to deliver your order within the estimated timeframe, delays may occasionally occur due to:
                                     </p>
                                     <ul class="policy-bullet-list" role="list">
                                         <li class="policy-bullet-item">
@@ -594,7 +597,7 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Courier disruptions</span>
+                                            <span>Courier service disruptions</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
@@ -602,7 +605,7 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                                         </li>
                                     </ul>
                                     <p class="policy-text">
-                                        We appreciate your patience and understanding.
+                                        We appreciate your patience and understanding. If your delivery is significantly delayed, please contact our support team at <a href="mailto:support@nutronyx.in" style="color: #1E5736; font-weight: 600; text-decoration: underline;">support@nutronyx.in</a> for assistance.
                                     </p>
                                 </div>
                             </article>
@@ -616,7 +619,7 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                                         Please ensure that your shipping address and contact details are accurate.
                                     </p>
                                     <p class="policy-text">
-                                        Nutronyx is not responsible for delays or failed deliveries caused by incorrect or incomplete information provided by the customer.
+                                        NUTRONYX is not responsible for delays or failed deliveries caused by incorrect or incomplete information provided by the customer.
                                     </p>
                                 </div>
                             </article>
@@ -630,7 +633,7 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                             <span class="policy-support-eyebrow">SUPPORT</span>
                             <h2 class="policy-support-title">Need help with your order?</h2>
                             <p class="policy-support-desc">
-                                If you have any questions regarding your shipment or delivery, our team will be happy to assist you.
+                                If you have any questions or concerns about your order, shipping, or delivery, please contact our support team.
                             </p>
                             <a href="mailto:support@nutronyx.in" class="policy-support-email-btn">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -639,9 +642,6 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                                 </svg>
                                 <span>support@nutronyx.in</span>
                             </a>
-                            <p class="policy-support-note">
-                                Every order is packed with care and delivered with the same commitment to quality that goes into every Nutronyx product.
-                            </p>
                         </section>
 
                     </div>
@@ -655,15 +655,15 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
              ========================================================================== -->
         <section class="policy-bottom-cta">
             <div class="policy-bottom-cta-inner">
-                <h3>Ready to Begin Your Daily Ritual?</h3>
-                <p>Discover clean, sustained plant vitality with NUTRONYX ABC+. Pure 100% whole foods designed for lifelong health.</p>
+                <h3>Ready to Make Wellness Part of Your Day?</h3>
+                <p>Discover thoughtfully crafted natural nutrition designed to complement your everyday wellness routine.</p>
                 <div class="policy-cta-btn-group">
                     <a href="shop" class="btn-policy-shop">
-                        <span>Shop ABC+ Ritual</span>
+                        <span>Explore Our Products</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </a>
                     <a href="contact" class="btn-policy-contact">
-                        <span>Talk to Concierge</span>
+                        <span>Contact Our Team</span>
                     </a>
                 </div>
             </div>
@@ -676,7 +676,7 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
     <!-- Scripts: GSAP & Smooth Scrolling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="assets/js/main.js?v=20261124_v1"></script>
+    <script src="assets/js/main.js?v=20261124_v3"></script>
 
     <script>
         // Smooth scroll & active state tracking for TOC links

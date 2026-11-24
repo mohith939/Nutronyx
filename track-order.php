@@ -81,7 +81,11 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
     <link rel="stylesheet" href="assets/css/style.css?v=20261124_v3">
     <style>
     .track-body { background-color: #FAF7F2; min-height: 100vh; display: flex; flex-direction: column; }
-    .track-hero { padding: 120px 4vw 40px; text-align: center; max-width: 720px; margin: 0 auto; }
+    .track-hero { padding: 170px 4vw 40px; text-align: center; max-width: 720px; margin: 0 auto; }
+    @media (max-width: 768px) {
+        .track-hero { padding-top: 145px; }
+        .track-card { padding: 24px 20px; margin-bottom: 40px; }
+    }
     .track-card { background: #FFFFFF; border-radius: 24px; padding: clamp(28px, 4vw, 40px); border: 1px solid rgba(215, 207, 192, 0.6); box-shadow: 0 16px 40px rgba(20, 52, 34, 0.05); max-width: 680px; margin: 0 auto 60px; width: 92%; }
     .stepper { display: flex; justify-content: space-between; position: relative; margin: 30px 0 36px; }
     .stepper::before { content: ''; position: absolute; top: 16px; left: 10%; right: 10%; height: 2px; background: #E2DBD0; z-index: 1; }
@@ -101,9 +105,9 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
 
     <main>
         <div class="track-hero">
-            <span style="font-size: 11.5px; font-weight: 700; color: #1E5736; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 8px;">Order Tracking Concierge</span>
-            <h1 style="font-family: var(--font-serif, 'Playfair Display'); font-size: clamp(32px, 4.5vw, 44px); font-weight: 600; color: #14221A;">Track Your Wellness Package</h1>
-            <p style="font-size: 14.5px; color: #586B5F; margin-top: 10px; line-height: 1.5;">Enter your order reference number and associated contact mobile number to view real-time fulfillment milestones.</p>
+            <span style="font-size: 11.5px; font-weight: 700; color: #1E5736; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 8px;">Order Tracking</span>
+            <h1 style="font-family: var(--font-serif, 'Playfair Display'); font-size: clamp(32px, 4.5vw, 44px); font-weight: 600; color: #14221A;">Track Your Order</h1>
+            <p style="font-size: 14.5px; color: #586B5F; margin-top: 10px; line-height: 1.5;">Enter your order number and registered mobile number to check your order status and delivery updates.</p>
         </div>
 
         <div class="track-card">
@@ -120,7 +124,7 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
                     </div>
                 </div>
                 <button type="submit" class="btn-track" style="align-self: center; width: 100%; max-width: 240px;">
-                    Locate Shipment &rarr;
+                    Track My Order
                 </button>
             </form>
 
@@ -215,5 +219,10 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
         </div>
     </main>
 
+    <!-- Footer -->
+    <?php include __DIR__ . '/includes/footer.php'; ?>
+
+    <!-- Scripts -->
+    <script src="assets/js/main.js?v=20261124_v3"></script>
 </body>
 </html>
