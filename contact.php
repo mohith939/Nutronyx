@@ -354,7 +354,7 @@ $currentPage = 'contact';
                             </svg>
                         </div>
                         <h3 class="partner-card-title">Retail Stores</h3>
-                        <p class="partner-card-desc">Bring Nutronyx to your customers</p>
+                        <p class="partner-card-desc">Bring NUTRONYX products closer to your customers.</p>
                     </div>
 
                     <!-- 2. Distributors -->
@@ -369,7 +369,7 @@ $currentPage = 'contact';
                             </svg>
                         </div>
                         <h3 class="partner-card-title">Distributors</h3>
-                        <p class="partner-card-desc">Grow with a trusted wellness brand</p>
+                        <p class="partner-card-desc">Expand your portfolio with quality natural nutrition products.</p>
                     </div>
 
                     <!-- 3. Corporate Wellness -->
@@ -383,7 +383,7 @@ $currentPage = 'contact';
                             </svg>
                         </div>
                         <h3 class="partner-card-title">Corporate Wellness</h3>
-                        <p class="partner-card-desc">Support your team’s everyday health</p>
+                        <p class="partner-card-desc">Encourage healthier habits across your workplace.</p>
                     </div>
 
                     <!-- 4. Creators & Influencers -->
@@ -395,15 +395,15 @@ $currentPage = 'contact';
                             </svg>
                         </div>
                         <h3 class="partner-card-title">Creators & Influencers</h3>
-                        <p class="partner-card-desc">Collaborate to spread better nutrition</p>
+                        <p class="partner-card-desc">Inspire your audience through meaningful wellness collaborations.</p>
                     </div>
 
                 </div>
 
                 <!-- Call to Action Pill Button -->
                 <div class="partnership-cta-wrap">
-                    <button type="button" class="btn-partner-cta" id="btnPartnerCta" aria-label="Partner with Nutronyx">
-                        <span>Partner with Nutronyx</span>
+                    <button type="button" class="btn-partner-cta" id="btnPartnerCta" aria-label="Partner with NUTRONYX">
+                        <span>Partner with NUTRONYX</span>
                         <span class="btn-arrow" aria-hidden="true">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>

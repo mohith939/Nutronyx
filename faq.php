@@ -207,12 +207,12 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                     <!-- Left Sticky Editorial Column -->
                     <aside class="faq-sticky-intro">
                         <div class="faq-intro-wrap">
-                            <span class="faq-eyebrow">THE NUTRONYX KNOWLEDGE EXPERIENCE</span>
+                            <span class="faq-eyebrow">YOUR WELLNESS QUESTIONS, ANSWERED</span>
                             <h2 class="faq-headline">
                                 <span class="faq-headline-line">Curiosity</span>
                                 <span class="faq-headline-line faq-headline-accent">Meets Clarity.</span>
                             </h2>
-                            <p class="faq-intro-subtext">Everything you want to know about making ABC+ part of your everyday ritual.</p>
+                            <p class="faq-intro-subtext">Find answers to common questions about our products, natural ingredients, and everyday wellness.</p>
 
                             <!-- Editorial Concierge Card -->
                             <div class="faq-concierge-card">
@@ -222,10 +222,10 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     </svg>
                                 </div>
                                 <div class="concierge-content">
-                                    <h3 class="concierge-title">Have a specific question?</h3>
-                                    <p class="concierge-text">Our wellness concierge is on hand to guide your daily ritual and address personal preferences.</p>
+                                    <h3 class="concierge-title">Have More Questions?</h3>
+                                    <p class="concierge-text">Our team is here to help with product information, orders, and general enquiries.</p>
                                     <a href="contact" class="concierge-link" style="margin-bottom: 8px;">
-                                        <span>Contact Ritual Concierge</span>
+                                        <span>Contact NUTRONYX Support</span>
                                         <span class="concierge-arrow" aria-hidden="true">↗</span>
                                     </a>
                                     <div style="font-size: 12px; color: #6B7280; margin-top: 6px;">
@@ -256,11 +256,11 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-1" role="region" aria-labelledby="faq-btn-1">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                NUTRONYX ABC+ is a daily wellness blend crafted from five pure whole-food ingredients: Amla (Indian Gooseberry), Beetroot, Carrot, Ginger, and Lemon. Formulated into a finely soluble powder, it delivers everyday vitality, sustained energy, and digestive harmony without synthetic vitamins, artificial sweeteners, or fillers.
+                                                NUTRONYX ABC+ is a natural wellness powder made from five carefully selected ingredients: Amla, Beetroot, Carrot, Ginger, and Lemon. Designed to complement everyday nutrition, it offers a convenient way to incorporate plant-based ingredients into your daily routine.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
-                                                <span>Five whole ingredients · Zero synthetic additives</span>
+                                                <span>Five natural ingredients • Everyday nutrition</span>
                                             </div>
                                         </div>
                                     </div>
@@ -283,11 +283,11 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-2" role="region" aria-labelledby="faq-btn-2">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                ABC+ contains exactly five unadulterated ingredients: fresh organic Amla for natural Vitamin C and immunity; Beetroot for natural nitrates and healthy blood circulation; Carrot for beta-carotene and antioxidant protection; Ginger for digestive warmth and gut comfort; and Lemon for gentle daily cleansing and natural freshness. Nothing else is added.
+                                                ABC+ contains five ingredients: Amla (Indian Gooseberry), Carrot, Beetroot, Lemon, and Ginger. Each ingredient is selected for its natural nutritional properties and contribution to the overall blend.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
-                                                <span>Amla · Beetroot · Carrot · Ginger · Lemon</span>
+                                                <span>Amla • Carrot • Beetroot • Lemon • Ginger</span>
                                             </div>
                                         </div>
                                     </div>
@@ -310,11 +310,11 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-3" role="region" aria-labelledby="faq-btn-3">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                Unlike conventional supplements that rely on synthetic isolates, chemical binders, maltodextrin fillers, or masked artificial flavors, ABC+ honors the whole plant matrix. The ingredients are gently dehydrated at controlled low temperatures to protect delicate phytonutrients and enzymes, allowing your body to absorb them as real, recognized nourishment.
+                                                ABC+ focuses on a carefully balanced combination of plant-based ingredients rather than relying on a single isolated nutrient. Its convenient powder format makes it easy to include natural nutrition in your everyday routine.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
-                                                <span>Whole-plant matrix · Bioavailable whole-food nutrition</span>
+                                                <span>Thoughtful formulation • Plant-based ingredients</span>
                                             </div>
                                         </div>
                                     </div>
@@ -337,11 +337,11 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-4" role="region" aria-labelledby="faq-btn-4">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                Preparation is a calm three-step ritual: Add one level scoop (approx. 10g) of ABC+ powder into a glass, pour 200ml of room temperature or lukewarm water (or blend into your favorite smoothie), and stir gently until dissolved into a rich, deep ruby elixir. Drink fresh and savor the natural earthy notes.
+                                                Add 1–2 teaspoons of ABC+ powder to a glass of water and stir thoroughly. You can also blend it into your favourite smoothie. Follow the serving instructions on the product packaging.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
-                                                <span>1 scoop · 200ml water · Stir gently &amp; enjoy</span>
+                                                <span>1–2 teaspoons • Mix well • Enjoy</span>
                                             </div>
                                         </div>
                                     </div>
@@ -364,11 +364,11 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-5" role="region" aria-labelledby="faq-btn-5">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                We recommend enjoying ABC+ first thing in the morning on an empty stomach or alongside a light breakfast. Taking it at the start of your day supports optimal nutrient absorption, natural hydration, and calm, sustained vitality without the jittery spike and crash associated with caffeine.
+                                                ABC+ can be enjoyed at a time that suits your daily routine, whether in the morning or during the day. Consistency and a balanced diet are more important than consuming it at a specific time.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
-                                                <span>Ideal as your first morning wellness ritual</span>
+                                                <span>Flexible timing • Everyday wellness</span>
                                             </div>
                                         </div>
                                     </div>
@@ -391,11 +391,11 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-6" role="region" aria-labelledby="faq-btn-6">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                Yes. ABC+ is formulated specifically as a daily nourishment ritual for lasting well-being. Because it contains exclusively pure whole foods with zero synthetic stimulants, chemical preservatives, or pharmaceuticals, it is inherently gentle and designed for consistent, lifelong daily use.
+                                                ABC+ is designed to complement everyday nutrition when consumed according to the recommended serving instructions. Individuals with allergies, medical conditions, or specific dietary requirements should review the ingredients and consult a qualified healthcare professional when appropriate.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
-                                                <span>Gentle food-grade nutrition · Safe daily</span>
+                                                <span>Everyday nutrition • Follow recommended serving</span>
                                             </div>
                                         </div>
                                     </div>
@@ -418,11 +418,11 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-7" role="region" aria-labelledby="faq-btn-7">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                Store your ABC+ canister in a cool, dry pantry away from direct sunlight, excess heat, and humidity. Always close the airtight lid tightly after use. Since our formula contains no synthetic anti-caking agents, using a clean, completely dry spoon ensures the powder remains fine, fragrant, and fresh throughout its shelf life.
+                                                Store ABC+ in a cool, dry place away from direct sunlight, heat, and moisture. Always close the container tightly after use and use a clean, dry spoon. Follow the storage instructions and best-before date printed on the packaging.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
-                                                <span>Cool, dry place · Airtight seal · No anti-caking chemicals</span>
+                                                <span>Cool &amp; dry place • Keep tightly closed</span>
                                             </div>
                                         </div>
                                     </div>
@@ -445,11 +445,11 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                     <div class="faq-collapse" id="faq-ans-8" role="region" aria-labelledby="faq-btn-8">
                                         <div class="faq-collapse-inner">
                                             <p class="faq-answer-text">
-                                                ABC+ is available exclusively through our official online boutique at nutronyx.in and select wellness partners. Ordering directly guarantees that you receive fresh small-batch craftsmanship, authentic packaging, and direct support from our ritual concierge team.
+                                                You can purchase NUTRONYX ABC+ directly from our official website, nutronyx.in. For assistance with ordering, product information, or delivery-related questions, contact our customer support team.
                                             </p>
                                             <div class="faq-highlight-pill">
                                                 <span class="pill-dot"></span>
-                                                <span>Exclusive at nutronyx.in · Fresh small batches</span>
+                                                <span>Official website • Customer support</span>
                                             </div>
                                         </div>
                                     </div>
@@ -468,15 +468,15 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
              ========================================================================== -->
         <section class="faq-bottom-cta">
             <div class="faq-bottom-cta-inner">
-                <h3>Ready to Begin Your Daily Ritual?</h3>
-                <p>Discover clean, sustained plant vitality with NUTRONYX ABC+. Pure 100% whole foods designed for lifelong health.</p>
+                <h3>Ready to Make Wellness Part of Your Day?</h3>
+                <p>Discover thoughtfully crafted natural nutrition designed to complement your everyday wellness routine.</p>
                 <div class="faq-cta-btn-group">
                     <a href="shop" class="btn-faq-shop">
-                        <span>Shop ABC+ Ritual</span>
+                        <span>Explore Our Products</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </a>
                     <a href="contact" class="btn-faq-contact">
-                        <span>Talk to Concierge</span>
+                        <span>Contact Our Team</span>
                     </a>
                 </div>
             </div>
@@ -489,6 +489,6 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
     <!-- Scripts: GSAP & Main Interactions -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="assets/js/main.js?v=20261124_v1"></script>
+    <script src="assets/js/main.js?v=20261124_v3"></script>
 </body>
 </html>
