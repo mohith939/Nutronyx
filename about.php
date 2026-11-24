@@ -42,7 +42,7 @@ $currentPage = "about";
     <!-- Global Base & Component Stylesheet -->
     <link rel="stylesheet" href="assets/css/style.css?v=20261124_v3">
     <!-- Scoped About Page Stylesheet -->
-    <link rel="stylesheet" href="assets/css/about.css?v=20261119_v1">
+    <link rel="stylesheet" href="assets/css/about.css?v=20261124_v3">
 </head>
 <body class="nutronyx-body about-page-body">
 
@@ -90,7 +90,7 @@ $currentPage = "about";
 
                         <!-- Supporting Narrative -->
                         <p class="about-hero-description">
-                            At Nutronyx, we believe better health begins with better choices. We carefully select natural ingredients and thoughtfully craft them into simple, convenient nutrition designed to become part of your everyday routine.
+                            At NUTRONYX, we believe better health begins with better everyday choices. We bring together carefully selected natural ingredients to create simple, thoughtfully crafted nutrition products that fit effortlessly into your daily routine.
                         </p>
 
                         <!-- 3-Button Single Row Group -->
@@ -222,8 +222,9 @@ $currentPage = "about";
                                     </svg>
                                 </div>
                                 <div class="story-node-content">
+                                    <h3 class="story-node-title">Our Beginning</h3>
                                     <p class="story-node-text">
-                                        Nutronyx began with one simple vision—to make natural nutrition more accessible for everyone.
+                                        NUTRONYX began with a simple vision—to make natural nutrition accessible and easy to incorporate into everyday life.
                                     </p>
                                 </div>
                             </div>
@@ -239,8 +240,9 @@ $currentPage = "about";
                                     </svg>
                                 </div>
                                 <div class="story-node-content">
+                                    <h3 class="story-node-title">Our First Step</h3>
                                     <p class="story-node-text">
-                                        Our journey started with ABC+, a thoughtfully crafted blend developed using carefully selected natural ingredients to support everyday wellness.
+                                        Our journey began with ABC+, a thoughtfully crafted blend of five carefully selected natural ingredients, created to make everyday nutrition simple and convenient.
                                     </p>
                                 </div>
                             </div>
@@ -254,8 +256,9 @@ $currentPage = "about";
                                     </svg>
                                 </div>
                                 <div class="story-node-content">
+                                    <h3 class="story-node-title">What We Believe</h3>
                                     <p class="story-node-text">
-                                        Rather than following trends, we focus on creating products people can trust through quality, transparency, and consistency.
+                                        We believe lasting trust is built through quality, transparency, and consistency—not by simply following trends.
                                     </p>
                                 </div>
                             </div>
@@ -270,8 +273,9 @@ $currentPage = "about";
                                     </svg>
                                 </div>
                                 <div class="story-node-content">
+                                    <h3 class="story-node-title">Looking Ahead</h3>
                                     <p class="story-node-text">
-                                        As Nutronyx continues to grow, we remain committed to developing clean, innovative nutrition products that help people build healthier habits every day.
+                                        As NUTRONYX grows, our focus remains on developing thoughtfully crafted natural nutrition products that inspire healthier everyday habits.
                                     </p>
                                 </div>
                             </div>
@@ -306,8 +310,106 @@ $currentPage = "about";
         </section>
 
         <!-- ==========================================================================
+             SECTION: OUR MISSION
+             "Making Natural Nutrition Accessible"
+             ========================================================================== -->
+        <section class="about-mission-section" id="mission" aria-label="Section: Our Mission">
+            <div class="mission-container">
+                <div class="mission-header-block">
+                    <div class="mission-sprout-icon" aria-hidden="true">
+                        <svg width="24" height="20" viewBox="0 0 28 24" fill="none">
+                            <path d="M14 20C14 12 6 8 2 10C2 17 8 21 14 20Z" fill="#1E5736"/>
+                            <path d="M14 20C14 12 22 8 26 10C26 17 20 21 14 20Z" fill="#25533A"/>
+                            <path d="M14 24V19" stroke="#1E5736" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="mission-eyebrow-wrapper">
+                        <span class="mission-eyebrow-rule" aria-hidden="true"></span>
+                        <span class="mission-eyebrow-text">OUR MISSION</span>
+                        <span class="mission-eyebrow-rule" aria-hidden="true"></span>
+                    </div>
+                    <h2 class="mission-main-headline">
+                        <span class="mission-hl-line">Making Natural Nutrition</span>
+                        <span class="mission-hl-line"><em class="mission-hl-italic">Accessible for Everyone.</em></span>
+                    </h2>
+                    <div class="mission-headline-flourish" aria-hidden="true">
+                        <svg width="140" height="12" viewBox="0 0 140 12" fill="none">
+                            <path d="M2 3C46 11 94 11 138 3" stroke="#1E5736" stroke-width="2.4" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="mission-cards-grid" role="list">
+                    <!-- Pillar 01: Making Natural Nutrition Accessible -->
+                    <div class="mission-card-item" role="listitem">
+                        <div class="mission-card-badge" aria-hidden="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="mission-card-title">Making Natural Nutrition Accessible</h3>
+                        <p class="mission-card-desc">
+                            To make thoughtfully crafted, natural nutrition products simple, convenient, and accessible for everyday use.
+                        </p>
+                    </div>
+
+                    <!-- Pillar 02: Choosing Ingredients with Care -->
+                    <div class="mission-card-item" role="listitem">
+                        <div class="mission-card-badge" aria-hidden="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                            </svg>
+                        </div>
+                        <h3 class="mission-card-title">Choosing Ingredients with Care</h3>
+                        <p class="mission-card-desc">
+                            To carefully select natural ingredients and develop purposeful formulations that complement everyday wellness routines.
+                        </p>
+                    </div>
+
+                    <!-- Pillar 03: Prioritising Quality and Transparency -->
+                    <div class="mission-card-item" role="listitem">
+                        <div class="mission-card-badge" aria-hidden="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                <path d="m9 12 2 2 4-4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="mission-card-title">Prioritising Quality and Transparency</h3>
+                        <p class="mission-card-desc">
+                            To maintain consistent quality standards and provide clear, honest information about our products and ingredients.
+                        </p>
+                    </div>
+
+                    <!-- Pillar 04: Encouraging Healthier Everyday Habits -->
+                    <div class="mission-card-item" role="listitem">
+                        <div class="mission-card-badge" aria-hidden="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </div>
+                        <h3 class="mission-card-title">Encouraging Healthier Everyday Habits</h3>
+                        <p class="mission-card-desc">
+                            To inspire people to make thoughtful nutrition choices and build sustainable wellness routines, one day at a time.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
              SECTION 03: OUR VISION
-             "A More Healthy and Wellness-Focused India."
+             "A Healthier India. A Better Tomorrow."
              ========================================================================== -->
         <section class="about-vision-section" id="vision" aria-label="Section 03: Our Vision">
             
@@ -348,9 +450,8 @@ $currentPage = "about";
 
                             <!-- Main Editorial Headline with Flourish -->
                             <h2 class="vision-main-headline">
-                                <span class="vision-hl-line">A More Healthy</span>
-                                <span class="vision-hl-line">and Wellness-Focused</span>
-                                <span class="vision-hl-line"><em class="vision-hl-italic">India.</em></span>
+                                <span class="vision-hl-line">A Healthier India.</span>
+                                <span class="vision-hl-line"><em class="vision-hl-italic">A Better Tomorrow.</em></span>
                             </h2>
 
                             <!-- Curved Green Flourish Under Headline -->
@@ -392,9 +493,9 @@ $currentPage = "about";
                                 </svg>
                             </div>
                             <div class="vision-pillar-content">
-                                <h3 class="vision-pillar-title">To become one of India’s most trusted wellness brands,</h3>
+                                <h3 class="vision-pillar-title">To become one of India's most trusted natural nutrition brands</h3>
                                 <p class="vision-pillar-desc">
-                                    recognised for quality, transparency, and thoughtfully crafted nutrition.
+                                    Recognised for uncompromising quality, honest transparency, and thoughtfully crafted nutrition products.
                                 </p>
                             </div>
                         </div>
@@ -410,9 +511,9 @@ $currentPage = "about";
                                 </svg>
                             </div>
                             <div class="vision-pillar-content">
-                                <h3 class="vision-pillar-title">To help people make healthier choices</h3>
+                                <h3 class="vision-pillar-title">To inspire healthier everyday choices</h3>
                                 <p class="vision-pillar-desc">
-                                    through products that combine carefully selected natural ingredients with uncompromising quality standards.
+                                    By making natural nutrition simple, accessible, and convenient through carefully selected ingredients and quality-focused products.
                                 </p>
                             </div>
                         </div>
@@ -430,9 +531,9 @@ $currentPage = "about";
                                 </svg>
                             </div>
                             <div class="vision-pillar-content">
-                                <h3 class="vision-pillar-title">To build a brand for the long run</h3>
+                                <h3 class="vision-pillar-title">To build a brand that generations can trust</h3>
                                 <p class="vision-pillar-desc">
-                                    that customers can rely on every day—creating wellness products that inspire confidence, consistency, and healthier lifestyles for generations to come.
+                                    Creating lasting relationships through consistency, integrity, and a commitment to supporting healthier lifestyles for years to come.
                                 </p>
                             </div>
                         </div>
@@ -536,7 +637,7 @@ $currentPage = "about";
                             <div class="commit-pillar-content">
                                 <h3 class="commit-pillar-title">Uncompromising Quality</h3>
                                 <p class="commit-pillar-desc">
-                                    From sourcing carefully selected ingredients to maintaining high standards in manufacturing and product safety, we deliver consistency in every detail.
+                                    From carefully selecting natural ingredients to maintaining high standards of product quality and safety, we focus on consistency in every detail.
                                 </p>
                             </div>
                         </div>
@@ -554,7 +655,7 @@ $currentPage = "about";
                             <div class="commit-pillar-content">
                                 <h3 class="commit-pillar-title">Honest Transparency</h3>
                                 <p class="commit-pillar-desc">
-                                    We are committed to providing clear and honest product information, because we believe transparency is just as important as quality.
+                                    We believe trust begins with honesty. That's why we're committed to providing clear, accurate, and transparent information about our products.
                                 </p>
                             </div>
                         </div>
@@ -573,7 +674,7 @@ $currentPage = "about";
                             <div class="commit-pillar-content">
                                 <h3 class="commit-pillar-title">Continuous Improvement</h3>
                                 <p class="commit-pillar-desc">
-                                    We constantly refine and improve our formulations to bring you better, more effective nutrition products.
+                                    We continuously explore, refine, and improve our products to deliver thoughtful nutrition solutions for everyday wellness.
                                 </p>
                             </div>
                         </div>
@@ -593,7 +694,7 @@ $currentPage = "about";
                             <div class="commit-pillar-content">
                                 <h3 class="commit-pillar-title">You at the Heart</h3>
                                 <p class="commit-pillar-desc">
-                                    Our promise is simple—to create nutrition products that you can confidently make part of your everyday wellness routine.
+                                    Our commitment is simple—to create natural nutrition products that you can confidently make part of your everyday wellness routine.
                                 </p>
                             </div>
                         </div>
@@ -673,7 +774,7 @@ $currentPage = "about";
                                 </div>
                                 <div class="journey-node-content">
                                     <p class="journey-node-text">
-                                        Thank you for taking the time to learn about Nutronyx.
+                                        Thank you for taking the time to discover NUTRONYX.
                                     </p>
                                 </div>
                             </div>
@@ -690,7 +791,7 @@ $currentPage = "about";
                                 </div>
                                 <div class="journey-node-content">
                                     <p class="journey-node-text">
-                                        Every product we create begins with a simple belief—that better health starts with thoughtful daily choices. Our journey is driven by quality, transparency, and a genuine commitment to helping people build healthier habits through natural nutrition.
+                                        We believe better health begins with thoughtful everyday choices. Guided by quality, transparency, and a passion for natural nutrition, we create products designed to support healthier daily routines.
                                     </p>
                                 </div>
                             </div>
@@ -704,7 +805,7 @@ $currentPage = "about";
                                 </div>
                                 <div class="journey-node-content">
                                     <p class="journey-node-text">
-                                        Whether you’re beginning your wellness journey or continuing one you’ve already started, we’re honoured to be a part of it.
+                                        Whether you're taking your first step towards healthier living or continuing your wellness journey, we're delighted to be part of it.
                                     </p>
                                 </div>
                             </div>
@@ -721,7 +822,7 @@ $currentPage = "about";
                                 </div>
                                 <div class="journey-node-content">
                                     <p class="journey-node-text">
-                                        Together, let’s build healthier routines, make better choices, and embrace a more natural approach to everyday wellness.
+                                        Together, let's embrace natural nutrition, make mindful choices, and build healthier habits for a better tomorrow.
                                     </p>
                                 </div>
                             </div>
