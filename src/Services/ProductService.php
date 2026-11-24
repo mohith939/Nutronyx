@@ -133,9 +133,10 @@ class ProductService
             case 'stock_desc':
                 $sql .= " ORDER BY total_stock DESC";
                 break;
+            case 'position':
             case 'newest':
             default:
-                $sql .= " ORDER BY p.created_at DESC";
+                $sql .= " ORDER BY CASE WHEN p.position > 0 THEN 0 ELSE 1 END, p.position ASC, p.created_at DESC";
                 break;
         }
 
@@ -326,14 +327,14 @@ class ProductService
                 sale_price_amount, cost_price_amount, tax_rate, currency, barcode, brand,
                 track_inventory, allow_backorders, stock_status, subcategory, tags, collections,
                 options_json, video_url, shipping_class, dimensions_cm,
-                is_visible_storefront, is_visible_catalog, is_visible_search, is_featured,
+                is_visible_storefront, is_visible_catalog, is_visible_search, is_featured, position,
                 created_at, updated_at
             ) VALUES (
                 :id, :wid, :cid, :title, :slug, :desc, :short_desc, :status, :img,
                 :sale_price, :cost_price, :tax_rate, :currency, :barcode, :brand,
                 :track_inv, :backorders, :stock_status, :subcat, :tags, :collections,
                 :options_json, :video_url, :shipping_class, :dimensions_cm,
-                :vis_store, :vis_cat, :vis_search, :featured,
+                :vis_store, :vis_cat, :vis_search, :featured, :pos,
                 CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
             )
         ");
@@ -367,6 +368,7 @@ class ProductService
             ':vis_cat' => isset($data['is_visible_catalog']) ? (int)$data['is_visible_catalog'] : 1,
             ':vis_search' => isset($data['is_visible_search']) ? (int)$data['is_visible_search'] : 1,
             ':featured' => isset($data['is_featured']) ? (int)$data['is_featured'] : 0,
+            ':pos' => isset($data['position']) ? (int)$data['position'] : 0,
         ]);
 
         // Create initial or custom variants
@@ -451,6 +453,7 @@ class ProductService
                 is_visible_catalog = :vis_cat,
                 is_visible_search = :vis_search,
                 is_featured = :featured,
+                position = CASE WHEN :has_pos = 1 THEN :pos ELSE position END,
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = :id AND website_id = :wid
         ");
@@ -484,6 +487,8 @@ class ProductService
             ':vis_cat' => isset($data['is_visible_catalog']) ? (int)$data['is_visible_catalog'] : 1,
             ':vis_search' => isset($data['is_visible_search']) ? (int)$data['is_visible_search'] : 1,
             ':featured' => isset($data['is_featured']) ? (int)$data['is_featured'] : 0,
+            ':has_pos' => isset($data['position']) ? 1 : 0,
+            ':pos' => isset($data['position']) ? (int)$data['position'] : 0,
         ]);
 
         // Synchronize product variants if matrix provided
@@ -1131,6 +1136,20 @@ class ProductService
             }
         }
         return $deleted;
+    }
+
+    /**
+     * Update product sequence/order position for storefront display
+     */
+    public static function updatePosition(string $productId, int $newPosition): bool
+    {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("UPDATE products SET position = :pos WHERE id = :id AND website_id = :wid");
+        return $stmt->execute([
+            ':pos' => max(0, $newPosition),
+            ':id' => $productId,
+            ':wid' => Context::getWebsiteId()
+        ]);
     }
 
     /**

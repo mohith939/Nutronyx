@@ -325,7 +325,9 @@
             setChecked('productTrackInv', true);
             setChecked('productBackorders', false);
             setVal('productStockStatus', 'in_stock');
-            setVal('productLowStock', '5');
+            setVal('productLowStock', '10');
+            setVal('productLowStockThreshold', '10');
+            setVal('productPosition', '0');
             setVal('productTaxRate', '0');
 
             const catEl = document.getElementById('productCategory');
@@ -385,10 +387,13 @@
             const costPrice = p.cost_price_amount ? (p.cost_price_amount / 100) : '';
             setVal('productCostPrice', costPrice);
 
-            // SKU & Stock
+            // SKU & Stock & Low Stock
             setVal('productSku', p.primary_sku || '');
             const totalStock = p.total_stock !== undefined ? p.total_stock : (p.primary_stock || 100);
             setVal('productStockQty', totalStock);
+            const lowStock = p.low_stock_threshold !== undefined ? p.low_stock_threshold : (p.primary_low_stock_threshold || 10);
+            setVal('productLowStockThreshold', lowStock);
+            setVal('productPosition', p.position !== undefined ? p.position : 0);
 
             // Visibility & Channels
             setChecked('productVisStore', p.is_visible_storefront === 1 || p.is_visible_storefront === '1' || p.is_visible_storefront === undefined);
@@ -1042,6 +1047,36 @@
 
         generateVariantRowsFromInputs: function() {
             this.addNewVariantRow();
+        },
+
+        updatePosition: function(productId, position) {
+            const formData = new FormData();
+            formData.append('action', 'update_position');
+            formData.append('product_id', productId);
+            formData.append('position', position);
+
+            fetch('products.php', {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.NutronyxToast) {
+                        window.NutronyxToast.success('Position sequence saved: #' + position);
+                    }
+                } else {
+                    if (window.NutronyxToast) {
+                        window.NutronyxToast.error(data.error || 'Failed to update position');
+                    }
+                }
+            })
+            .catch(err => {
+                if (window.NutronyxToast) {
+                    window.NutronyxToast.error('Network error saving position');
+                }
+            });
         }
     };
 

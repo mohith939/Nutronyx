@@ -394,19 +394,21 @@ class OrderService
         $paymentStatus = strtoupper(trim((string)($data['payment_status'] ?? ($payMethod === 'COD' ? 'PENDING' : 'PAID'))));
         $fulfillmentStatus = strtoupper(trim((string)($data['fulfillment_status'] ?? 'PENDING')));
 
+        $couponCode = !empty($data['coupon_code']) ? strtoupper(trim((string)$data['coupon_code'])) : null;
+
         $stmt = $db->prepare("
             INSERT INTO orders (
                 id, website_id, order_number, customer_id, order_status, payment_status, fulfillment_status,
                 subtotal_amount, shipping_amount, discount_amount, tax_amount, grand_total_amount, currency,
                 shipping_name, shipping_phone, shipping_address_line1, shipping_address_line2,
                 shipping_city, shipping_state, shipping_postal_code, customer_notes, internal_notes,
-                payment_method, created_at, updated_at
+                payment_method, coupon_code, created_at, updated_at
             ) VALUES (
                 :id, :wid, :onum, :cid, :ostatus, :pstatus, :fstatus,
                 :subtot, :ship, :disc, :tax, :gtot, 'INR',
                 :sname, :sphone, :addr1, :addr2,
                 :city, :state, :pincode, :cnotes, :inotes,
-                :pmethod, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+                :pmethod, :ccode, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
             )
         ");
         $stmt->execute([
@@ -431,7 +433,8 @@ class OrderService
             ':pincode' => $data['shipping_postal_code'] ?? '',
             ':cnotes' => $data['customer_notes'] ?? '',
             ':inotes' => $data['internal_notes'] ?? '',
-            ':pmethod' => $payMethod
+            ':pmethod' => $payMethod,
+            ':ccode' => $couponCode
         ]);
 
         // Insert items and adjust stock

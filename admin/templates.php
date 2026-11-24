@@ -816,13 +816,6 @@ $receiptPresets = [
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                    <!-- Store Selector Dropdown -->
-                    <button type="button" class="btn-header-store" onclick="window.toggleStoreDropdown(event)">
-                        <span>🏬</span>
-                        <span><?= htmlspecialchars($activeWebsite['name'] ?? 'Nutronyx Store') ?></span>
-                        <span style="font-size: 10px; color: #6B7280;">▼</span>
-                    </button>
-
                     <!-- Preview Documents Secondary Button -->
                     <button type="button" class="btn-preview-docs" onclick="window.openDocumentPreviewModal()">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

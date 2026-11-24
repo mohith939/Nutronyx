@@ -86,6 +86,12 @@ if (isset($_REQUEST['ajax'])) {
             exit;
         }
 
+        if ($action === 'update_position' && !empty($_POST['product_id']) && isset($_POST['position'])) {
+            $ok = ProductService::updatePosition($_POST['product_id'], (int)$_POST['position']);
+            echo json_encode(['success' => $ok, 'message' => 'Product sequence updated successfully.']);
+            exit;
+        }
+
         echo json_encode(['success' => false, 'error' => 'Unknown AJAX action.']);
     } catch (\Throwable $e) {
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
@@ -487,6 +493,7 @@ $page = $pageNum;
                     <thead>
                         <tr>
                             <th style="width: 40px; text-align: center;"></th>
+                            <th style="width: 75px; text-align: center;" title="Storefront sequence order">Order</th>
                             <th>Product</th>
                             <th>Category</th>
                             <th>Price</th>
@@ -500,7 +507,7 @@ $page = $pageNum;
                     <tbody>
                         <?php if (empty($products)): ?>
                             <tr>
-                                <td colspan="9" style="text-align: center; padding: 48px 20px;">
+                                <td colspan="10" style="text-align: center; padding: 48px 20px;">
                                     <div style="width: 56px; height: 56px; border-radius: 50%; background: #F3F4F6; display: inline-flex; align-items: center; justify-content: center; color: #9CA3AF; margin-bottom: 12px;">
                                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                                     </div>
@@ -527,6 +534,16 @@ $page = $pageNum;
                                 <tr id="row-<?= htmlspecialchars($p['id']) ?>">
                                     <td style="text-align: center;">
                                         <input type="checkbox" class="catalog-checkbox product-select-checkbox" value="<?= htmlspecialchars($p['id']) ?>" onchange="window.NutronyxProduct.handleRowCheckbox()">
+                                    </td>
+                                    
+                                    <!-- Storefront Sequence Order Position -->
+                                    <td style="text-align: center;" onclick="event.stopPropagation()">
+                                        <div style="display: inline-flex; align-items: center; justify-content: center;">
+                                            <input type="number" min="0" value="<?= (int)($p['position'] ?? 0) ?>" 
+                                                style="width: 46px; text-align: center; padding: 4px 2px; font-size: 13px; font-weight: 700; border: 1.5px solid #E5E7EB; border-radius: 6px; background: #FAF9F6; color: #144D29;" 
+                                                onchange="window.NutronyxProduct.updatePosition('<?= $p['id'] ?>', this.value)"
+                                                title="Set storefront display position (1 = first, 2 = second, etc.)">
+                                        </div>
                                     </td>
                                     
                                     <!-- Product Info (Image + Title + SKU) -->
@@ -649,7 +666,7 @@ $page = $pageNum;
                                 <!-- NESTED VARIANT ROWS (EXPANDABLE SUBTABLE ACCORDION) -->
                                 <?php if (!empty($p['variants'])): ?>
                                     <tr class="nested-variant-tr <?= $isExpanded ? 'open' : '' ?>" id="variant-subtable-<?= htmlspecialchars($p['id']) ?>">
-                                        <td colspan="9" class="nested-variant-container">
+                                        <td colspan="10" class="nested-variant-container">
                                             <table class="nested-variant-table">
                                                 <thead>
                                                     <tr>
@@ -854,7 +871,7 @@ $page = $pageNum;
                     </div>
                     <input type="hidden" name="cost_price" id="productCostPrice" value="">
 
-                    <div class="form-grid-2">
+                    <div class="form-grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
                         <div class="form-group">
                             <label class="form-label">Primary SKU *</label>
                             <input type="text" name="sku" id="productSku" class="form-control" placeholder="e.g. NX-ABC-001">
@@ -863,7 +880,13 @@ $page = $pageNum;
                             <label class="form-label">Inventory on hand</label>
                             <input type="number" name="stock_quantity" id="productStockQty" class="form-control" value="100">
                         </div>
+                        <div class="form-group">
+                            <label class="form-label">Low stock alert threshold</label>
+                            <input type="number" name="low_stock_threshold" id="productLowStockThreshold" class="form-control" value="10" placeholder="10">
+                            <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Alerts when stock is below this</span>
+                        </div>
                     </div>
+                    <input type="hidden" name="position" id="productPosition" value="0">
 
                     <!-- Storefront Visibility Defaults (Hidden per user request) -->
                     <input type="hidden" name="is_visible_storefront" id="productVisStore" value="1">

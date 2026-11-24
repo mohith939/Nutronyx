@@ -152,6 +152,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action']) && 
         } elseif ($bulkType === 'delete') {
             $cnt = CustomerService::bulkDelete($ids);
             $successMsg = "Deleted {$cnt} customer(s).";
+        } elseif ($bulkType === 'export_selected') {
+            CustomerService::exportCustomersCsv($ids);
+            exit;
         } elseif ($bulkType === 'send_email') {
             $successMsg = "Email broadcast initiated for " . count($ids) . " customer(s).";
         }
@@ -336,7 +339,11 @@ $activeCustomerDetails = $selectedCustomerId ? CustomerService::getCustomerDetai
                     <h1 style="font-family: 'Playfair Display', Georgia, serif; font-size: 28px; font-weight: 700; color: #111827; margin: 0; letter-spacing: -0.02em;">Customers</h1>
                     <p style="font-size: 13.5px; color: #6B7280; margin-top: 4px; margin-bottom: 0;">Manage your customer base, view purchasing history and engagement</p>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <a href="customers.php?export=csv" class="btn-bulk-item" style="font-weight: 600; padding: 8px 14px; font-size: 13px; text-decoration: none; color: #374151; display: inline-flex; align-items: center; gap: 6px;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <span>Export</span>
+                    </a>
                     <button type="button" class="btn-bulk-item" onclick="window.NutronyxModal.open('importCsvModal')" style="font-weight: 600; padding: 8px 14px; font-size: 13px;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                         <span>Import</span>
@@ -488,6 +495,11 @@ $activeCustomerDetails = $selectedCustomerId ? CustomerService::getCustomerDetai
                             <button type="button" onclick="triggerCustomerBulkAction('change_status', 'Inactive')" style="width: 100%; padding: 8px 12px; border: none; background: none; text-align: left; font-size: 13px; cursor: pointer;">Inactive</button>
                         </div>
                     </div>
+
+                    <button type="button" class="btn-bulk-item" onclick="triggerCustomerBulkAction('export_selected')">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <span>Export Selected</span>
+                    </button>
 
                     <button type="button" class="btn-bulk-item btn-bulk-cancel" onclick="triggerCustomerBulkAction('delete')">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>

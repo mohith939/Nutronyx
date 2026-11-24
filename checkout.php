@@ -130,6 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 'items' => $orderItems,
                 'shipping_amount_paise' => $cart['shipping_paise'],
                 'discount_amount_paise' => $cart['discount_paise'],
+                'coupon_code' => !empty($cart['applied_coupon']['code']) ? strtoupper(trim($cart['applied_coupon']['code'])) : null,
                 'payment_method' => 'CASHFREE',
                 'payment_status' => 'PENDING',
                 'order_status' => 'PENDING'
@@ -138,6 +139,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $placedOrder = OrderService::createOrder($orderData);
 
             if ($placedOrder) {
+                if (!empty($cart['applied_coupon']['code'])) {
+                    try {
+                        \Nutronyx\Services\PromotionService::recordRedemption(
+                            $cart['applied_coupon']['code'],
+                            $placedOrder['order_number'],
+                            $cart['discount_paise'],
+                            $cart['total_paise'],
+                            $placedOrder['customer_id'] ?? null,
+                            $fullName,
+                            $phone
+                        );
+                    } catch (\Throwable $e) {}
+                }
+
                 $cfRes = CashfreePaymentService::createOrder([
                     'order_id' => $placedOrder['order_number'],
                     'order_amount' => (float)$cart['total_rupees'],

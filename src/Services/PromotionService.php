@@ -390,7 +390,7 @@ class PromotionService
             $pct = (int)$promo['discount_value'];
             $discountAmount = (int)round(($subtotalPaise * $pct) / 100);
         } elseif ($promo['discount_type'] === 'FREE_SHIPPING') {
-            $discountAmount = 9900; // Free standard shipping in paise
+            $discountAmount = 0; // Free shipping waives delivery fee, does not discount product prices
         } else {
             $discountAmount = (int)$promo['discount_value'];
         }
@@ -401,5 +401,64 @@ class PromotionService
             'discount_amount' => $discountAmount,
             'message' => 'Coupon eligible and applied successfully!'
         ];
+    }
+
+    public static function recordRedemption(
+        string $couponCode,
+        string $orderId,
+        int $discountPaise,
+        int $orderTotalPaise,
+        ?string $customerId = null,
+        ?string $customerName = null,
+        ?string $customerPhone = null
+    ): void {
+        self::ensureTables();
+        $db = Database::getConnection();
+        $wid = Context::getWebsiteId();
+
+        $cleanCode = strtoupper(trim($couponCode));
+        $stmt = $db->prepare("SELECT id FROM promotions WHERE website_id = :wid AND UPPER(code) = :code LIMIT 1");
+        $stmt->execute([':wid' => $wid, ':code' => $cleanCode]);
+        $promoId = $stmt->fetchColumn() ?: null;
+
+        // 1. Increment usage count & financial counters on promotion
+        if ($promoId) {
+            $uStmt = $db->prepare("
+                UPDATE promotions SET
+                    usage_count = COALESCE(usage_count, 0) + 1,
+                    discount_given_amount = COALESCE(discount_given_amount, 0) + :disc,
+                    revenue_generated_amount = COALESCE(revenue_generated_amount, 0) + :rev
+                WHERE id = :id AND website_id = :wid
+            ");
+            $uStmt->execute([
+                ':disc' => $discountPaise,
+                ':rev' => $orderTotalPaise,
+                ':id' => $promoId,
+                ':wid' => $wid
+            ]);
+        }
+
+        // 2. Insert into coupon_redemptions table
+        $rStmt = $db->prepare("
+            INSERT INTO coupon_redemptions (
+                id, website_id, promotion_id, coupon_code, order_id, customer_id, customer_name, customer_phone,
+                discount_amount, order_total, payment_status, order_status, redeemed_at
+            ) VALUES (
+                :id, :wid, :pid, :code, :oid, :cid, :cname, :cphone,
+                :disc, :total, 'PAID', 'PROCESSING', CURRENT_TIMESTAMP
+            )
+        ");
+        $rStmt->execute([
+            ':id' => 'red_' . bin2hex(random_bytes(6)),
+            ':wid' => $wid,
+            ':pid' => $promoId,
+            ':code' => $cleanCode,
+            ':oid' => $orderId,
+            ':cid' => $customerId,
+            ':cname' => $customerName,
+            ':cphone' => $customerPhone,
+            ':disc' => $discountPaise,
+            ':total' => $orderTotalPaise
+        ]);
     }
 }

@@ -399,6 +399,7 @@ class Database
             'video_url' => 'VARCHAR(255)',
             'shipping_class' => 'VARCHAR(50)',
             'dimensions_cm' => 'VARCHAR(50)',
+            'position' => 'INTEGER DEFAULT 0',
         ];
 
         $stmt = $db->query("PRAGMA table_info(products)");
@@ -433,6 +434,7 @@ class Database
             'delivery_person_name' => "VARCHAR(120) DEFAULT 'Not assigned'",
             'delivery_person_phone' => 'VARCHAR(50)',
             'invoice_number' => 'VARCHAR(60)',
+            'coupon_code' => 'VARCHAR(64)',
         ];
         $oStmt = $db->query("PRAGMA table_info(orders)");
         $orderExisting = [];

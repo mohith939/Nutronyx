@@ -622,6 +622,50 @@ if (!empty($_GET['selected_id'])) {
             gap: 4px;
         }
 
+        /* Action Dropdown Styling */
+        .action-dropdown-wrap {
+            position: relative;
+            display: inline-block;
+        }
+        .action-dots-btn {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            line-height: 1;
+            cursor: pointer;
+            color: #6B7280;
+            transition: all 0.15s;
+        }
+        .action-dots-btn:hover {
+            background: #F3F4F6;
+            color: #111827;
+            border-color: #D1D5DB;
+        }
+        .action-dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 4px;
+            width: 190px;
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            z-index: 1050;
+            padding: 6px;
+            text-align: left;
+        }
+        .action-dropdown-menu.show {
+            display: block;
+        }
+
         /* Status Pills */
         .badge-status-active {
             background: #ECFDF5;
@@ -987,12 +1031,6 @@ if (!empty($_GET['selected_id'])) {
                     </p>
                 </div>
                 <div class="header-actions-group">
-                    <div class="store-selector-pill">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                        <span><?= htmlspecialchars($activeWebsite['name'] ?? 'Nutronyx Store') ?></span>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                    </div>
-
                     <button type="button" class="btn-header-secondary" onclick="window.openCreateCampaignModal()">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
                         <span>Create Campaign</span>
@@ -1187,7 +1225,7 @@ if (!empty($_GET['selected_id'])) {
                         </div>
 
                         <!-- Data Table -->
-                        <div style="overflow-x: auto;">
+                        <div class="coupons-table-wrapper" style="overflow: visible; position: relative;">
                             <table class="coupons-data-table" id="couponsTable">
                                 <thead>
                                     <tr>
@@ -1683,38 +1721,41 @@ if (!empty($_GET['selected_id'])) {
                             </tr>
                         </thead>
                         <tbody>
+                            <?php 
+                            $analyticsPromos = $promos;
+                            usort($analyticsPromos, function($a, $b) {
+                                return ($b['usage_count'] ?? 0) <=> ($a['usage_count'] ?? 0);
+                            });
+                            if (empty($analyticsPromos)): ?>
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: #9CA3AF; padding: 30px;">
+                                        No coupons have been created or redeemed yet.
+                                    </td>
+                                </tr>
+                            <?php else: 
+                                $rank = 1;
+                                foreach ($analyticsPromos as $ap): 
+                                    $used = (int)($ap['usage_count'] ?? 0);
+                                    $rev = (int)($ap['revenue_generated_amount'] ?? 0) / 100;
+                                    $status = strtoupper($ap['status'] ?? ($ap['is_active'] ? 'ACTIVE' : 'INACTIVE'));
+                            ?>
                             <tr>
-                                <td style="font-weight: 800; color: #166534;">#1</td>
-                                <td><span class="code-badge-wrap">NUTRO10</span></td>
-                                <td>New Year Sale</td>
-                                <td><strong>436 redemptions</strong></td>
-                                <td style="font-weight: 800; color: #144D29;">₹4,36,000</td>
-                                <td><span class="badge-status-active">44% Conversion</span></td>
+                                <td style="font-weight: 800; color: #166534;">#<?= $rank++ ?></td>
+                                <td><span class="code-badge-wrap"><?= htmlspecialchars($ap['code']) ?></span></td>
+                                <td><?= htmlspecialchars(explode('&bull;', $ap['campaign_name'] ?? 'General')[0]) ?></td>
+                                <td><strong><?= number_format($used) ?> redemptions</strong></td>
+                                <td style="font-weight: 800; color: #144D29;">₹<?= number_format($rev, 2) ?></td>
+                                <td>
+                                    <?php if ($status === 'ACTIVE'): ?>
+                                        <span class="badge-status-active">Active</span>
+                                    <?php elseif ($status === 'EXHAUSTED'): ?>
+                                        <span class="badge-status-exhausted">Capped</span>
+                                    <?php else: ?>
+                                        <span class="badge-status-inactive">Inactive</span>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
-                            <tr>
-                                <td style="font-weight: 800; color: #166534;">#2</td>
-                                <td><span class="code-badge-wrap">WELCOME15</span></td>
-                                <td>Welcome Offer</td>
-                                <td><strong>328 redemptions</strong></td>
-                                <td style="font-weight: 800; color: #144D29;">₹3,28,000</td>
-                                <td><span class="badge-status-active">66% Conversion</span></td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: 800; color: #166534;">#3</td>
-                                <td><span class="code-badge-wrap">NUTRONYX50</span></td>
-                                <td>Festive Sale</td>
-                                <td><strong>250 redemptions</strong></td>
-                                <td style="font-weight: 800; color: #144D29;">₹1,99,750</td>
-                                <td><span class="badge-status-exhausted">100% Capped</span></td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: 800; color: #166534;">#4</td>
-                                <td><span class="code-badge-wrap">FREESHIP</span></td>
-                                <td>Freedom Week</td>
-                                <td><strong>219 redemptions</strong></td>
-                                <td style="font-weight: 800; color: #144D29;">₹1,53,081</td>
-                                <td><span class="badge-status-active">Active</span></td>
-                            </tr>
+                            <?php endforeach; endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -2032,27 +2073,11 @@ if (!empty($_GET['selected_id'])) {
                             </button>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                            <div>
-                                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Internal Name / Label</label>
-                                <input type="text" name="name" id="couponNameInp" placeholder="e.g. Winter Immunity 15%" class="form-control" style="border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #D1D5DB;">
-                                <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">For admin reference</span>
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Campaign Association</label>
-                                <select name="campaign_name" id="couponCampaignSelect" class="form-control" style="border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #D1D5DB; background: #FFFFFF;">
-                                    <option value="General Storewide Promotion">General Storewide Promotion</option>
-                                    <?php if (!empty($campaigns)): ?>
-                                        <?php foreach ($campaigns as $camp): ?>
-                                            <option value="<?= htmlspecialchars($camp['name']) ?>"><?= htmlspecialchars($camp['name']) ?></option>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <option value="New Year Sale">New Year Sale</option>
-                                        <option value="Welcome Offer">Welcome Offer</option>
-                                        <option value="Festive Sale">Festive Sale</option>
-                                    <?php endif; ?>
-                                </select>
-                            </div>
+                        <div style="margin-bottom: 0;">
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Internal Name / Label</label>
+                            <input type="text" name="name" id="couponNameInp" placeholder="e.g. Winter Immunity 15%" class="form-control" style="border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #D1D5DB; width: 100%;">
+                            <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">For internal admin reference</span>
+                            <input type="hidden" name="campaign_name" id="couponCampaignSelect" value="General Storewide Promotion">
                         </div>
                     </div>
 
@@ -2107,14 +2132,14 @@ if (!empty($_GET['selected_id'])) {
                                 <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Minimum Cart Value</label>
                                 <div style="position: relative;">
                                     <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 600; color: #6B7280;">₹</span>
-                                    <input type="number" name="minimum_order_rupees" id="couponMinCartInp" value="499" min="0" class="form-control" style="border-radius: 8px; padding-left: 24px; font-size: 13px; border: 1px solid #D1D5DB;">
+                                    <input type="number" name="minimum_order_rupees" id="couponMinCartInp" value="0" min="0" placeholder="0" class="form-control" style="border-radius: 8px; padding-left: 24px; font-size: 13px; border: 1px solid #D1D5DB;">
                                 </div>
-                                <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Enter 0 for no minimum</span>
+                                <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Enter 0 for no minimum cart requirement</span>
                             </div>
                             <div>
                                 <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Total Redemptions Cap</label>
-                                <input type="number" name="usage_limit" id="couponUsageLimitInp" value="500" min="0" placeholder="0 = Unlimited" class="form-control" style="border-radius: 8px; font-size: 13px; border: 1px solid #D1D5DB;">
-                                <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Storewide limit (0 = Unlimited)</span>
+                                <input type="number" name="usage_limit" id="couponUsageLimitInp" value="0" min="0" placeholder="0 = Unlimited" class="form-control" style="border-radius: 8px; font-size: 13px; border: 1px solid #D1D5DB;">
+                                <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">0 = Unlimited redemptions</span>
                             </div>
                         </div>
 
@@ -2129,27 +2154,18 @@ if (!empty($_GET['selected_id'])) {
                         </label>
                     </div>
 
-                    <!-- Card 4: Validity & Status -->
+                    <!-- Card 4: Validity & Schedule -->
                     <div class="coupon-form-group-card">
                         <div class="coupon-form-group-title">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                            <span>Schedule &amp; Status</span>
+                            <span>Schedule &amp; Expiry</span>
                         </div>
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                            <div>
-                                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Expiry Date</label>
-                                <input type="date" name="expires_at" id="couponExpiryInp" value="<?= date('Y-m-d', strtotime('+60 days')) ?>" class="form-control" style="border-radius: 8px; font-size: 13px; border: 1px solid #D1D5DB;">
-                                <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Expires at midnight</span>
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Status</label>
-                                <select name="status" id="couponStatusSelect" class="form-control" style="border-radius: 8px; font-size: 13px; border: 1px solid #D1D5DB; background: #FFFFFF;">
-                                    <option value="ACTIVE">● Active (Live at Checkout)</option>
-                                    <option value="SCHEDULED">⏱ Scheduled (Future Launch)</option>
-                                    <option value="INACTIVE">○ Draft / Disabled</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Expiry Date</label>
+                            <input type="date" name="expires_at" id="couponExpiryInp" value="<?= date('Y-m-d', strtotime('+60 days')) ?>" class="form-control" style="border-radius: 8px; font-size: 13px; border: 1px solid #D1D5DB; width: 100%;">
+                            <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Expires at midnight</span>
+                            <input type="hidden" name="status" id="couponStatusSelect" value="ACTIVE">
                         </div>
                     </div>
 
@@ -2421,8 +2437,8 @@ if (!empty($_GET['selected_id'])) {
         window.autoGenCode();
         window.selectDiscountType('PERCENTAGE');
         if (document.getElementById('modalDiscountValInput')) document.getElementById('modalDiscountValInput').value = '15';
-        if (document.getElementById('couponMinCartInp')) document.getElementById('couponMinCartInp').value = '499';
-        if (document.getElementById('couponUsageLimitInp')) document.getElementById('couponUsageLimitInp').value = '500';
+        if (document.getElementById('couponMinCartInp')) document.getElementById('couponMinCartInp').value = '0';
+        if (document.getElementById('couponUsageLimitInp')) document.getElementById('couponUsageLimitInp').value = '0';
         if (document.getElementById('couponPerCustomerLimit')) document.getElementById('couponPerCustomerLimit').checked = true;
         if (document.getElementById('couponPerCustomerLimitVal')) document.getElementById('couponPerCustomerLimitVal').value = '1';
         if (document.getElementById('couponStatusSelect')) document.getElementById('couponStatusSelect').value = 'ACTIVE';

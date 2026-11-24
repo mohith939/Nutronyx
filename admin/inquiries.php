@@ -260,12 +260,13 @@ function getInquiryPageUrl(array $overrides = []): string {
     }
 
     /* Table Container */
+    /* Table Container */
     .table-card {
         background: #FFFFFF;
         border: 1px solid #E5E7EB;
         border-radius: 14px;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        overflow: visible;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
     .inq-table {
@@ -276,7 +277,7 @@ function getInquiryPageUrl(array $overrides = []): string {
 
     .inq-table th {
         background: #F9FAFB;
-        padding: 12px 18px;
+        padding: 13px 18px;
         font-size: 11.5px;
         font-weight: 700;
         text-transform: uppercase;
@@ -286,7 +287,7 @@ function getInquiryPageUrl(array $overrides = []): string {
     }
 
     .inq-table td {
-        padding: 16px 18px;
+        padding: 15px 18px;
         font-size: 13.5px;
         border-bottom: 1px solid #F3F4F6;
         vertical-align: middle;
@@ -308,10 +309,9 @@ function getInquiryPageUrl(array $overrides = []): string {
         gap: 6px;
         padding: 4px 10px;
         border-radius: 6px;
-        font-size: 11px;
+        font-size: 11.5px;
         font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
+        letter-spacing: 0.04em;
     }
 
     .badge-type.contact {
@@ -326,45 +326,35 @@ function getInquiryPageUrl(array $overrides = []): string {
         border: 1px solid #FDE68A;
     }
 
-    .badge-status {
+    /* Status dot pills */
+    .status-pill-dot {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 4px 10px;
+        padding: 4px 11px;
         border-radius: 20px;
-        font-size: 11.5px;
+        font-size: 12px;
         font-weight: 700;
-        letter-spacing: 0.04em;
     }
-
-    .badge-status.new {
-        background: #FEF3C7;
-        color: #D97706;
-    }
-
-    .badge-status.contacted {
-        background: #E0F2FE;
-        color: #0369A1;
-    }
-
-    .badge-status.resolved {
-        background: #DCFCE7;
-        color: #15803D;
-    }
-
-    .badge-status.archived {
-        background: #F3F4F6;
-        color: #6B7280;
+    .status-pill-dot .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        display: inline-block;
     }
 
     .contact-card-subtext {
         font-size: 12px;
         color: #6B7280;
-        margin-top: 2px;
+        margin-top: 3px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
     }
 
     .contact-link {
-        color: var(--color-forest);
+        color: #143D24;
         text-decoration: none;
         font-weight: 500;
     }
@@ -381,14 +371,92 @@ function getInquiryPageUrl(array $overrides = []): string {
         color: #4B5563;
         font-size: 13px;
         cursor: pointer;
+        padding: 3px 6px;
+        border-radius: 6px;
+        background: #F9FAFB;
+        border: 1px solid #F3F4F6;
+        display: inline-block;
+        transition: all 0.15s ease;
     }
 
     .msg-excerpt:hover {
         color: #111827;
-        text-decoration: underline;
+        background: #F3F4F6;
+        border-color: #E5E7EB;
     }
 
-    /* Actions buttons */
+    /* Action Dropdown Styling */
+    .action-dropdown-wrap {
+        position: relative;
+        display: inline-block;
+    }
+    .action-dots-btn {
+        background: #FFFFFF;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        line-height: 1;
+        cursor: pointer;
+        color: #6B7280;
+        transition: all 0.15s;
+    }
+    .action-dots-btn:hover {
+        background: #F3F4F6;
+        color: #111827;
+        border-color: #D1D5DB;
+    }
+    .action-dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 4px;
+        width: 195px;
+        background: #FFFFFF;
+        border: 1px solid #E5E7EB;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        z-index: 1050;
+        padding: 6px;
+        text-align: left;
+    }
+    .action-dropdown-menu.show {
+        display: block;
+    }
+    .action-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: none;
+        background: transparent;
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+        text-align: left;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.12s ease;
+    }
+    .action-menu-item:hover {
+        background: #F3F4F6;
+        color: #111827;
+    }
+    .action-menu-item.danger {
+        color: #DC2626;
+    }
+    .action-menu-item.danger:hover {
+        background: #FEF2F2;
+        color: #B91C1C;
+    }
+
     .btn-action-view {
         background: #F3F4F6;
         border: 1px solid #E5E7EB;
@@ -403,7 +471,6 @@ function getInquiryPageUrl(array $overrides = []): string {
         gap: 6px;
         transition: all 0.2s ease;
     }
-
     .btn-action-view:hover {
         background: #E5E7EB;
         color: #111827;
@@ -666,50 +733,132 @@ function getInquiryPageUrl(array $overrides = []): string {
                             <?php else: ?>
                                 <?php foreach ($inquiries as $inq): 
                                     $isPartner = ($inq['type'] === 'PARTNERSHIP');
-                                    $dateStr = date('d M Y, h:i A', strtotime($inq['created_at']));
+                                    $datePart = date('d M Y', strtotime($inq['created_at']));
+                                    $timePart = date('h:i A', strtotime($inq['created_at']));
+                                    $st = strtoupper($inq['status'] ?? 'NEW');
                                 ?>
                                     <tr>
-                                        <td style="white-space: nowrap; font-size: 12.5px; color: #6B7280;">
-                                            <?= $dateStr ?>
+                                        <!-- Date & Time -->
+                                        <td>
+                                            <div style="font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap;"><?= $datePart ?></div>
+                                            <div style="font-size: 11.5px; color: #6B7280; margin-top: 1px;"><?= $timePart ?></div>
                                         </td>
+
+                                        <!-- Type -->
                                         <td>
                                             <span class="badge-type <?= $isPartner ? 'partnership' : 'contact' ?>">
-                                                <?= $isPartner ? 'Partnership' : 'Contact' ?>
+                                                <?php if ($isPartner): ?>
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                                                    <span>Partnership</span>
+                                                <?php else: ?>
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                                    <span>Contact</span>
+                                                <?php endif; ?>
                                             </span>
                                         </td>
+
+                                        <!-- Submitter Contact -->
                                         <td>
-                                            <div style="font-weight: 600; color: #111827;"><?= htmlspecialchars($inq['name']) ?></div>
+                                            <div style="font-weight: 700; color: #111827; font-size: 13.5px;"><?= htmlspecialchars($inq['name']) ?></div>
                                             <div class="contact-card-subtext">
                                                 <a href="mailto:<?= htmlspecialchars($inq['email']) ?>" class="contact-link"><?= htmlspecialchars($inq['email']) ?></a>
                                                 <?php if (!empty($inq['phone'])): ?>
-                                                    &bull; <a href="tel:<?= htmlspecialchars($inq['phone']) ?>" class="contact-link"><?= htmlspecialchars($inq['phone']) ?></a>
+                                                    <span style="color: #D1D5DB;">&bull;</span>
+                                                    <a href="tel:<?= htmlspecialchars($inq['phone']) ?>" class="contact-link"><?= htmlspecialchars($inq['phone']) ?></a>
                                                 <?php endif; ?>
                                             </div>
                                             <?php if (!empty($inq['company'])): ?>
-                                                <div style="font-size: 11.5px; color: #4B5563; margin-top: 2px;">
-                                                    🏢 <strong><?= htmlspecialchars($inq['company']) ?></strong>
+                                                <div style="font-size: 11.5px; color: #4B5563; margin-top: 3px; display: flex; align-items: center; gap: 4px;">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="22.01"></line><line x1="15" y1="22" x2="15" y2="22.01"></line><line x1="12" y1="18" x2="12" y2="18.01"></line></svg>
+                                                    <span><?= htmlspecialchars($inq['company']) ?></span>
                                                 </div>
                                             <?php endif; ?>
                                         </td>
+
+                                        <!-- Category / Subject -->
                                         <td>
-                                            <div style="font-weight: 600; font-size: 13px; color: #111827;">
+                                            <span style="display: inline-block; padding: 3px 8px; background: #F3F4F6; border-radius: 6px; font-weight: 600; font-size: 12px; color: #374151;">
                                                 <?= htmlspecialchars($inq['category'] ?: 'General Inquiry') ?>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="msg-excerpt" onclick="openDetailModal(<?= htmlspecialchars(json_encode($inq)) ?>)" title="Click to view full message">
-                                                <?= htmlspecialchars(mb_strimwidth($inq['message'], 0, 80, '...')) ?>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge-status <?= strtolower($inq['status']) ?>">
-                                                <?= htmlspecialchars($inq['status']) ?>
                                             </span>
                                         </td>
-                                        <td style="text-align: right; white-space: nowrap;">
-                                            <button type="button" class="btn-action-view" onclick="openDetailModal(<?= htmlspecialchars(json_encode($inq)) ?>)">
-                                                <span>View Details</span>
-                                            </button>
+
+                                        <!-- Message Excerpt -->
+                                        <td>
+                                            <div class="msg-excerpt" onclick="openDetailModal(<?= htmlspecialchars(json_encode($inq)) ?>)" title="Click to view full message">
+                                                <?= htmlspecialchars(mb_strimwidth($inq['message'], 0, 75, '...')) ?>
+                                            </div>
+                                        </td>
+
+                                        <!-- Status Dot Pill -->
+                                        <td>
+                                            <?php if ($st === 'NEW'): ?>
+                                                <span class="status-pill-dot" style="background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A;">
+                                                    <span class="dot" style="background: #D97706;"></span>
+                                                    <span>New</span>
+                                                </span>
+                                            <?php elseif ($st === 'CONTACTED'): ?>
+                                                <span class="status-pill-dot" style="background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD;">
+                                                    <span class="dot" style="background: #0284C7;"></span>
+                                                    <span>Contacted</span>
+                                                </span>
+                                            <?php elseif ($st === 'RESOLVED'): ?>
+                                                <span class="status-pill-dot" style="background: #DCFCE7; color: #15803D; border: 1px solid #BBF7D0;">
+                                                    <span class="dot" style="background: #10B981;"></span>
+                                                    <span>Resolved</span>
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="status-pill-dot" style="background: #F3F4F6; color: #4B5563; border: 1px solid #E5E7EB;">
+                                                    <span class="dot" style="background: #9CA3AF;"></span>
+                                                    <span><?= htmlspecialchars(ucfirst(strtolower($st))) ?></span>
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <!-- 3-Dots Action Menu -->
+                                        <td style="text-align: right; padding-right: 18px;" onclick="event.stopPropagation()">
+                                            <div class="action-dropdown-wrap">
+                                                <button type="button" class="action-dots-btn" onclick="toggleInqMenu('<?= $inq['id'] ?>', event)" title="Inquiry Actions">
+                                                    &bull;&bull;&bull;
+                                                </button>
+                                                <div id="inqMenu_<?= $inq['id'] ?>" class="action-dropdown-menu">
+                                                    <button type="button" class="action-menu-item" onclick="openDetailModal(<?= htmlspecialchars(json_encode($inq)) ?>)">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                                        <span>View Full Message</span>
+                                                    </button>
+                                                    <a href="mailto:<?= htmlspecialchars($inq['email']) ?>?subject=Re: <?= urlencode($inq['category'] ?? 'Nutronyx Inquiry') ?>" class="action-menu-item">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                                        <span>Send Email Reply</span>
+                                                    </a>
+                                                    <div style="height: 1px; background: #F3F4F6; margin: 4px 0;"></div>
+                                                    <form method="POST" action="inquiries.php" style="margin: 0;">
+                                                        <input type="hidden" name="action" value="update_status">
+                                                        <input type="hidden" name="inquiry_id" value="<?= htmlspecialchars($inq['id']) ?>">
+                                                        <input type="hidden" name="status" value="CONTACTED">
+                                                        <button type="submit" class="action-menu-item">
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                            <span>Mark Contacted</span>
+                                                        </button>
+                                                    </form>
+                                                    <form method="POST" action="inquiries.php" style="margin: 0;">
+                                                        <input type="hidden" name="action" value="update_status">
+                                                        <input type="hidden" name="inquiry_id" value="<?= htmlspecialchars($inq['id']) ?>">
+                                                        <input type="hidden" name="status" value="RESOLVED">
+                                                        <button type="submit" class="action-menu-item" style="color: #059669; font-weight: 600;">
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                                            <span>Mark Resolved</span>
+                                                        </button>
+                                                    </form>
+                                                    <div style="height: 1px; background: #F3F4F6; margin: 4px 0;"></div>
+                                                    <form method="POST" action="inquiries.php" style="margin: 0;" onsubmit="return confirm('Are you sure you want to delete this inquiry record?');">
+                                                        <input type="hidden" name="action" value="delete_inquiry">
+                                                        <input type="hidden" name="inquiry_id" value="<?= htmlspecialchars($inq['id']) ?>">
+                                                        <button type="submit" class="action-menu-item danger">
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                            <span>Delete Inquiry</span>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -869,6 +1018,22 @@ function getInquiryPageUrl(array $overrides = []): string {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeDetailModal();
+        }
+    });
+
+    function toggleInqMenu(id, e) {
+        if (e) e.stopPropagation();
+        const menu = document.getElementById('inqMenu_' + id);
+        const isShown = menu && menu.classList.contains('show');
+        document.querySelectorAll('.action-dropdown-menu.show').forEach(m => m.classList.remove('show'));
+        if (!isShown && menu) {
+            menu.classList.add('show');
+        }
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.action-dropdown-wrap')) {
+            document.querySelectorAll('.action-dropdown-menu.show').forEach(m => m.classList.remove('show'));
         }
     });
 

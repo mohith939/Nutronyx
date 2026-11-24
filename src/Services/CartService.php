@@ -160,12 +160,16 @@ class CartService
         $discountPaise = 0;
         $appliedCoupon = $_SESSION['nutronyx_applied_coupon'] ?? null;
         if ($appliedCoupon && $subtotalPaise > 0) {
-            $check = PromotionService::validateCoupon($appliedCoupon['code'], $subtotalPaise);
-            if ($check['valid']) {
-                $discountPaise = min($check['discount_amount'], $subtotalPaise);
-            } else {
-                // If subtotal dropped below minimum, keep promo metadata but discount is 0 or notify
+            if (($appliedCoupon['discount_type'] ?? '') === 'FREE_SHIPPING') {
                 $discountPaise = 0;
+            } else {
+                $check = PromotionService::validateCoupon($appliedCoupon['code'], $subtotalPaise);
+                if ($check['valid']) {
+                    $discountPaise = min($check['discount_amount'], $subtotalPaise);
+                } else {
+                    // If subtotal dropped below minimum, keep promo metadata but discount is 0 or notify
+                    $discountPaise = 0;
+                }
             }
         }
 
