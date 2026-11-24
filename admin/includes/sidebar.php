@@ -62,15 +62,6 @@ $navItems = [
         <button type="button" class="drawer-close-btn" id="sidebarCloseBtn" aria-label="Close navigation drawer" title="Close navigation">&times;</button>
     </div>
 
-    <!-- Storefront Display inside Drawer (Single Store Panel) -->
-    <div class="drawer-mobile-storefront" style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--admin-border-subtle);">
-        <label style="font-size: 10.5px; font-weight: 700; color: #8A9A90; text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 6px;">Active Storefront:</label>
-        <div style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #E2DBD0; background: #FAF9F6; font-size: 12.5px; font-weight: 600; color: #14221A; display: flex; align-items: center; gap: 8px;">
-            <span style="width: 8px; height: 8px; border-radius: 50%; background: #166534; display: inline-block; flex-shrink: 0;"></span>
-            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?= htmlspecialchars($activeWebsite['name']) ?></span>
-        </div>
-    </div>
-
     <nav class="sidebar-nav">
         <?php foreach ($navItems as $sectionTitle => $sectionItems): ?>
             <div>
