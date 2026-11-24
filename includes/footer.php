@@ -26,7 +26,7 @@
                     <span class="brand-hl-line">thoughtfully.</span>
                 </h2>
                 <p class="footer-brand-subtext">
-                    Everyday wellness, crafted from nature’s finest ingredients.
+                    Natural nutrition, thoughtfully crafted for everyday wellness.
                 </p>
             </div>
 

@@ -459,7 +459,7 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                 </span>
                 <h1 class="policy-hero-title">Return &amp; <span>Refund Policy</span></h1>
                 <p class="policy-hero-subtext">
-                    Learn about our return, replacement, refund, and cancellation policies to ensure a smooth shopping experience with Nutronyx.
+                    Understand our policies on returns, replacements, refunds, and order cancellations for a clear and hassle-free shopping experience with NUTRONYX.
                 </p>
             </div>
         </header>
@@ -480,7 +480,7 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                                 <span class="faq-headline-line faq-headline-accent">Fair Resolutions.</span>
                             </h2>
                             <p class="faq-intro-subtext">
-                                Every Nutronyx order is prepared with care. If something isn't right, we'll work with you to find a fair and timely resolution.
+                                Every NUTRONYX order is prepared with care. If something isn't right, our team is here to understand your concern and help you find a fair resolution.
                             </p>
 
                             <!-- Table of Contents Quick Nav -->
@@ -494,25 +494,6 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                                     <li><a href="#section-05" class="policy-toc-link"><span class="policy-toc-num">05</span> Order Cancellation</a></li>
                                 </ul>
                             </nav>
-
-                            <!-- Concierge Assistance Card -->
-                            <div class="faq-concierge-card" style="margin-top: 24px;">
-                                <div class="concierge-icon-wrap" aria-hidden="true">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="23 4 23 10 17 10"></polyline>
-                                        <polyline points="1 20 1 14 7 14"></polyline>
-                                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                                    </svg>
-                                </div>
-                                <div class="concierge-content">
-                                    <h3 class="concierge-title">Need help with an order?</h3>
-                                    <p class="concierge-text">Contact our concierge team with your Order ID for prompt assistance.</p>
-                                    <a href="mailto:support@nutronyx.in" class="concierge-link">
-                                        <span>Email support@nutronyx.in</span>
-                                        <span class="concierge-arrow" aria-hidden="true">↗</span>
-                                    </a>
-                                </div>
-                            </div>
                         </div>
                     </aside>
 
@@ -526,7 +507,7 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Returns</h2>
                                     <p class="policy-text">
-                                        For hygiene and safety reasons, food products cannot be returned once they have been delivered.
+                                        For hygiene and safety reasons, we do not accept returns of food products once delivered, except where the product is damaged, defective, incorrect, or where otherwise required by applicable law.
                                     </p>
                                     <p class="policy-text" style="margin-top: 10px; font-weight: 500;">
                                         We do not accept returns for:
@@ -534,17 +515,20 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                                     <ul class="policy-bullet-list" role="list">
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Opened or used products</span>
+                                            <span>Products that have been opened or used, except where a product defect or other legally protected issue is identified.</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Change of mind after delivery</span>
+                                            <span>Change of mind after delivery.</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Incorrect orders placed by the customer</span>
+                                            <span>Incorrect products ordered by the customer.</span>
                                         </li>
                                     </ul>
+                                    <p class="policy-text" style="margin-top: 12px;">
+                                        If you receive a damaged, defective, or incorrect product, please refer to the section below for assistance.
+                                    </p>
                                 </div>
                             </article>
 
@@ -563,15 +547,15 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Defective</span>
+                                            <span>Defective or unsuitable for consumption</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
                                             <span>Different from the product you ordered</span>
                                         </li>
                                     </ul>
-                                    <p class="policy-text">
-                                        Please contact us within 48 hours of receiving your order.
+                                    <p class="policy-text" style="margin-top: 12px;">
+                                        Please contact us at <a href="mailto:support@nutronyx.in" style="color: var(--color-forest, #263e2b); text-decoration: underline; font-weight: 500;">support@nutronyx.in</a>, preferably within 48 hours of delivery.
                                     </p>
                                     <p class="policy-text" style="margin-top: 14px; font-weight: 500;">
                                         To help us review your request, please provide:
@@ -583,15 +567,18 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Clear photos of the product and its packaging</span>
+                                            <span>Clear photos of the product and its packaging, where available</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
                                             <span>A brief description of the issue</span>
                                         </li>
                                     </ul>
-                                    <p class="policy-text" style="margin-top: 12px; color: #7A8C80; font-size: 14.5px;">
-                                        Requests made after 48 hours of delivery may not be eligible for replacement or refund.
+                                    <p class="policy-text" style="margin-top: 12px;">
+                                        Our team will review your request and assist you with an appropriate resolution.
+                                    </p>
+                                    <p class="policy-text" style="margin-top: 10px; color: #7A8C80; font-size: 14.5px;">
+                                        Requests received after 48 hours will be reviewed on a case-by-case basis, subject to applicable consumer protection laws.
                                     </p>
                                 </div>
                             </article>
@@ -602,18 +589,21 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Replacement or Refund</h2>
                                     <p class="policy-text">
-                                        Once your request has been reviewed and approved, Nutronyx will, at its discretion:
+                                        Once your request has been reviewed and approved, NUTRONYX will provide an appropriate resolution, which may include:
                                     </p>
                                     <ul class="policy-bullet-list" role="list">
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Provide a replacement product, or</span>
+                                            <span>A replacement of the affected product, subject to availability.</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Issue a refund to your original payment method if a replacement is not possible.</span>
+                                            <span>A refund to your original payment method, where a replacement is unavailable or a refund is otherwise appropriate.</span>
                                         </li>
                                     </ul>
+                                    <p class="policy-text" style="margin-top: 12px;">
+                                        All requests will be handled fairly in accordance with our policy and applicable consumer protection laws.
+                                    </p>
                                 </div>
                             </article>
 
@@ -623,10 +613,10 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Refunds</h2>
                                     <p class="policy-text">
-                                        If your refund request is approved, the refund will be processed to your original payment method within 5–7 business days.
+                                        Once your refund request is approved, NUTRONYX will initiate the refund to your original payment method within 5–7 business days.
                                     </p>
                                     <p class="policy-text">
-                                        The time taken for the amount to reflect in your account may vary depending on your bank or payment provider.
+                                        The time required for the refunded amount to reflect in your account may vary depending on your bank or payment service provider.
                                     </p>
                                 </div>
                             </article>
@@ -637,10 +627,16 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Order Cancellation</h2>
                                     <p class="policy-text">
-                                        Orders may be cancelled only before they are shipped.
+                                        Orders may be cancelled before they are dispatched.
                                     </p>
                                     <p class="policy-text">
-                                        Once an order has been dispatched, it cannot be cancelled.
+                                        To request a cancellation, please contact <a href="mailto:support@nutronyx.in" style="color: var(--color-forest, #263e2b); text-decoration: underline; font-weight: 500;">support@nutronyx.in</a> with your Order ID as soon as possible.
+                                    </p>
+                                    <p class="policy-text">
+                                        Once an order has been dispatched, cancellation requests may not be accepted.
+                                    </p>
+                                    <p class="policy-text" style="margin-top: 10px; color: #7A8C80; font-size: 14.5px;">
+                                        For damaged, defective, or incorrect products received after delivery, please refer to our Replacement or Refund Policy.
                                     </p>
                                 </div>
                             </article>
@@ -648,13 +644,13 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                         </div>
 
                         <!-- ==================================================================
-                             CUSTOMER SUPPORT CARD (From Reference Image 6)
+                             CUSTOMER SUPPORT CARD
                              ================================================================== -->
                         <section class="policy-support-section" aria-label="Customer Support Contact">
                             <span class="policy-support-eyebrow">CUSTOMER SUPPORT</span>
-                            <h2 class="policy-support-title">Need help with a return or refund?</h2>
+                            <h2 class="policy-support-title">Need Help with a Return or Refund?</h2>
                             <p class="policy-support-desc">
-                                If you have any questions regarding returns, refunds, replacements, or order cancellations, our support team is here to assist you.
+                                For assistance with returns, replacements, refunds, or order cancellations, please contact our support team. We're here to help.
                             </p>
                             <a href="mailto:support@nutronyx.in" class="policy-support-email-btn">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -664,7 +660,7 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
                                 <span>support@nutronyx.in</span>
                             </a>
                             <p class="policy-support-note">
-                                Every Nutronyx order is prepared with care. If something isn't right, we'll work with you to find a fair and timely resolution.
+                                Every NUTRONYX order is prepared with care. If something isn't right, we'll work with you to find a fair resolution.
                             </p>
                         </section>
 

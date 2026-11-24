@@ -459,7 +459,7 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                 </span>
                 <h1 class="policy-hero-title">Terms &amp; <span>Conditions</span></h1>
                 <p class="policy-hero-subtext">
-                    Please read these Terms &amp; Conditions carefully before using Nutronyx. They explain your rights, responsibilities, and the terms governing your use of our website and products.
+                    Please review these Terms &amp; Conditions to understand the guidelines, rights, and responsibilities associated with using the NUTRONYX website and purchasing our products.
                 </p>
             </div>
         </header>
@@ -480,7 +480,7 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                                 <span class="faq-headline-line faq-headline-accent">Every Step.</span>
                             </h2>
                             <p class="faq-intro-subtext">
-                                We believe honest guidelines create lasting relationships. Here is a clear summary of how we operate and protect your experience.
+                                At NUTRONYX, we believe transparency and integrity are the foundation of trust. These terms outline our policies, responsibilities, and commitment to a fair and reliable shopping experience.
                             </p>
 
                             <!-- Table of Contents Quick Nav -->
@@ -496,27 +496,6 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                                     <li><a href="#section-07" class="policy-toc-link"><span class="policy-toc-num">07</span> Governing Law</a></li>
                                 </ul>
                             </nav>
-
-                            <!-- Concierge Assistance Card -->
-                            <div class="faq-concierge-card" style="margin-top: 24px;">
-                                <div class="concierge-icon-wrap" aria-hidden="true">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                        <polyline points="14 2 14 8 20 8"></polyline>
-                                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                                        <polyline points="10 9 9 9 8 9"></polyline>
-                                    </svg>
-                                </div>
-                                <div class="concierge-content">
-                                    <h3 class="concierge-title">Questions regarding terms?</h3>
-                                    <p class="concierge-text">Our customer concierge is happy to clarify any legal or ordering questions.</p>
-                                    <a href="mailto:support@nutronyx.in" class="concierge-link">
-                                        <span>Email support@nutronyx.in</span>
-                                        <span class="concierge-arrow" aria-hidden="true">↗</span>
-                                    </a>
-                                </div>
-                            </div>
                         </div>
                     </aside>
 
@@ -530,7 +509,10 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">About Nutronyx</h2>
                                     <p class="policy-text">
-                                        Nutronyx is a wellness brand committed to offering natural, high-quality nutrition products designed to support a healthy lifestyle. Our products are intended for general wellness and are not meant to diagnose, treat, cure, or prevent any disease.
+                                        NUTRONYX is a wellness brand dedicated to offering natural, high-quality nutrition products that support everyday health and well-being.
+                                    </p>
+                                    <p class="policy-text">
+                                        Our products are intended for general nutritional and wellness purposes and are not intended to diagnose, treat, cure, or prevent any disease.
                                     </p>
                                 </div>
                             </article>
@@ -543,19 +525,23 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                                     <ul class="policy-bullet-list" role="list">
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>All orders placed on our website are subject to acceptance and product availability.</span>
+                                            <span>All orders placed through our website are subject to acceptance, product availability, and successful payment confirmation.</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Prices are listed in Indian Rupees (₹) and include applicable taxes unless otherwise stated.</span>
+                                            <span>Product prices are displayed in Indian Rupees (₹) and include applicable taxes unless otherwise stated.</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Payments are processed securely through our authorized payment partners.</span>
+                                            <span>Payments are processed through authorized third-party payment service providers.</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Nutronyx reserves the right to refuse or cancel any order in the event of pricing errors, suspected fraud, or unforeseen circumstances.</span>
+                                            <span>NUTRONYX reserves the right to refuse or cancel orders due to pricing errors, product unavailability, suspected fraudulent activity, or circumstances beyond our reasonable control.</span>
+                                        </li>
+                                        <li class="policy-bullet-item">
+                                            <span class="policy-bullet-dot" aria-hidden="true"></span>
+                                            <span>If an order is cancelled by NUTRONYX after successful payment, the amount paid will be refunded to the original payment method in accordance with our Refund Policy.</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -567,13 +553,13 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Product Information</h2>
                                     <p class="policy-text">
-                                        We strive to ensure that all product descriptions, images, ingredients, pricing, and other information are accurate and up to date.
+                                        We make reasonable efforts to ensure that product descriptions, ingredients, nutritional information, images, pricing, and other details displayed on our website are accurate and up to date.
                                     </p>
                                     <p class="policy-text">
-                                        Minor variations may occur.
+                                        As our products contain natural ingredients, minor variations in colour, texture, and appearance may occur.
                                     </p>
                                     <p class="policy-text">
-                                        Product images are for illustrative purposes only.
+                                        Product images are for illustrative purposes. Please refer to the product packaging for applicable product details.
                                     </p>
                                 </div>
                             </article>
@@ -584,10 +570,13 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Health Disclaimer</h2>
                                     <p class="policy-text">
-                                        Nutronyx products support general wellness and are not a substitute for professional medical advice.
+                                        NUTRONYX products are intended for general nutrition and wellness purposes and are not a substitute for a balanced diet, healthy lifestyle, or professional medical advice.
                                     </p>
                                     <p class="policy-text">
-                                        Consult your healthcare professional if you are pregnant, breastfeeding, have a medical condition, or are taking medication.
+                                        Our products are not intended to diagnose, treat, cure, or prevent any disease.
+                                    </p>
+                                    <p class="policy-text">
+                                        If you are pregnant, breastfeeding, have an existing medical condition, have known food allergies, or are taking medication, consult a qualified healthcare professional before consuming our products.
                                     </p>
                                 </div>
                             </article>
@@ -598,10 +587,10 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Intellectual Property</h2>
                                     <p class="policy-text">
-                                        All content including logos, product names, images, graphics, and designs are the intellectual property of Nutronyx.
+                                        All content displayed on the NUTRONYX website, including brand names, logos, product descriptions, images, graphics, designs, and other materials, is owned by NUTRONYX or used with appropriate authorization.
                                     </p>
                                     <p class="policy-text">
-                                        Unauthorized reproduction or distribution is prohibited.
+                                        Unauthorized copying, reproduction, modification, distribution, or commercial use of such content without prior written permission is prohibited, except as permitted by applicable law.
                                     </p>
                                 </div>
                             </article>
@@ -612,10 +601,13 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Limitation of Liability</h2>
                                     <p class="policy-text">
-                                        Nutronyx shall not be liable for indirect or consequential losses arising from the use of this website or its products.
+                                        NUTRONYX makes reasonable efforts to maintain accurate website information and provide quality products and reliable services.
                                     </p>
                                     <p class="policy-text">
-                                        Liability is limited to the purchase price of the product where permitted by law.
+                                        To the extent permitted by applicable law, NUTRONYX shall not be liable for indirect or consequential losses arising from the use of our website or products.
+                                    </p>
+                                    <p class="policy-text">
+                                        Nothing in these Terms &amp; Conditions limits or excludes any liability or consumer rights that cannot legally be restricted under applicable Indian law.
                                     </p>
                                 </div>
                             </article>
@@ -626,7 +618,10 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Governing Law</h2>
                                     <p class="policy-text">
-                                        These Terms &amp; Conditions are governed by the laws of India.
+                                        These Terms &amp; Conditions shall be governed by and interpreted in accordance with the laws of India.
+                                    </p>
+                                    <p class="policy-text">
+                                        Subject to applicable consumer protection laws and mandatory jurisdiction requirements, disputes arising in connection with these Terms &amp; Conditions shall be subject to the jurisdiction of the competent courts in Telangana, India.
                                     </p>
                                 </div>
                             </article>
@@ -634,17 +629,17 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                         </div>
 
                         <!-- ==================================================================
-                             THANK YOU / TRANSPARENCY CARD (From Reference Image 7)
+                             CUSTOMER SUPPORT CARD
                              ================================================================== -->
-                        <section class="policy-support-section" aria-label="Customer Trust and Transparency">
-                            <span class="policy-support-eyebrow">THANK YOU</span>
+                        <section class="policy-support-section" aria-label="Customer Support Contact">
+                            <span class="policy-support-eyebrow">CUSTOMER SUPPORT</span>
                             <h2 class="policy-support-title">
                                 Transparency.<br>
                                 Trust.<br>
-                                Every step of the way.
+                                Every Step of the Way.
                             </h2>
                             <p class="policy-support-desc">
-                                If you have any questions regarding these Terms &amp; Conditions, our team will be happy to assist you.
+                                Have questions about our Terms &amp; Conditions, orders, or policies? Our support team is here to assist you.
                             </p>
                             <a href="mailto:support@nutronyx.in" class="policy-support-email-btn">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -653,9 +648,6 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
                                 </svg>
                                 <span>support@nutronyx.in</span>
                             </a>
-                            <p class="policy-support-note">
-                                We believe transparency builds trust. Protecting your rights is an essential part of delivering the Nutronyx experience.
-                            </p>
                         </section>
 
                     </div>
