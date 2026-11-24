@@ -46,7 +46,7 @@ $currentPage = 'partner';
     <!-- Global Base Stylesheet -->
     <link rel="stylesheet" href="assets/css/style.css?v=20261124_v3">
     <!-- Scoped Partner Page Stylesheet -->
-    <link rel="stylesheet" href="assets/css/partner.css?v=20261119_v2">
+    <link rel="stylesheet" href="assets/css/partner.css?v=20261124_v3">
 </head>
 <body class="nutronyx-body partner-page-body">
 
@@ -92,7 +92,7 @@ $currentPage = 'partner';
                         <!-- 4. Core Partnership Pillars (TITLES ONLY, NO SUBTITLES) -->
                         <div class="partner-pillars-row" aria-label="Core Partnership Pillars">
                             
-                            <!-- Pillar 1: Commercial Integrity -->
+                            <!-- Pillar 1: Transparent Partnerships -->
                             <div class="pillar-card">
                                 <div class="pillar-icon-box" aria-hidden="true">
                                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -101,12 +101,12 @@ $currentPage = 'partner';
                                         <path d="M6 14l-3 3a2.828 2.828 0 0 0 4 4l1-1"/>
                                     </svg>
                                 </div>
-                                <h3 class="pillar-title">COMMERCIAL<br>INTEGRITY</h3>
+                                <h3 class="pillar-title">TRANSPARENT<br>PARTNERSHIPS</h3>
                             </div>
 
                             <span class="pillar-sep-rule" aria-hidden="true"></span>
 
-                            <!-- Pillar 2: Clean Whole-Food Purity -->
+                            <!-- Pillar 2: Natural Nutrition -->
                             <div class="pillar-card">
                                 <div class="pillar-icon-box" aria-hidden="true">
                                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -115,12 +115,12 @@ $currentPage = 'partner';
                                         <path d="M12 18c0-3.5-3-6-6-6 0 3 2.5 6 6 6z"/>
                                     </svg>
                                 </div>
-                                <h3 class="pillar-title">CLEAN<br>WHOLE-FOOD PURITY</h3>
+                                <h3 class="pillar-title">NATURAL<br>NUTRITION</h3>
                             </div>
 
                             <span class="pillar-sep-rule" aria-hidden="true"></span>
 
-                            <!-- Pillar 3: Dedicated Concierge -->
+                            <!-- Pillar 3: Dedicated Partner Support -->
                             <div class="pillar-card">
                                 <div class="pillar-icon-box" aria-hidden="true">
                                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -130,7 +130,7 @@ $currentPage = 'partner';
                                         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                                     </svg>
                                 </div>
-                                <h3 class="pillar-title">DEDICATED<br>CONCIERGE</h3>
+                                <h3 class="pillar-title">DEDICATED<br>PARTNER SUPPORT</h3>
                             </div>
 
                         </div>
@@ -159,7 +159,7 @@ $currentPage = 'partner';
 
                         <!-- 6. Trust & Credential Verification Bar -->
                         <div class="partner-trust-credential-bar">
-                            <span class="trust-caption">TRUSTED BY WELLNESS-FOCUSED BUSINESSES</span>
+                            <span class="trust-caption">BUILT FOR MEANINGFUL PARTNERSHIPS</span>
                             
                             <div class="trust-badges-wrapper">
                                 <!-- Laurel Left -->
@@ -275,7 +275,7 @@ $currentPage = 'partner';
 
                             <!-- Supporting Narrative Copy -->
                             <p class="why-supporting-copy">
-                                We believe meaningful partnerships are built on shared values, uncompromising quality, and a vision for better everyday wellness.
+                                At NUTRONYX, we believe successful partnerships are built on mutual trust, shared values, and a commitment to quality. Together, we aim to create lasting business relationships while making natural nutrition more accessible.
                             </p>
 
                             <!-- Floating Provenance Plaque -->
@@ -304,7 +304,7 @@ $currentPage = 'partner';
                     <div class="why-principles-col">
                         <div class="why-philosophy-cards-stack">
                             
-                            <!-- Card 01: Foundational Purity -->
+                            <!-- Card 01: Product Excellence -->
                             <div class="why-phil-card" data-index="0">
                                 <div class="phil-card-icon-badge" aria-hidden="true">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -315,12 +315,12 @@ $currentPage = 'partner';
                                 </div>
                                 <span class="phil-card-divider" aria-hidden="true"></span>
                                 <div class="phil-card-content">
-                                    <span class="phil-card-tag">FOUNDATIONAL PURITY</span>
-                                    <h3 class="phil-card-title">Premium Product Standards</h3>
+                                    <span class="phil-card-tag">PRODUCT EXCELLENCE</span>
+                                    <h3 class="phil-card-title">Commitment to Quality</h3>
                                 </div>
                             </div>
 
-                            <!-- Card 02: Mutual Integrity -->
+                            <!-- Card 02: Mutual Trust -->
                             <div class="why-phil-card" data-index="1">
                                 <div class="phil-card-icon-badge" aria-hidden="true">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -332,12 +332,12 @@ $currentPage = 'partner';
                                 </div>
                                 <span class="phil-card-divider" aria-hidden="true"></span>
                                 <div class="phil-card-content">
-                                    <span class="phil-card-tag">MUTUAL INTEGRITY</span>
-                                    <h3 class="phil-card-title">Shared Values</h3>
+                                    <span class="phil-card-tag">MUTUAL TRUST</span>
+                                    <h3 class="phil-card-title">Trust &amp; Transparency</h3>
                                 </div>
                             </div>
 
-                            <!-- Card 03: Consistent Operations -->
+                            <!-- Card 03: Reliable Collaboration -->
                             <div class="why-phil-card" data-index="2">
                                 <div class="phil-card-icon-badge" aria-hidden="true">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -349,12 +349,12 @@ $currentPage = 'partner';
                                 </div>
                                 <span class="phil-card-divider" aria-hidden="true"></span>
                                 <div class="phil-card-content">
-                                    <span class="phil-card-tag">CONSISTENT OPERATIONS</span>
-                                    <h3 class="phil-card-title">Reliable Collaboration</h3>
+                                    <span class="phil-card-tag">RELIABLE COLLABORATION</span>
+                                    <h3 class="phil-card-title">Dependable Partnerships</h3>
                                 </div>
                             </div>
 
-                            <!-- Card 04: Sustained Horizon -->
+                            <!-- Card 04: Shared Success -->
                             <div class="why-phil-card" data-index="3">
                                 <div class="phil-card-icon-badge" aria-hidden="true">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -367,8 +367,8 @@ $currentPage = 'partner';
                                 </div>
                                 <span class="phil-card-divider" aria-hidden="true"></span>
                                 <div class="phil-card-content">
-                                    <span class="phil-card-tag">SUSTAINED HORIZON</span>
-                                    <h3 class="phil-card-title">Long-Term Growth</h3>
+                                    <span class="phil-card-tag">SHARED SUCCESS</span>
+                                    <h3 class="phil-card-title">Sustainable Business Growth</h3>
                                 </div>
                             </div>
 
@@ -422,7 +422,7 @@ $currentPage = 'partner';
 
                     <!-- Supporting Description -->
                     <p class="showcase-subheadline">
-                        From independent retailers to wellness advocates, we welcome people and businesses who share our commitment to thoughtful everyday nutrition.
+                        We welcome retailers, distributors, fitness centres, wellness professionals, corporate organisations, and creators who share our passion for natural nutrition. Together, we aim to build meaningful partnerships and make everyday wellness accessible to more people.
                     </p>
                 </div>
 
@@ -493,8 +493,8 @@ $currentPage = 'partner';
                         </div>
                     </a>
 
-                    <!-- 5. Wellness Professionals -->
-                    <a href="#partner-application" class="showcase-card" role="listitem" data-category="professionals" aria-label="Partner with us: Wellness Professionals">
+                    <!-- 5. Health & Wellness Professionals -->
+                    <a href="#partner-application" class="showcase-card" role="listitem" data-category="professionals" aria-label="Partner with us: Health & Wellness Professionals">
                         <div class="showcase-card-inner">
                             <div class="showcase-icon-badge" aria-hidden="true">
                                 <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -503,7 +503,7 @@ $currentPage = 'partner';
                                     <path d="M12 22V13"></path>
                                 </svg>
                             </div>
-                            <h3 class="showcase-card-title">Wellness<br>Professionals</h3>
+                            <h3 class="showcase-card-title">Health &amp; Wellness<br>Professionals</h3>
                         </div>
                     </a>
 
@@ -564,11 +564,11 @@ $currentPage = 'partner';
                         <article class="trust-advantage-card card-left" data-index="0">
                             <div class="advantage-header">
                                 <span class="advantage-num-badge">01</span>
-                                <span class="advantage-meta-tag">FOUNDATIONAL PURITY</span>
+                                <span class="advantage-meta-tag">PRODUCT EXCELLENCE</span>
                             </div>
-                            <h3 class="advantage-title">PREMIUM PRODUCT STANDARDS</h3>
+                            <h3 class="advantage-title">PREMIUM PRODUCT QUALITY</h3>
                             <p class="advantage-desc">
-                                Thoughtfully developed wellness products with a commitment to ingredient integrity and quality.
+                                Carefully developed natural nutrition products with a strong focus on ingredient quality, safety, and consistency.
                             </p>
                             <div class="advantage-foot-hairline" aria-hidden="true"></div>
                         </article>
@@ -577,11 +577,11 @@ $currentPage = 'partner';
                         <article class="trust-advantage-card card-left" data-index="1">
                             <div class="advantage-header">
                                 <span class="advantage-num-badge">02</span>
-                                <span class="advantage-meta-tag">OPERATIONAL INTEGRITY</span>
+                                <span class="advantage-meta-tag">OPERATIONAL RELIABILITY</span>
                             </div>
-                            <h3 class="advantage-title">RELIABLE SUPPLY CHAIN</h3>
+                            <h3 class="advantage-title">DEPENDABLE SUPPLY &amp; COORDINATION</h3>
                             <p class="advantage-desc">
-                                A dependable approach to product availability and business coordination.
+                                A commitment to clear order coordination, transparent communication, and reliable product availability.
                             </p>
                             <div class="advantage-foot-hairline" aria-hidden="true"></div>
                         </article>
@@ -604,8 +604,8 @@ $currentPage = 'partner';
                                     </svg>
                                 </div>
                                 <div class="hallmark-info">
-                                    <span class="hallmark-tag">PERENNIAL STANDARD</span>
-                                    <span class="hallmark-title">COMMERCIAL INTEGRITY</span>
+                                    <span class="hallmark-tag">BUILT ON TRUST</span>
+                                    <span class="hallmark-title">QUALITY &bull; INTEGRITY &bull; PARTNERSHIP</span>
                                 </div>
                             </div>
                         </div>
@@ -618,11 +618,11 @@ $currentPage = 'partner';
                         <article class="trust-advantage-card card-right" data-index="2">
                             <div class="advantage-header">
                                 <span class="advantage-num-badge">03</span>
-                                <span class="advantage-meta-tag">COLLABORATIVE CONCIERGE</span>
+                                <span class="advantage-meta-tag">PARTNER-FIRST APPROACH</span>
                             </div>
                             <h3 class="advantage-title">DEDICATED PARTNERSHIP SUPPORT</h3>
                             <p class="advantage-desc">
-                                A collaborative approach that values communication, clarity, and meaningful business relationships.
+                                Personalised communication and responsive assistance to help our partners build successful business relationships.
                             </p>
                             <div class="advantage-foot-hairline" aria-hidden="true"></div>
                         </article>
@@ -631,11 +631,11 @@ $currentPage = 'partner';
                         <article class="trust-advantage-card card-right" data-index="3">
                             <div class="advantage-header">
                                 <span class="advantage-num-badge">04</span>
-                                <span class="advantage-meta-tag">MUTUAL HORIZON</span>
+                                <span class="advantage-meta-tag">SHARED GROWTH</span>
                             </div>
-                            <h3 class="advantage-title">LONG-TERM GROWTH</h3>
+                            <h3 class="advantage-title">LONG-TERM BUSINESS GROWTH</h3>
                             <p class="advantage-desc">
-                                Building opportunities through shared ambition, thoughtful collaboration, and lasting value.
+                                Building meaningful opportunities through mutual trust, shared ambitions, and a commitment to lasting value.
                             </p>
                             <div class="advantage-foot-hairline" aria-hidden="true"></div>
                         </article>
@@ -648,22 +648,22 @@ $currentPage = 'partner';
                 <div class="trust-covenant-ribbon">
                     <div class="covenant-item">
                         <span class="covenant-dot" aria-hidden="true"></span>
-                        <span class="covenant-text">BOTANICAL PURITY</span>
+                        <span class="covenant-text">QUALITY FIRST</span>
                     </div>
                     <span class="covenant-divider" aria-hidden="true">&bull;</span>
                     <div class="covenant-item">
                         <span class="covenant-dot" aria-hidden="true"></span>
-                        <span class="covenant-text">OPERATIONAL CLARITY</span>
+                        <span class="covenant-text">RELIABLE OPERATIONS</span>
                     </div>
                     <span class="covenant-divider" aria-hidden="true">&bull;</span>
                     <div class="covenant-item">
                         <span class="covenant-dot" aria-hidden="true"></span>
-                        <span class="covenant-text">PERSONAL COORDINATION</span>
+                        <span class="covenant-text">PARTNER SUPPORT</span>
                     </div>
                     <span class="covenant-divider" aria-hidden="true">&bull;</span>
                     <div class="covenant-item">
                         <span class="covenant-dot" aria-hidden="true"></span>
-                        <span class="covenant-text">SUSTAINED HORIZONS</span>
+                        <span class="covenant-text">SHARED GROWTH</span>
                     </div>
                 </div>
 
@@ -714,11 +714,11 @@ $currentPage = 'partner';
                         <div class="journey-step-card card-left">
                             <div class="step-card-header">
                                 <span class="step-num-display">01</span>
-                                <span class="step-meta-tag">STAGE I &bull; INITIAL INQUIRY</span>
+                                <span class="step-meta-tag">01 — STAGE I &bull; INITIAL INQUIRY</span>
                             </div>
                             <h3 class="step-title">SUBMIT YOUR APPLICATION</h3>
                             <p class="step-desc">
-                                Tell us about your business, your interests, and the kind of partnership you're looking to build.
+                                Tell us about your business, your interests, and the type of partnership you would like to explore with NUTRONYX.
                             </p>
                             <div class="step-card-accent" aria-hidden="true"></div>
                         </div>
@@ -741,26 +741,26 @@ $currentPage = 'partner';
                         <div class="journey-step-card card-right">
                             <div class="step-card-header">
                                 <span class="step-num-display">02</span>
-                                <span class="step-meta-tag">STAGE II &bull; STRATEGIC REVIEW</span>
+                                <span class="step-meta-tag">02 — STAGE II &bull; EVALUATION &amp; REVIEW</span>
                             </div>
                             <h3 class="step-title">APPLICATION REVIEW</h3>
                             <p class="step-desc">
-                                Our team reviews your information to understand your business and partnership goals.
+                                Our team carefully reviews your application to understand your business profile, partnership interests, and potential opportunities for collaboration.
                             </p>
                             <div class="step-card-accent" aria-hidden="true"></div>
                         </div>
                     </div>
 
-                    <!-- STEP 03: BUSINESS DISCUSSION (LEFT) -->
+                    <!-- STEP 03: PARTNERSHIP DISCUSSION (LEFT) -->
                     <div class="journey-step-row step-row-left" data-step="3">
                         <div class="journey-step-card card-left">
                             <div class="step-card-header">
                                 <span class="step-num-display">03</span>
-                                <span class="step-meta-tag">STAGE III &bull; DIRECT DIALOGUE</span>
+                                <span class="step-meta-tag">03 — STAGE III &bull; MUTUAL EXPLORATION</span>
                             </div>
-                            <h3 class="step-title">BUSINESS DISCUSSION</h3>
+                            <h3 class="step-title">PARTNERSHIP DISCUSSION</h3>
                             <p class="step-desc">
-                                We connect to discuss your interests, explore opportunities, and understand how we can collaborate.
+                                We connect with you to discuss business opportunities, understand mutual expectations, and explore how we can create lasting value together.
                             </p>
                             <div class="step-card-accent" aria-hidden="true"></div>
                         </div>
@@ -783,11 +783,11 @@ $currentPage = 'partner';
                         <div class="journey-step-card card-right">
                             <div class="step-card-header">
                                 <span class="step-num-display">04</span>
-                                <span class="step-meta-tag">STAGE IV &bull; ALLIANCE INITIATION</span>
+                                <span class="step-meta-tag">04 — STAGE IV &bull; PARTNERSHIP ONBOARDING</span>
                             </div>
                             <h3 class="step-title">WELCOME TO NUTRONYX</h3>
                             <p class="step-desc">
-                                When there's a shared vision and a strong foundation, we begin building our partnership together.
+                                Once we mutually agree on the partnership terms, we guide you through the onboarding process and begin building a successful collaboration.
                             </p>
                             <div class="step-card-accent" aria-hidden="true"></div>
                         </div>
@@ -830,12 +830,12 @@ $currentPage = 'partner';
                 <div class="partner-app-header">
                     <div class="partner-app-eyebrow">
                         <span class="eyebrow-dash" aria-hidden="true"></span>
-                        <span class="eyebrow-text">STAGE V &bull; STRATEGIC APPLICATION</span>
+                        <span class="eyebrow-text">PARTNERSHIP APPLICATION</span>
                         <span class="eyebrow-dash" aria-hidden="true"></span>
                     </div>
-                    <h2 class="partner-app-title">Begin Your Alliance with Nutronyx.</h2>
+                    <h2 class="partner-app-title">Let's Build a Partnership Together.</h2>
                     <p class="partner-app-subtitle">
-                        Whether you are a wellness center, retail curator, healthcare practitioner, or brand creator, let’s explore how we can collaborate.
+                        Whether you're a retailer, distributor, wellness professional, fitness centre, or content creator, we'd love to explore opportunities to grow together.
                     </p>
                 </div>
 
@@ -859,37 +859,37 @@ $currentPage = 'partner';
                         <div class="partner-grid-2col">
                             <div class="partner-field-wrap" id="wrap-partner-name">
                                 <label for="partner_name" class="partner-label">Full Name <span class="req">*</span></label>
-                                <input type="text" id="partner_name" name="full_name" class="partner-input" placeholder="e.g. Dr. Ananya Sharma" required autocomplete="name">
+                                <input type="text" id="partner_name" name="full_name" class="partner-input" placeholder="Enter your full name" required autocomplete="name">
                             </div>
                             <div class="partner-field-wrap" id="wrap-partner-company">
-                                <label for="partner_company" class="partner-label">Company / Brand / Practice <span class="req">*</span></label>
-                                <input type="text" id="partner_company" name="company" class="partner-input" placeholder="e.g. Veda Wellness Sanctuary" required>
+                                <label for="partner_company" class="partner-label">Business / Brand Name</label>
+                                <input type="text" id="partner_company" name="company" class="partner-input" placeholder="Business name (if applicable)">
                             </div>
                         </div>
 
                         <div class="partner-grid-2col">
                             <div class="partner-field-wrap" id="wrap-partner-email">
-                                <label for="partner_email" class="partner-label">Business Email <span class="req">*</span></label>
-                                <input type="email" id="partner_email" name="email" class="partner-input" placeholder="name@organization.com" required autocomplete="email">
+                                <label for="partner_email" class="partner-label">Email Address <span class="req">*</span></label>
+                                <input type="email" id="partner_email" name="email" class="partner-input" placeholder="name@example.com" required autocomplete="email">
                             </div>
                             <div class="partner-field-wrap" id="wrap-partner-phone">
-                                <label for="partner_phone" class="partner-label">Phone / WhatsApp Number <span class="req">*</span></label>
+                                <label for="partner_phone" class="partner-label">Phone / WhatsApp <span class="req">*</span></label>
                                 <input type="tel" id="partner_phone" name="phone" class="partner-input" placeholder="+91 98765 43210" required autocomplete="tel">
                             </div>
                         </div>
 
                         <div class="partner-field-wrap" id="wrap-partner-category">
-                            <label for="partner_category" class="partner-label">Partnership Track / Category <span class="req">*</span></label>
+                            <label for="partner_category" class="partner-label">Partnership Category <span class="req">*</span></label>
                             <div class="partner-select-wrap">
                                 <select id="partner_category" name="category" class="partner-select" required>
-                                    <option value="" disabled selected>Select your partnership track...</option>
-                                    <option value="Corporate Wellness &amp; Executive Gifting">Corporate Wellness &amp; Executive Gifting</option>
-                                    <option value="Distributors &amp; Retail Alliances">Distributors &amp; Retail Alliances</option>
-                                    <option value="Healthcare, Nutritionists &amp; Functional Clinics">Healthcare, Nutritionists &amp; Functional Clinics</option>
-                                    <option value="Content Creators &amp; Wellness Ambassadors">Content Creators &amp; Wellness Ambassadors</option>
-                                    <option value="Luxury Hospitality, Spas &amp; Wellness Retreats">Luxury Hospitality, Spas &amp; Wellness Retreats</option>
-                                    <option value="Gyms, Fitness Centers &amp; Sports Nutrition">Gyms, Fitness Centers &amp; Sports Nutrition</option>
-                                    <option value="Other Strategic Alliances">Other Strategic Alliances</option>
+                                    <option value="" disabled selected>Select your partnership category</option>
+                                    <option value="Retail Store">Retail Store</option>
+                                    <option value="Distributor / Wholesaler">Distributor / Wholesaler</option>
+                                    <option value="Corporate Wellness">Corporate Wellness</option>
+                                    <option value="Gym / Fitness Centre">Gym / Fitness Centre</option>
+                                    <option value="Health &amp; Wellness Professional">Health &amp; Wellness Professional</option>
+                                    <option value="Content Creator / Influencer">Content Creator / Influencer</option>
+                                    <option value="Other">Other</option>
                                 </select>
                                 <span class="select-chevron" aria-hidden="true">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -898,14 +898,17 @@ $currentPage = 'partner';
                         </div>
 
                         <div class="partner-field-wrap" id="wrap-partner-message">
-                            <label for="partner_message" class="partner-label">Proposed Collaboration / Notes <span class="req">*</span></label>
-                            <textarea id="partner_message" name="message" class="partner-textarea" rows="4" placeholder="Tell us about your organization, anticipated reach, and how you envision collaborating with Nutronyx..." required></textarea>
+                            <label for="partner_message" class="partner-label">Tell Us About Your Partnership Interest <span class="req">*</span></label>
+                            <textarea id="partner_message" name="message" class="partner-textarea" rows="4" placeholder="Tell us about your business or profile, the partnership you're interested in, and how you'd like to collaborate with NUTRONYX." required></textarea>
                         </div>
 
                         <div class="partner-form-footer">
                             <div class="partner-form-reassurance">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                                <span>Direct review by Nutronyx Founding Team. Response within 24-48 hours.</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E5736" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="m9 12 2 2 4-4"></path>
+                                </svg>
+                                <span>Your application will be reviewed by the NUTRONYX team.</span>
                             </div>
                             <button type="submit" id="partnerSubmitBtn" class="partner-submit-btn">
                                 <span class="btn-text">SUBMIT PARTNERSHIP APPLICATION</span>
@@ -947,7 +950,7 @@ $currentPage = 'partner';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
     <!-- Scoped Partner Page Interaction Script -->
-    <script src="assets/js/partner.js?v=20261117_v2"></script>
+    <script src="assets/js/partner.js?v=20261124_v3"></script>
 
     <!-- Finstics Tap Handler -->
     <script>

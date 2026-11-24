@@ -257,6 +257,26 @@ function initPartnerCategoriesDiscovery(prefersReducedMotion) {
             }, "-=0.5");
         }
     });
+
+    // Category click handler: smooth scroll & pre-select in application form
+    const categoryMap = {
+        "retail": "Retail Store",
+        "distributors": "Distributor / Wholesaler",
+        "corporate": "Corporate Wellness",
+        "fitness": "Gym / Fitness Centre",
+        "professionals": "Health & Wellness Professional",
+        "creators": "Content Creator / Influencer"
+    };
+
+    section.querySelectorAll(".showcase-card").forEach(card => {
+        card.addEventListener("click", () => {
+            const cat = card.dataset.category;
+            const select = document.getElementById("partner_category");
+            if (select && categoryMap[cat]) {
+                select.value = categoryMap[cat];
+            }
+        });
+    });
 }
 
 
@@ -528,25 +548,21 @@ function initPartnerApplicationForm() {
             document.getElementById("wrap-partner-name")?.classList.add("has-error");
             showAlert("Please enter your full name (minimum 2 characters).");
             hasError = true;
-        } else if (!company) {
-            document.getElementById("wrap-partner-company")?.classList.add("has-error");
-            showAlert("Please provide your organization, brand, or clinic name.");
-            hasError = true;
         } else if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             document.getElementById("wrap-partner-email")?.classList.add("has-error");
-            showAlert("Please provide a valid work or business email address.");
+            showAlert("Please provide a valid email address.");
             hasError = true;
         } else if (!phone || !/^[0-9+\-\s().]{7,25}$/.test(phone)) {
             document.getElementById("wrap-partner-phone")?.classList.add("has-error");
-            showAlert("Please enter a valid phone number so we can reach you.");
+            showAlert("Please enter a valid phone or WhatsApp number.");
             hasError = true;
         } else if (!category) {
             document.getElementById("wrap-partner-category")?.classList.add("has-error");
-            showAlert("Please select a partnership category.");
+            showAlert("Please select your partnership category.");
             hasError = true;
         } else if (message.length < 10) {
             document.getElementById("wrap-partner-message")?.classList.add("has-error");
-            showAlert("Please describe your proposed collaboration in at least 10 characters.");
+            showAlert("Please tell us about your partnership interest in at least 10 characters.");
             hasError = true;
         }
 

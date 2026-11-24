@@ -94,10 +94,10 @@ if (empty($fullName)) {
     $errors['full_name'] = 'Full name must be at least 2 characters.';
 }
 
-// Company / Brand / Clinic Name
+// Company / Brand / Clinic Name (Optional)
 $company = trim(strip_tags((string)($inputData['company'] ?? '')));
 if (empty($company)) {
-    $errors['company'] = 'Please enter your company, brand, or practice name.';
+    $company = 'Not specified';
 }
 
 // Email Address
