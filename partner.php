@@ -551,7 +551,7 @@ $currentPage = 'partner';
                     </h2>
 
                     <p class="trust-supporting-copy">
-                        Strong partnerships are built on more than products. They grow through shared values, dependable collaboration, and a commitment to creating lasting value.
+                        At NUTRONYX, we believe lasting partnerships are built on trust, consistent quality, and dependable collaboration. We are committed to supporting our partners with transparent communication, reliable coordination, and opportunities for mutual growth.
                     </p>
                 </div>
 
