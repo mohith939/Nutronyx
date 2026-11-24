@@ -804,11 +804,11 @@ $currentPage = 'partner';
                             <path d="M12 8v10"/>
                         </svg>
                     </div>
-                    <blockquote class="closing-quote-statement">
-                        &ldquo;Every successful partnership begins with a conversation.&rdquo;
-                    </blockquote>
+                    <h3 class="closing-quote-statement">
+                        Let's Build Something Meaningful Together.
+                    </h3>
                     <p class="closing-guidance-sub">
-                        Ready to discuss how we can grow together? Share your details with our team.
+                        Ready to explore a partnership with NUTRONYX? Share your details with our team and discover opportunities to grow together.
                     </p>
                     <div class="closing-cta-action">
                         <a href="#partner-application" class="btn-journey-start" aria-label="Start the conversation - Proceed to application">
