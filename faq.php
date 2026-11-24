@@ -489,6 +489,6 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
     <!-- Scripts: GSAP & Main Interactions -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="assets/js/main.js?v=20261117_v2"></script>
+    <script src="assets/js/main.js?v=20261124_v1"></script>
 </body>
 </html>

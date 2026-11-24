@@ -101,6 +101,7 @@ $isAnnouncementActive = (!empty($announcement) && !empty($announcement['is_enabl
                 <button class="mobile-toggle" aria-label="Toggle Menu" aria-expanded="false">
                     <span></span>
                     <span></span>
+                    <span></span>
                 </button>
             </div>
         </div>
@@ -127,11 +128,20 @@ $isAnnouncementActive = (!empty($announcement) && !empty($announcement['is_enabl
         const mobileToggle = header.querySelector(".mobile-toggle");
         const mainNav = header.querySelector(".main-nav");
         if (mobileToggle && mainNav) {
+            if (mobileToggle.dataset.headerBound === "true") return;
+            mobileToggle.dataset.headerBound = "true";
+
             mobileToggle.addEventListener("click", (e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                const isExpanded = mobileToggle.getAttribute("aria-expanded") === "true";
-                mobileToggle.setAttribute("aria-expanded", String(!isExpanded));
-                mainNav.classList.toggle("mobile-open");
+                const isOpen = mainNav.classList.contains("mobile-open");
+                if (isOpen) {
+                    mainNav.classList.remove("mobile-open");
+                    mobileToggle.setAttribute("aria-expanded", "false");
+                } else {
+                    mainNav.classList.add("mobile-open");
+                    mobileToggle.setAttribute("aria-expanded", "true");
+                }
             });
 
             // Close when clicking outside

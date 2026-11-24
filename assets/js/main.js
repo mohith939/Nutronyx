@@ -5,30 +5,7 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Header scroll state
-    const header = document.querySelector(".site-header");
-    const updateHeaderOnScroll = () => {
-        if (window.scrollY > 40) {
-            header?.classList.add("scrolled");
-        } else {
-            header?.classList.remove("scrolled");
-        }
-    };
-    window.addEventListener("scroll", updateHeaderOnScroll, { passive: true });
-    updateHeaderOnScroll();
-
-    // 2. Mobile navigation toggle
-    const mobileToggle = document.querySelector(".mobile-toggle");
-    const mainNav = document.querySelector(".main-nav");
-    if (mobileToggle && mainNav) {
-        mobileToggle.addEventListener("click", () => {
-            const isExpanded = mobileToggle.getAttribute("aria-expanded") === "true";
-            mobileToggle.setAttribute("aria-expanded", String(!isExpanded));
-            mainNav.classList.toggle("mobile-open");
-        });
-    }
-
-    // 3. Check for prefers-reduced-motion
+    // 1. Check for prefers-reduced-motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) {
         console.info("Nutronyx: prefers-reduced-motion detected. Disabling scroll animations.");

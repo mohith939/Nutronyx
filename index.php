@@ -1541,7 +1541,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     
     <!-- Interaction & Motion Script -->
-    <script src="assets/js/main.js?v=20261119_v1"></script>
+    <script src="assets/js/main.js?v=20261124_v1"></script>
     <script>
     function onShowcasePillClick(variantId, price, btn) {
         if (arguments.length === 4) {

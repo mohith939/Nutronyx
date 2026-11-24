@@ -690,7 +690,7 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
     <!-- Scripts: GSAP & Smooth Scrolling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="assets/js/main.js?v=20261117_v2"></script>
+    <script src="assets/js/main.js?v=20261124_v1"></script>
 
     <script>
         // Smooth scroll & active state tracking for TOC links
