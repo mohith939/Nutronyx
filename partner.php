@@ -36,7 +36,7 @@ $currentPage = 'partner';
     <link rel=manifest href="/site.webmanifest">
     <meta name=theme-color content="#174529">
 
-    <meta name="description" content="Bring everyday wellness to more people. Partner with NUTRONYX and collaborate with a purpose-driven wellness brand.">
+    <meta name="description" content="Partner with NUTRONYX to bring thoughtfully crafted natural nutrition to more people while building meaningful opportunities for shared growth.">
 
     <!-- Google Fonts: Cormorant Garamond, Playfair Display & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,7 +86,7 @@ $currentPage = 'partner';
 
                         <!-- 3. Supporting Description -->
                         <p class="partner-hero-description">
-                            Collaborate with a purpose-driven wellness brand and create lasting value through clean, plant-based nutrition.
+                            Partner with NUTRONYX to bring thoughtfully crafted natural nutrition to more people while building meaningful opportunities for shared growth.
                         </p>
 
                         <!-- 4. Core Partnership Pillars (TITLES ONLY, NO SUBTITLES) -->
