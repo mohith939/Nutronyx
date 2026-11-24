@@ -23,45 +23,38 @@ $isAnnouncementActive = (!empty($announcement) && !empty($announcement['is_enabl
 ?>
 <header class="site-header <?= $isAnnouncementActive ? 'has-announcement' : '' ?>" id="siteHeader">
     <?php if ($isAnnouncementActive): 
-        $icon1Svg = \Nutronyx\Services\AnnouncementService::getIconSvg($announcement['icon_1'] ?? 'truck');
-        $icon2Svg = \Nutronyx\Services\AnnouncementService::getIconSvg($announcement['icon_2'] ?? 'shield');
-        $icon3Svg = \Nutronyx\Services\AnnouncementService::getIconSvg($announcement['icon_3'] ?? 'leaf');
-        $speed = (int)($announcement['speed_seconds'] ?? 28);
+        $speed = (int)($announcement['speed_seconds'] ?? 30);
         $bgColor = htmlspecialchars($announcement['bg_color'] ?? '#0D2F1F');
         $textColor = htmlspecialchars($announcement['text_color'] ?? '#FAF6ED');
+
+        $announcementItems = [];
+        for ($i = 1; $i <= 4; $i++) {
+            $sentKey = "sentence_{$i}";
+            $iconKey = "icon_{$i}";
+            if (!empty($announcement[$sentKey])) {
+                $announcementItems[] = [
+                    'text' => $announcement[$sentKey],
+                    'icon' => \Nutronyx\Services\AnnouncementService::getIconSvg($announcement[$iconKey] ?? 'truck')
+                ];
+            }
+        }
     ?>
     <!-- Top Announcement Ticker Bar (Exact Reference Match) -->
     <div class="announcement-ticker-bar" style="background-color: <?= $bgColor ?>; color: <?= $textColor ?>;" aria-label="Announcement Notice">
         <div class="scroller-track" style="animation-duration: <?= $speed ?>s;">
             <!-- Loop block 1 -->
             <div class="scroller-content">
-                <?php if (!empty($announcement['sentence_1'])): ?>
-                    <span class="scroller-item"><span class="scroller-icon"><?= $icon1Svg ?></span><span class="scroller-text"><?= htmlspecialchars($announcement['sentence_1']) ?></span></span>
+                <?php foreach ($announcementItems as $item): ?>
+                    <span class="scroller-item"><span class="scroller-icon"><?= $item['icon'] ?></span><span class="scroller-text"><?= htmlspecialchars($item['text']) ?></span></span>
                     <span class="scroller-bullet" aria-hidden="true">&#8226;</span>
-                <?php endif; ?>
-                <?php if (!empty($announcement['sentence_2'])): ?>
-                    <span class="scroller-item"><span class="scroller-icon"><?= $icon2Svg ?></span><span class="scroller-text"><?= htmlspecialchars($announcement['sentence_2']) ?></span></span>
-                    <span class="scroller-bullet" aria-hidden="true">&#8226;</span>
-                <?php endif; ?>
-                <?php if (!empty($announcement['sentence_3'])): ?>
-                    <span class="scroller-item"><span class="scroller-icon"><?= $icon3Svg ?></span><span class="scroller-text"><?= htmlspecialchars($announcement['sentence_3']) ?></span></span>
-                    <span class="scroller-bullet" aria-hidden="true">&#8226;</span>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </div>
             <!-- Loop block 2 (Seamless Infinite Duplicate) -->
             <div class="scroller-content" aria-hidden="true">
-                <?php if (!empty($announcement['sentence_1'])): ?>
-                    <span class="scroller-item"><span class="scroller-icon"><?= $icon1Svg ?></span><span class="scroller-text"><?= htmlspecialchars($announcement['sentence_1']) ?></span></span>
+                <?php foreach ($announcementItems as $item): ?>
+                    <span class="scroller-item"><span class="scroller-icon"><?= $item['icon'] ?></span><span class="scroller-text"><?= htmlspecialchars($item['text']) ?></span></span>
                     <span class="scroller-bullet" aria-hidden="true">&#8226;</span>
-                <?php endif; ?>
-                <?php if (!empty($announcement['sentence_2'])): ?>
-                    <span class="scroller-item"><span class="scroller-icon"><?= $icon2Svg ?></span><span class="scroller-text"><?= htmlspecialchars($announcement['sentence_2']) ?></span></span>
-                    <span class="scroller-bullet" aria-hidden="true">&#8226;</span>
-                <?php endif; ?>
-                <?php if (!empty($announcement['sentence_3'])): ?>
-                    <span class="scroller-item"><span class="scroller-icon"><?= $icon3Svg ?></span><span class="scroller-text"><?= htmlspecialchars($announcement['sentence_3']) ?></span></span>
-                    <span class="scroller-bullet" aria-hidden="true">&#8226;</span>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>

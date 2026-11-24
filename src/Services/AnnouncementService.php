@@ -24,18 +24,30 @@ class AnnouncementService
                 website_id TEXT NOT NULL UNIQUE,
                 is_enabled INTEGER NOT NULL DEFAULT 1,
                 sentence_1 TEXT NOT NULL,
-                icon_1 TEXT NOT NULL DEFAULT 'truck',
+                icon_1 TEXT NOT NULL DEFAULT 'tag',
                 sentence_2 TEXT NOT NULL,
-                icon_2 TEXT NOT NULL DEFAULT 'shield',
+                icon_2 TEXT NOT NULL DEFAULT 'leaf',
                 sentence_3 TEXT NOT NULL,
-                icon_3 TEXT NOT NULL DEFAULT 'leaf',
+                icon_3 TEXT NOT NULL DEFAULT 'box',
+                sentence_4 TEXT NOT NULL DEFAULT '',
+                icon_4 TEXT NOT NULL DEFAULT 'truck',
                 bg_color TEXT NOT NULL DEFAULT '#0D2F1F',
                 text_color TEXT NOT NULL DEFAULT '#FAF6ED',
-                speed_seconds INTEGER NOT NULL DEFAULT 28,
+                speed_seconds INTEGER NOT NULL DEFAULT 30,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
         ");
+
+        // Column migration for existing installations
+        $cols = $db->query("PRAGMA table_info(site_announcements)")->fetchAll(\PDO::FETCH_ASSOC);
+        $colNames = array_column($cols, 'name');
+        if (!in_array('sentence_4', $colNames, true)) {
+            $db->exec("ALTER TABLE site_announcements ADD COLUMN sentence_4 TEXT DEFAULT ''");
+        }
+        if (!in_array('icon_4', $colNames, true)) {
+            $db->exec("ALTER TABLE site_announcements ADD COLUMN icon_4 TEXT DEFAULT 'truck'");
+        }
 
         // Seed default record if empty
         $stmt = $db->query("SELECT COUNT(*) FROM site_announcements");
@@ -46,23 +58,32 @@ class AnnouncementService
                     sentence_1, icon_1,
                     sentence_2, icon_2,
                     sentence_3, icon_3,
+                    sentence_4, icon_4,
                     bg_color, text_color, speed_seconds
                 ) VALUES (
                     'store_nutronyx_in', 1,
-                    'GET 10% OFF YOUR FIRST ORDER | USE CODE: FIRST10', 'tag',
-                    'No chemicals, no preservatives — freshness guaranteed', 'shield',
-                    'Sourced directly from farmers — 100% whole-food ingredients', 'leaf',
-                    '#0D2F1F', '#FAF6ED', 28
+                    'GET 10% OFF YOUR FIRST ORDER | CODE: FIRST10', 'tag',
+                    'NATURAL INGREDIENTS • THOUGHTFULLY CRAFTED', 'leaf',
+                    'NO ADDED SUGAR • NO ARTIFICIAL PRESERVATIVES', 'box',
+                    'DELIVERY ACROSS INDIA • SHIPPING CHARGES APPLY', 'truck',
+                    '#0D2F1F', '#FAF6ED', 30
                 )
             ");
             $insert->execute();
         } else {
-            // Auto-migrate legacy sentence_1 text if it contains "75" or "Delivery from"
+            // Update to the latest 4-sentence configuration
             $db->exec("
                 UPDATE site_announcements 
-                SET sentence_1 = 'GET 10% OFF YOUR FIRST ORDER | USE CODE: FIRST10', 
-                    icon_1 = 'tag' 
-                WHERE sentence_1 LIKE '%75%' OR sentence_1 LIKE '%Delivery from%'
+                SET sentence_1 = 'GET 10% OFF YOUR FIRST ORDER | CODE: FIRST10', 
+                    icon_1 = 'tag',
+                    sentence_2 = 'NATURAL INGREDIENTS • THOUGHTFULLY CRAFTED',
+                    icon_2 = 'leaf',
+                    sentence_3 = 'NO ADDED SUGAR • NO ARTIFICIAL PRESERVATIVES',
+                    icon_3 = 'box',
+                    sentence_4 = 'DELIVERY ACROSS INDIA • SHIPPING CHARGES APPLY',
+                    icon_4 = 'truck',
+                    speed_seconds = 30
+                WHERE sentence_4 IS NULL OR sentence_4 = '' OR sentence_2 LIKE '%No chemicals%'
             ");
         }
 
@@ -89,20 +110,24 @@ class AnnouncementService
             return [
                 'website_id' => $siteId,
                 'is_enabled' => 1,
-                'sentence_1' => 'GET 10% OFF YOUR FIRST ORDER | USE CODE: FIRST10',
+                'sentence_1' => 'GET 10% OFF YOUR FIRST ORDER | CODE: FIRST10',
                 'icon_1' => 'tag',
-                'sentence_2' => 'No chemicals, no preservatives — freshness guaranteed',
-                'icon_2' => 'shield',
-                'sentence_3' => 'Sourced directly from farmers — 100% whole-food ingredients',
-                'icon_3' => 'leaf',
+                'sentence_2' => 'NATURAL INGREDIENTS • THOUGHTFULLY CRAFTED',
+                'icon_2' => 'leaf',
+                'sentence_3' => 'NO ADDED SUGAR • NO ARTIFICIAL PRESERVATIVES',
+                'icon_3' => 'box',
+                'sentence_4' => 'DELIVERY ACROSS INDIA • SHIPPING CHARGES APPLY',
+                'icon_4' => 'truck',
                 'bg_color' => '#0D2F1F',
                 'text_color' => '#FAF6ED',
-                'speed_seconds' => 28
+                'speed_seconds' => 30
             ];
         }
 
         $row['is_enabled'] = (int)($row['is_enabled'] ?? 1);
-        $row['speed_seconds'] = (int)($row['speed_seconds'] ?? 28);
+        $row['speed_seconds'] = (int)($row['speed_seconds'] ?? 30);
+        $row['sentence_4'] = (string)($row['sentence_4'] ?? '');
+        $row['icon_4'] = (string)($row['icon_4'] ?? 'truck');
         return $row;
     }
 
@@ -113,14 +138,16 @@ class AnnouncementService
 
         $isEnabled = !empty($data['is_enabled']) ? 1 : 0;
         $sentence1 = trim((string)($data['sentence_1'] ?? ''));
-        $icon1 = trim((string)($data['icon_1'] ?? 'truck'));
+        $icon1 = trim((string)($data['icon_1'] ?? 'tag'));
         $sentence2 = trim((string)($data['sentence_2'] ?? ''));
-        $icon2 = trim((string)($data['icon_2'] ?? 'shield'));
+        $icon2 = trim((string)($data['icon_2'] ?? 'leaf'));
         $sentence3 = trim((string)($data['sentence_3'] ?? ''));
-        $icon3 = trim((string)($data['icon_3'] ?? 'leaf'));
+        $icon3 = trim((string)($data['icon_3'] ?? 'box'));
+        $sentence4 = trim((string)($data['sentence_4'] ?? ''));
+        $icon4 = trim((string)($data['icon_4'] ?? 'truck'));
         $bgColor = trim((string)($data['bg_color'] ?? '#0D2F1F'));
         $textColor = trim((string)($data['text_color'] ?? '#FAF6ED'));
-        $speed = max(10, min(80, (int)($data['speed_seconds'] ?? 28)));
+        $speed = max(10, min(80, (int)($data['speed_seconds'] ?? 30)));
 
         // Check if record exists
         $stmtCheck = $db->prepare("SELECT id FROM site_announcements WHERE website_id = ? LIMIT 1");
@@ -134,6 +161,7 @@ class AnnouncementService
                     sentence_1 = ?, icon_1 = ?,
                     sentence_2 = ?, icon_2 = ?,
                     sentence_3 = ?, icon_3 = ?,
+                    sentence_4 = ?, icon_4 = ?,
                     bg_color = ?, text_color = ?,
                     speed_seconds = ?,
                     updated_at = CURRENT_TIMESTAMP
@@ -144,6 +172,7 @@ class AnnouncementService
                 $sentence1, $icon1,
                 $sentence2, $icon2,
                 $sentence3, $icon3,
+                $sentence4, $icon4,
                 $bgColor, $textColor,
                 $speed,
                 $websiteId
@@ -155,15 +184,17 @@ class AnnouncementService
                     sentence_1, icon_1,
                     sentence_2, icon_2,
                     sentence_3, icon_3,
+                    sentence_4, icon_4,
                     bg_color, text_color,
                     speed_seconds
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             return $stmt->execute([
                 $websiteId, $isEnabled,
                 $sentence1, $icon1,
                 $sentence2, $icon2,
                 $sentence3, $icon3,
+                $sentence4, $icon4,
                 $bgColor, $textColor,
                 $speed
             ]);
@@ -179,6 +210,7 @@ class AnnouncementService
             'star' => '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>',
             'sparkles' => '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>',
             'tag' => '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>',
+            'box', 'package', 'box-check' => '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line><polyline points="6.5 15.5 8.5 17.5 12 14"></polyline></svg>',
             'heart' => '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>',
             default => '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>'
         };

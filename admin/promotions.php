@@ -150,14 +150,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             AnnouncementService::updateAnnouncement($websiteId, [
                 'is_enabled' => isset($_POST['is_enabled']) ? 1 : 0,
                 'sentence_1' => trim($_POST['sentence_1'] ?? ''),
-                'icon_1' => trim($_POST['icon_1'] ?? 'truck'),
+                'icon_1' => trim($_POST['icon_1'] ?? 'tag'),
                 'sentence_2' => trim($_POST['sentence_2'] ?? ''),
-                'icon_2' => trim($_POST['icon_2'] ?? 'shield'),
+                'icon_2' => trim($_POST['icon_2'] ?? 'leaf'),
                 'sentence_3' => trim($_POST['sentence_3'] ?? ''),
-                'icon_3' => trim($_POST['icon_3'] ?? 'leaf'),
+                'icon_3' => trim($_POST['icon_3'] ?? 'box'),
+                'sentence_4' => trim($_POST['sentence_4'] ?? ''),
+                'icon_4' => trim($_POST['icon_4'] ?? 'truck'),
                 'bg_color' => trim($_POST['bg_color'] ?? '#0D2F1F'),
                 'text_color' => trim($_POST['text_color'] ?? '#FAF6ED'),
-                'speed_seconds' => max(10, min(120, (int)($_POST['speed_seconds'] ?? 28)))
+                'speed_seconds' => max(10, min(120, (int)($_POST['speed_seconds'] ?? 30)))
             ]);
             $notice = "Announcement ticker settings saved successfully and updated live!";
             $currentTab = 'announcement';
@@ -1740,7 +1742,7 @@ if (!empty($_GET['selected_id'])) {
                             Live Storefront Preview
                         </label>
                         <div id="livePreviewContainer" style="border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.06); <?= empty($announcement['is_enabled']) ? 'opacity: 0.38;' : '' ?>">
-                            <div id="previewTickerBar" style="background-color: <?= htmlspecialchars($announcement['bg_color']) ?>; color: <?= htmlspecialchars($announcement['text_color']) ?>; padding: 7.5px 16px; font-size: 12px; font-weight: 500; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 24px; transition: background-color 0.2s, color 0.2s;">
+                            <div id="previewTickerBar" style="background-color: <?= htmlspecialchars($announcement['bg_color']) ?>; color: <?= htmlspecialchars($announcement['text_color']) ?>; padding: 7.5px 16px; font-size: 12px; font-weight: 500; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 24px; transition: background-color 0.2s, color 0.2s; text-transform: uppercase;">
                                 <div style="display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
                                     <span id="previewIcon1"><?= AnnouncementService::getIconSvg($announcement['icon_1']) ?></span>
                                     <span id="previewText1"><?= htmlspecialchars($announcement['sentence_1']) ?></span>
@@ -1755,6 +1757,13 @@ if (!empty($_GET['selected_id'])) {
                                     <span id="previewIcon3"><?= AnnouncementService::getIconSvg($announcement['icon_3']) ?></span>
                                     <span id="previewText3"><?= htmlspecialchars($announcement['sentence_3']) ?></span>
                                 </div>
+                                <?php if (!empty($announcement['sentence_4'])): ?>
+                                <span style="display: inline-block; width: 4.5px; height: 4.5px; border-radius: 50%; background-color: #D4AF37; flex-shrink: 0;"></span>
+                                <div style="display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+                                    <span id="previewIcon4"><?= AnnouncementService::getIconSvg($announcement['icon_4'] ?? 'truck') ?></span>
+                                    <span id="previewText4"><?= htmlspecialchars($announcement['sentence_4']) ?></span>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -1776,29 +1785,30 @@ if (!empty($_GET['selected_id'])) {
                             </label>
                         </div>
 
-                        <!-- 3 Sentences Grid -->
+                        <!-- 4 Sentences Grid -->
                         <div style="display: flex; flex-direction: column; gap: 18px; margin-bottom: 24px;">
                             <!-- Sentence 1 -->
                             <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 10px; padding: 18px 20px;">
                                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                                    <span style="font-size: 13.5px; font-weight: 700; color: #144D29;">Sentence 1 (e.g. Shipping / Delivery)</span>
+                                    <span style="font-size: 13.5px; font-weight: 700; color: #144D29;">Sentence 1 (Discount Code / Promotion)</span>
                                 </div>
                                 <div style="display: grid; grid-template-columns: 180px 1fr; gap: 14px;">
                                     <div>
                                         <label style="display: block; font-size: 12px; font-weight: 600; color: #4B5563; margin-bottom: 6px;">Icon</label>
                                         <select name="icon_1" id="icon1Select" class="promo-input-field" style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid #D1D5DB; padding: 0 10px;">
+                                            <option value="tag" <?= $announcement['icon_1'] === 'tag' ? 'selected' : '' ?>>🏷️ Discount Tag</option>
+                                            <option value="leaf" <?= $announcement['icon_1'] === 'leaf' ? 'selected' : '' ?>>🍃 Organic Leaf</option>
+                                            <option value="box" <?= in_array($announcement['icon_1'], ['box', 'package']) ? 'selected' : '' ?>>📦 Package / Box</option>
                                             <option value="truck" <?= $announcement['icon_1'] === 'truck' ? 'selected' : '' ?>>🚚 Delivery Truck</option>
                                             <option value="shield" <?= $announcement['icon_1'] === 'shield' ? 'selected' : '' ?>>🛡️ Shield / Quality</option>
-                                            <option value="leaf" <?= $announcement['icon_1'] === 'leaf' ? 'selected' : '' ?>>🍃 Organic Leaf</option>
                                             <option value="star" <?= $announcement['icon_1'] === 'star' ? 'selected' : '' ?>>⭐ Star / Premium</option>
                                             <option value="sparkles" <?= $announcement['icon_1'] === 'sparkles' ? 'selected' : '' ?>>✨ Sparkles / Pure</option>
-                                            <option value="tag" <?= $announcement['icon_1'] === 'tag' ? 'selected' : '' ?>>🏷️ Discount Tag</option>
                                             <option value="heart" <?= $announcement['icon_1'] === 'heart' ? 'selected' : '' ?>>❤️ Heart / Health</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label style="display: block; font-size: 12px; font-weight: 600; color: #4B5563; margin-bottom: 6px;">Sentence Text</label>
-                                        <input type="text" name="sentence_1" id="sentence1Input" class="promo-input-field" value="<?= htmlspecialchars($announcement['sentence_1']) ?>" placeholder="e.g. Delivery from ₹75 — charged by weight, never on what you spend" required style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid #D1D5DB; padding: 0 12px; box-sizing: border-box;">
+                                        <input type="text" name="sentence_1" id="sentence1Input" class="promo-input-field" value="<?= htmlspecialchars($announcement['sentence_1']) ?>" placeholder="e.g. GET 10% OFF YOUR FIRST ORDER | CODE: FIRST10" required style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid #D1D5DB; padding: 0 12px; box-sizing: border-box; text-transform: uppercase;">
                                     </div>
                                 </div>
                             </div>
@@ -1806,24 +1816,25 @@ if (!empty($_GET['selected_id'])) {
                             <!-- Sentence 2 -->
                             <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 10px; padding: 18px 20px;">
                                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                                    <span style="font-size: 13.5px; font-weight: 700; color: #144D29;">Sentence 2 (e.g. Freshness / Guarantee)</span>
+                                    <span style="font-size: 13.5px; font-weight: 700; color: #144D29;">Sentence 2 (Ingredients / Craft)</span>
                                 </div>
                                 <div style="display: grid; grid-template-columns: 180px 1fr; gap: 14px;">
                                     <div>
                                         <label style="display: block; font-size: 12px; font-weight: 600; color: #4B5563; margin-bottom: 6px;">Icon</label>
                                         <select name="icon_2" id="icon2Select" class="promo-input-field" style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid #D1D5DB; padding: 0 10px;">
+                                            <option value="leaf" <?= $announcement['icon_2'] === 'leaf' ? 'selected' : '' ?>>🍃 Organic Leaf</option>
+                                            <option value="tag" <?= $announcement['icon_2'] === 'tag' ? 'selected' : '' ?>>🏷️ Discount Tag</option>
+                                            <option value="box" <?= in_array($announcement['icon_2'], ['box', 'package']) ? 'selected' : '' ?>>📦 Package / Box</option>
                                             <option value="truck" <?= $announcement['icon_2'] === 'truck' ? 'selected' : '' ?>>🚚 Delivery Truck</option>
                                             <option value="shield" <?= $announcement['icon_2'] === 'shield' ? 'selected' : '' ?>>🛡️ Shield / Quality</option>
-                                            <option value="leaf" <?= $announcement['icon_2'] === 'leaf' ? 'selected' : '' ?>>🍃 Organic Leaf</option>
                                             <option value="star" <?= $announcement['icon_2'] === 'star' ? 'selected' : '' ?>>⭐ Star / Premium</option>
                                             <option value="sparkles" <?= $announcement['icon_2'] === 'sparkles' ? 'selected' : '' ?>>✨ Sparkles / Pure</option>
-                                            <option value="tag" <?= $announcement['icon_2'] === 'tag' ? 'selected' : '' ?>>🏷️ Discount Tag</option>
                                             <option value="heart" <?= $announcement['icon_2'] === 'heart' ? 'selected' : '' ?>>❤️ Heart / Health</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label style="display: block; font-size: 12px; font-weight: 600; color: #4B5563; margin-bottom: 6px;">Sentence Text</label>
-                                        <input type="text" name="sentence_2" id="sentence2Input" class="promo-input-field" value="<?= htmlspecialchars($announcement['sentence_2']) ?>" placeholder="e.g. No chemicals, no preservatives — freshness guaranteed" required style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid #D1D5DB; padding: 0 12px; box-sizing: border-box;">
+                                        <input type="text" name="sentence_2" id="sentence2Input" class="promo-input-field" value="<?= htmlspecialchars($announcement['sentence_2']) ?>" placeholder="e.g. NATURAL INGREDIENTS • THOUGHTFULLY CRAFTED" required style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid #D1D5DB; padding: 0 12px; box-sizing: border-box; text-transform: uppercase;">
                                     </div>
                                 </div>
                             </div>
@@ -1831,24 +1842,51 @@ if (!empty($_GET['selected_id'])) {
                             <!-- Sentence 3 -->
                             <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 10px; padding: 18px 20px;">
                                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                                    <span style="font-size: 13.5px; font-weight: 700; color: #144D29;">Sentence 3 (e.g. Direct Farmer Sourcing)</span>
+                                    <span style="font-size: 13.5px; font-weight: 700; color: #144D29;">Sentence 3 (Quality / Purity)</span>
                                 </div>
                                 <div style="display: grid; grid-template-columns: 180px 1fr; gap: 14px;">
                                     <div>
                                         <label style="display: block; font-size: 12px; font-weight: 600; color: #4B5563; margin-bottom: 6px;">Icon</label>
                                         <select name="icon_3" id="icon3Select" class="promo-input-field" style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid #D1D5DB; padding: 0 10px;">
+                                            <option value="box" <?= in_array($announcement['icon_3'], ['box', 'package']) ? 'selected' : '' ?>>📦 Package / Box</option>
+                                            <option value="leaf" <?= $announcement['icon_3'] === 'leaf' ? 'selected' : '' ?>>🍃 Organic Leaf</option>
+                                            <option value="tag" <?= $announcement['icon_3'] === 'tag' ? 'selected' : '' ?>>🏷️ Discount Tag</option>
                                             <option value="truck" <?= $announcement['icon_3'] === 'truck' ? 'selected' : '' ?>>🚚 Delivery Truck</option>
                                             <option value="shield" <?= $announcement['icon_3'] === 'shield' ? 'selected' : '' ?>>🛡️ Shield / Quality</option>
-                                            <option value="leaf" <?= $announcement['icon_3'] === 'leaf' ? 'selected' : '' ?>>🍃 Organic Leaf</option>
                                             <option value="star" <?= $announcement['icon_3'] === 'star' ? 'selected' : '' ?>>⭐ Star / Premium</option>
                                             <option value="sparkles" <?= $announcement['icon_3'] === 'sparkles' ? 'selected' : '' ?>>✨ Sparkles / Pure</option>
-                                            <option value="tag" <?= $announcement['icon_3'] === 'tag' ? 'selected' : '' ?>>🏷️ Discount Tag</option>
                                             <option value="heart" <?= $announcement['icon_3'] === 'heart' ? 'selected' : '' ?>>❤️ Heart / Health</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label style="display: block; font-size: 12px; font-weight: 600; color: #4B5563; margin-bottom: 6px;">Sentence Text</label>
-                                        <input type="text" name="sentence_3" id="sentence3Input" class="promo-input-field" value="<?= htmlspecialchars($announcement['sentence_3']) ?>" placeholder="e.g. Sourced directly from farmers — 100% whole-food botanicals" required style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid #D1D5DB; padding: 0 12px; box-sizing: border-box;">
+                                        <input type="text" name="sentence_3" id="sentence3Input" class="promo-input-field" value="<?= htmlspecialchars($announcement['sentence_3']) ?>" placeholder="e.g. NO ADDED SUGAR • NO ARTIFICIAL PRESERVATIVES" required style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid #D1D5DB; padding: 0 12px; box-sizing: border-box; text-transform: uppercase;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sentence 4 -->
+                            <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 10px; padding: 18px 20px;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                                    <span style="font-size: 13.5px; font-weight: 700; color: #144D29;">Sentence 4 (Delivery / Shipping)</span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 180px 1fr; gap: 14px;">
+                                    <div>
+                                        <label style="display: block; font-size: 12px; font-weight: 600; color: #4B5563; margin-bottom: 6px;">Icon</label>
+                                        <select name="icon_4" id="icon4Select" class="promo-input-field" style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid #D1D5DB; padding: 0 10px;">
+                                            <option value="truck" <?= ($announcement['icon_4'] ?? 'truck') === 'truck' ? 'selected' : '' ?>>🚚 Delivery Truck</option>
+                                            <option value="box" <?= in_array($announcement['icon_4'] ?? '', ['box', 'package']) ? 'selected' : '' ?>>📦 Package / Box</option>
+                                            <option value="leaf" <?= ($announcement['icon_4'] ?? '') === 'leaf' ? 'selected' : '' ?>>🍃 Organic Leaf</option>
+                                            <option value="tag" <?= ($announcement['icon_4'] ?? '') === 'tag' ? 'selected' : '' ?>>🏷️ Discount Tag</option>
+                                            <option value="shield" <?= ($announcement['icon_4'] ?? '') === 'shield' ? 'selected' : '' ?>>🛡️ Shield / Quality</option>
+                                            <option value="star" <?= ($announcement['icon_4'] ?? '') === 'star' ? 'selected' : '' ?>>⭐ Star / Premium</option>
+                                            <option value="sparkles" <?= ($announcement['icon_4'] ?? '') === 'sparkles' ? 'selected' : '' ?>>✨ Sparkles / Pure</option>
+                                            <option value="heart" <?= ($announcement['icon_4'] ?? '') === 'heart' ? 'selected' : '' ?>>❤️ Heart / Health</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 12px; font-weight: 600; color: #4B5563; margin-bottom: 6px;">Sentence Text</label>
+                                        <input type="text" name="sentence_4" id="sentence4Input" class="promo-input-field" value="<?= htmlspecialchars($announcement['sentence_4'] ?? '') ?>" placeholder="e.g. DELIVERY ACROSS INDIA • SHIPPING CHARGES APPLY" style="width: 100%; height: 42px; border-radius: 8px; border: 1px solid #D1D5DB; padding: 0 12px; box-sizing: border-box; text-transform: uppercase;">
                                     </div>
                                 </div>
                             </div>
@@ -1937,13 +1975,16 @@ if (!empty($_GET['selected_id'])) {
                     const s1 = document.getElementById('sentence1Input');
                     const s2 = document.getElementById('sentence2Input');
                     const s3 = document.getElementById('sentence3Input');
+                    const s4 = document.getElementById('sentence4Input');
                     const p1 = document.getElementById('previewText1');
                     const p2 = document.getElementById('previewText2');
                     const p3 = document.getElementById('previewText3');
+                    const p4 = document.getElementById('previewText4');
 
                     if (s1 && p1) s1.addEventListener('input', () => { p1.textContent = s1.value || 'Sentence 1'; });
                     if (s2 && p2) s2.addEventListener('input', () => { p2.textContent = s2.value || 'Sentence 2'; });
                     if (s3 && p3) s3.addEventListener('input', () => { p3.textContent = s3.value || 'Sentence 3'; });
+                    if (s4 && p4) s4.addEventListener('input', () => { p4.textContent = s4.value || 'Sentence 4'; });
                 });
                 </script>
             <?php endif; ?>
