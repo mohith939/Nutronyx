@@ -150,13 +150,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $_SESSION['nutronyx_last_cart_summary'] = $cart;
 
                 if (!empty($cfRes['payment_session_id']) && !str_starts_with($cfRes['payment_session_id'], 'session_cf_')) {
-                    $env = strtoupper($cfRes['environment'] ?? 'PRODUCTION');
-                    $cfHostedBase = ($env === 'PRODUCTION') 
-                        ? 'https://payments.cashfree.com/order/#' 
-                        : 'https://payments-test.cashfree.com/order/#';
-                    
-                    // Redirect directly to the original Cashfree payment panel
-                    header('Location: ' . $cfHostedBase . urlencode($cfRes['payment_session_id']));
+                    $env = strtolower($cfRes['environment'] ?? 'production');
+                    ?>
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="utf-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Securing Payment — NUTRONYX</title>
+                        <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+                        <style>
+                            body {
+                                margin: 0;
+                                min-height: 100vh;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                background: #FAF7F2;
+                                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                            }
+                            .loader-card {
+                                background: #FFFFFF;
+                                border: 1px solid #ECE7DE;
+                                border-radius: 16px;
+                                padding: 36px 28px;
+                                text-align: center;
+                                box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+                                max-width: 400px;
+                                width: 90%;
+                            }
+                            .spinner {
+                                width: 42px;
+                                height: 42px;
+                                border: 3px solid #EDE8DF;
+                                border-top: 3px solid #143D24;
+                                border-radius: 50%;
+                                animation: spin 0.7s linear infinite;
+                                margin: 0 auto 18px;
+                            }
+                            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                            .t { font-size: 16px; font-weight: 700; color: #143D24; margin-bottom: 6px; }
+                            .st { font-size: 13px; color: #697C70; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="loader-card">
+                            <div class="spinner"></div>
+                            <div class="t">Connecting to Cashfree Payments...</div>
+                            <div class="st">Opening payment options (UPI, GPay, Cards, NetBanking)...</div>
+                        </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                try {
+                                    const cashfree = Cashfree({ mode: "<?= $env ?>" });
+                                    cashfree.checkout({
+                                        paymentSessionId: "<?= $cfRes['payment_session_id'] ?>",
+                                        redirectTarget: "_self"
+                                    });
+                                } catch (e) {
+                                    window.location.href = "pay_cashfree?order_id=<?= urlencode($placedOrder['order_number']) ?>";
+                                }
+                            });
+                        </script>
+                    </body>
+                    </html>
+                    <?php
                     exit;
                 } else {
                     // Fallback to pay_cashfree page

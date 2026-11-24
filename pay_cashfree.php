@@ -172,19 +172,8 @@ if (!$isRealCashfreeSession || isset($_GET['retry'])) {
     }
 }
 
-// Cashfree Hosted URL fallback
-$hostedCheckoutBase = $isProduction ? 'https://payments.cashfree.com/order/#' : 'https://payments-test.cashfree.com/order/#';
-$hostedCheckoutUrl = ($isRealCashfreeSession && !empty($sessionId)) 
-    ? ($hostedCheckoutBase . urlencode($sessionId)) 
-    : ('pay_cashfree?order_id=' . urlencode($orderNumber) . '&retry=1');
-
+// Amount in Rupees
 $amountRupees = (float)($order['grand_total_amount'] / 100);
-
-// If not returning from payment and no error, redirect directly to the original Cashfree payment panel
-if ($isRealCashfreeSession && !empty($sessionId) && !isset($_GET['cf_action']) && empty($returnErrorMessage)) {
-    header('Location: ' . $hostedCheckoutUrl);
-    exit;
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
