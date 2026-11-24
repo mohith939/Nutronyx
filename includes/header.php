@@ -73,7 +73,7 @@ $isAnnouncementActive = (!empty($announcement) && !empty($announcement['is_enabl
                     <li class="nav-item"><a href="<?= $homePath ?>#home" class="nav-link <?= $isHome ? 'active' : '' ?>">Home</a></li>
                     <li class="nav-item"><a href="shop" class="nav-link <?= $isShop ? 'active' : '' ?>">Shop</a></li>
                     <li class="nav-item"><a href="about" class="nav-link <?= $isAbout ? 'active' : '' ?>">About</a></li>
-                    <li class="nav-item"><a href="partner" class="nav-link <?= $isPartner ? 'active' : '' ?>">Partner</a></li>
+                    <li class="nav-item"><a href="partner" class="nav-link <?= $isPartner ? 'active' : '' ?>">Become A Partner</a></li>
                     <li class="nav-item"><a href="contact" class="nav-link <?= $isContact ? 'active' : '' ?>">Contact</a></li>
                 </ul>
             </nav>

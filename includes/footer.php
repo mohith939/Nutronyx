@@ -47,10 +47,11 @@
                 <h3 class="footer-col-heading">EXPLORE</h3>
                 <span class="col-accent-dash" aria-hidden="true"></span>
                 <ul class="footer-nav-list" role="list">
-                    <li><a href="/#product-showcase" class="footer-nav-link">Ingredients</a></li>
-                    <li><a href="/#nutronyx-experience" class="footer-nav-link">Reviews</a></li>
-                    <li><a href="faq" class="footer-nav-link">FAQs</a></li>
-                    <li><a href="contact" class="footer-nav-link">Contact</a></li>
+                    <li><a href="shop" class="footer-nav-link">Shop</a></li>
+                    <li><a href="/#nutronyx-experience" class="footer-nav-link">Customer Reviews</a></li>
+                    <li><a href="partner" class="footer-nav-link">Become A Partner</a></li>
+                    <li><a href="faq" class="footer-nav-link">FAQ</a></li>
+                    <li><a href="about" class="footer-nav-link">About Us</a></li>
                 </ul>
             </div>
 

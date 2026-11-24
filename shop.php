@@ -82,7 +82,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
     <!-- Global Base & Component Stylesheet -->
     <link rel="stylesheet" href="assets/css/style.css?v=20261124_v1">
     <!-- Scoped Shop Page Stylesheet -->
-    <link rel="stylesheet" href="assets/css/shop.css?v=20261119_v3">
+    <link rel="stylesheet" href="assets/css/shop.css?v=20261124_v1">
 </head>
 <body class="nutronyx-body shop-page-body">
 
@@ -246,12 +246,45 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                             </button>
                         </div>
 
-                        <!-- Trust Guarantees (Matching Reference media_1795062513378.png) -->
+                        <!-- Trust Guarantees (Matching Reference media_1795062513378.png & media_1795503499065.png) -->
                         <div class="dossier-trust-list">
-                            <div class="trust-list-item">FSSAI Certified</div>
-                            <div class="trust-list-item">Premium Packaging</div>
-                            <div class="trust-list-item">No Artificial Preservatives</div>
-                            <div class="trust-list-item">Secure Checkout</div>
+                            <div class="trust-list-item">
+                                <span class="trust-list-icon" aria-hidden="true">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                        <polyline points="9 12 11 14 15 10"></polyline>
+                                    </svg>
+                                </span>
+                                <span>FSSAI Certified</span>
+                            </div>
+                            <div class="trust-list-item">
+                                <span class="trust-list-icon" aria-hidden="true">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                    </svg>
+                                </span>
+                                <span>Premium Packaging</span>
+                            </div>
+                            <div class="trust-list-item">
+                                <span class="trust-list-icon" aria-hidden="true">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                                    </svg>
+                                </span>
+                                <span>No Artificial Preservatives</span>
+                            </div>
+                            <div class="trust-list-item">
+                                <span class="trust-list-icon" aria-hidden="true">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                </span>
+                                <span>Secure Checkout</span>
+                            </div>
                         </div>
                     </div>
                 </div>

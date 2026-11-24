@@ -1087,19 +1087,40 @@
 .dossier-trust-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     padding-top: 20px;
     border-top: 1px solid #EFEAE1;
     width: 100%;
 }
 
 .trust-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     font-family: var(--font-sans);
     font-size: 14px;
     font-weight: 500;
     color: #2D3748;
     line-height: 1.5;
     letter-spacing: 0.01em;
+}
+
+.trust-list-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #EDF3EC;
+    color: #1A4D2E;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.trust-list-item:hover .trust-list-icon {
+    background: #E2ECE0;
+    transform: scale(1.05);
 }
 
 /* --- SCALABLE ARCHIVE PREVIEW FOR FUTURE PRODUCTS --- */
