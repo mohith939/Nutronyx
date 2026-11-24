@@ -1067,6 +1067,63 @@ textarea.form-control {
     margin-top: 20px;
 }
 
+.confirm-footer button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    font-family: inherit;
+    line-height: 1.4;
+}
+
+.confirm-footer .btn-secondary,
+.confirm-footer button.btn-secondary {
+    background: #FFFFFF;
+    border: 1px solid #D1D5DB;
+    color: #374151;
+}
+
+.confirm-footer .btn-secondary:hover,
+.confirm-footer button.btn-secondary:hover {
+    background: #F3F4F6;
+    border-color: #9CA3AF;
+    color: #111827;
+}
+
+.confirm-footer .btn-danger,
+.confirm-footer button.btn-danger {
+    background: #DC2626;
+    border: 1px solid #DC2626;
+    color: #FFFFFF;
+}
+
+.confirm-footer .btn-danger:hover,
+.confirm-footer button.btn-danger:hover {
+    background: #B91C1C;
+    border-color: #B91C1C;
+    color: #FFFFFF;
+}
+
+.confirm-footer .btn-primary,
+.confirm-footer button.btn-primary {
+    background: #10B981;
+    border: 1px solid #10B981;
+    color: #FFFFFF;
+}
+
+.confirm-footer .btn-primary:hover,
+.confirm-footer button.btn-primary:hover {
+    background: #059669;
+    border-color: #059669;
+    color: #FFFFFF;
+}
+
 /* Toast Container */
 .toast-container {
     position: fixed;

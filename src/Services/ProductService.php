@@ -282,7 +282,7 @@ class ProductService
         $websiteId = Context::getWebsiteId();
 
         // 1. Fetch relationships
-        $prod['relations'] = self::getRelations($id);
+        $prod['relations'] = self::getRelations($id, $visibleStorefrontOnly);
 
         // 2. Fetch product activity / audit logs
         $stmt = $db->prepare("
@@ -370,11 +370,17 @@ class ProductService
         ]);
 
         // Create initial or custom variants
+        $createdCustom = false;
         if (!empty($data['variants']) && is_array($data['variants'])) {
             foreach ($data['variants'] as $v) {
-                self::createVariant($id, $v);
+                if (empty(trim($v['title'] ?? ''))) continue;
+                try {
+                    self::createVariant($id, $v);
+                    $createdCustom = true;
+                } catch (\Throwable $ex) {}
             }
-        } else {
+        }
+        if (!$createdCustom) {
             // Default primary variant
             $sku = !empty($data['sku']) ? strtoupper(trim($data['sku'])) : ('NX-' . strtoupper(substr(str_replace('-', '', $slug), 0, 8)));
             self::createVariant($id, [
@@ -480,8 +486,89 @@ class ProductService
             ':featured' => isset($data['is_featured']) ? (int)$data['is_featured'] : 0,
         ]);
 
-        // If simple price or stock were supplied, sync primary variant
-        if ($priceRupees !== null || !empty($data['sku']) || isset($data['stock_quantity'])) {
+        // Synchronize product variants if matrix provided
+        if (!empty($data['variants']) && is_array($data['variants'])) {
+            $existingVariantsStmt = $db->prepare("SELECT id, sku FROM product_variants WHERE product_id = :pid AND website_id = :wid");
+            $existingVariantsStmt->execute([':pid' => $id, ':wid' => $websiteId]);
+            $existingVariants = $existingVariantsStmt->fetchAll(PDO::FETCH_ASSOC);
+            $existingVarMap = [];
+            foreach ($existingVariants as $ev) {
+                $existingVarMap[$ev['id']] = $ev;
+            }
+
+            $submittedVarIds = [];
+            foreach ($data['variants'] as $v) {
+                $vTitle = trim($v['title'] ?? '');
+                if (empty($vTitle)) continue;
+
+                $vSku = strtoupper(trim($v['sku'] ?? ''));
+                if (empty($vSku)) {
+                    $vSku = 'NX-' . strtoupper(substr(str_replace('-', '', $slug), 0, 8)) . '-' . strtoupper(substr(bin2hex(random_bytes(2)), 0, 4));
+                }
+
+                $vPrice = isset($v['price_rupees']) ? (int)round(((float)$v['price_rupees']) * 100) : ($priceAmount ?: 49900);
+                $vStock = isset($v['stock_quantity']) ? (int)$v['stock_quantity'] : 100;
+                $vId = !empty($v['id']) ? trim($v['id']) : null;
+
+                if ($vId && isset($existingVarMap[$vId])) {
+                    // Update existing variant
+                    $uStmt = $db->prepare("
+                        UPDATE product_variants SET
+                            title = :title,
+                            sku = :sku,
+                            price_amount = :price,
+                            updated_at = CURRENT_TIMESTAMP
+                        WHERE id = :id AND website_id = :wid
+                    ");
+                    $uStmt->execute([
+                        ':title' => $vTitle,
+                        ':sku' => $vSku,
+                        ':price' => $vPrice,
+                        ':id' => $vId,
+                        ':wid' => $websiteId
+                    ]);
+
+                    // Update stock
+                    $sStmt = $db->prepare("
+                        UPDATE inventory_stocks SET
+                            quantity_on_hand = :qty,
+                            updated_at = CURRENT_TIMESTAMP
+                        WHERE variant_id = :vid AND website_id = :wid
+                    ");
+                    $sStmt->execute([
+                        ':qty' => $vStock,
+                        ':vid' => $vId,
+                        ':wid' => $websiteId
+                    ]);
+
+                    $submittedVarIds[] = $vId;
+                } else {
+                    // Insert new variant
+                    try {
+                        $newVid = self::createVariant($id, [
+                            'title' => $vTitle,
+                            'sku' => $vSku,
+                            'price_amount' => $vPrice,
+                            'stock_quantity' => $vStock,
+                            'is_visible' => 1
+                        ]);
+                        $submittedVarIds[] = $newVid;
+                    } catch (\Throwable $e) {}
+                }
+            }
+
+            // Remove any variants that were deleted from the matrix (if more than 1 existed originally)
+            if (!empty($submittedVarIds)) {
+                foreach ($existingVarMap as $evId => $evData) {
+                    if (!in_array($evId, $submittedVarIds, true)) {
+                        try {
+                            $db->prepare("DELETE FROM inventory_stocks WHERE variant_id = :vid AND website_id = :wid")->execute([':vid' => $evId, ':wid' => $websiteId]);
+                            $db->prepare("DELETE FROM product_variants WHERE id = :vid AND website_id = :wid")->execute([':vid' => $evId, ':wid' => $websiteId]);
+                        } catch (\Throwable $ex) {}
+                    }
+                }
+            }
+        } elseif ($priceRupees !== null || !empty($data['sku']) || isset($data['stock_quantity'])) {
             $vStmt = $db->prepare("SELECT id FROM product_variants WHERE product_id = :pid AND website_id = :wid ORDER BY created_at ASC LIMIT 1");
             $vStmt->execute([':pid' => $id, ':wid' => $websiteId]);
             $primaryVar = $vStmt->fetch();
@@ -573,16 +660,28 @@ class ProductService
         return $res;
     }
 
-    /**
-     * Toggle storefront visibility switch
-     */
-    public static function toggleStorefrontVisibility(string $productId): bool
+    public static function toggleStorefrontVisibility(string $productId): array
     {
         $db = Database::getConnection();
-        $stmt = $db->prepare("UPDATE products SET is_visible_storefront = CASE WHEN is_visible_storefront = 1 THEN 0 ELSE 1 END, updated_at = CURRENT_TIMESTAMP WHERE id = :id AND website_id = :wid");
-        $res = $stmt->execute([':id' => $productId, ':wid' => Context::getWebsiteId()]);
-        AuditService::log('product.visibility_toggle', 'product', $productId, "Toggled storefront visibility");
-        return $res;
+        $websiteId = Context::getWebsiteId();
+
+        $curr = $db->prepare("SELECT is_visible_storefront FROM products WHERE id = :id AND website_id = :wid");
+        $curr->execute([':id' => $productId, ':wid' => $websiteId]);
+        $val = (int)$curr->fetchColumn();
+        $newState = ($val === 1) ? 0 : 1;
+
+        $stmt = $db->prepare("UPDATE products SET is_visible_storefront = :vis, updated_at = CURRENT_TIMESTAMP WHERE id = :id AND website_id = :wid");
+        $stmt->execute([':vis' => $newState, ':id' => $productId, ':wid' => $websiteId]);
+
+        // When parent is toggled off, sync all sub-variants so they are also turned off
+        if ($newState === 0) {
+            $db->prepare("UPDATE product_variants SET is_visible = 0 WHERE product_id = :pid AND website_id = :wid")->execute([':pid' => $productId, ':wid' => $websiteId]);
+        } else {
+            $db->prepare("UPDATE product_variants SET is_visible = 1 WHERE product_id = :pid AND website_id = :wid")->execute([':pid' => $productId, ':wid' => $websiteId]);
+        }
+
+        AuditService::log('product.visibility_toggle', 'product', $productId, "Toggled storefront visibility to " . ($newState ? 'ON' : 'OFF'));
+        return ['success' => true, 'is_visible' => $newState];
     }
 
     /**
@@ -874,11 +973,12 @@ class ProductService
     /**
      * Get related products categorized into related, upsell, and cross_sell
      */
-    public static function getRelations(string $productId): array
+    public static function getRelations(string $productId, bool $onlyVisible = false): array
     {
         $db = Database::getConnection();
         $websiteId = Context::getWebsiteId();
 
+        $visFilter = $onlyVisible ? " AND p.is_visible_storefront = 1 AND p.status = 'ACTIVE'" : "";
         $stmt = $db->prepare("
             SELECT pr.id as relation_id, pr.relation_type, pr.position,
                    p.id as product_id, p.title, p.slug, p.image_url, p.status,
@@ -888,7 +988,7 @@ class ProductService
             FROM product_relations pr
             JOIN products p ON p.id = pr.related_product_id
             LEFT JOIN categories c ON p.category_id = c.id
-            WHERE pr.product_id = :pid AND pr.website_id = :wid
+            WHERE pr.product_id = :pid AND pr.website_id = :wid {$visFilter}
             ORDER BY pr.position ASC, pr.created_at ASC
         ");
         $stmt->execute([':pid' => $productId, ':wid' => $websiteId]);

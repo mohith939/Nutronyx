@@ -22,8 +22,8 @@ if (isset($_REQUEST['ajax'])) {
 
     try {
         if ($action === 'toggle_visibility' && !empty($_POST['product_id'])) {
-            ProductService::toggleStorefrontVisibility($_POST['product_id']);
-            echo json_encode(['success' => true, 'message' => 'Product visibility updated.']);
+            $visRes = ProductService::toggleStorefrontVisibility($_POST['product_id']);
+            echo json_encode(['success' => true, 'is_visible' => $visRes['is_visible'], 'message' => 'Product visibility updated.']);
             exit;
         }
 
@@ -226,7 +226,7 @@ $page = $pageNum;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/admin.css?v=20261119_white">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=20261124_v1">
     <style>
         .product-page-header {
             display: flex;
@@ -318,15 +318,21 @@ $page = $pageNum;
 
             <!-- SUCCESS & ERROR ALERTS -->
             <?php if (!empty($successMsg)): ?>
-                <div class="dash-panel" style="background: #ECFDF5; border-color: #A7F3D0; color: #065F46; padding: 14px 18px; margin-bottom: 20px; font-weight: 500; display: flex; align-items: center; gap: 10px; border-radius: 12px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span><?= htmlspecialchars($successMsg) ?></span>
+                <div class="dash-panel auto-dismiss-alert" style="background: #ECFDF5; border-color: #A7F3D0; color: #065F46; padding: 14px 18px; margin-bottom: 20px; font-weight: 500; display: flex; align-items: center; justify-content: space-between; border-radius: 12px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span><?= htmlspecialchars($successMsg) ?></span>
+                    </div>
+                    <button type="button" onclick="this.closest('.dash-panel').remove()" style="border: none; background: transparent; color: #065F46; font-size: 20px; line-height: 1; cursor: pointer; padding: 0 4px;" title="Dismiss">&times;</button>
                 </div>
             <?php endif; ?>
             <?php if (!empty($errorMsg)): ?>
-                <div class="dash-panel" style="background: #FEF2F2; border-color: #FECACA; color: #991B1B; padding: 14px 18px; margin-bottom: 20px; font-weight: 500; display: flex; align-items: center; gap: 10px; border-radius: 12px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                    <span><?= htmlspecialchars($errorMsg) ?></span>
+                <div class="dash-panel auto-dismiss-alert" style="background: #FEF2F2; border-color: #FECACA; color: #991B1B; padding: 14px 18px; margin-bottom: 20px; font-weight: 500; display: flex; align-items: center; justify-content: space-between; border-radius: 12px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <span><?= htmlspecialchars($errorMsg) ?></span>
+                    </div>
+                    <button type="button" onclick="this.closest('.dash-panel').remove()" style="border: none; background: transparent; color: #991B1B; font-size: 20px; line-height: 1; cursor: pointer; padding: 0 4px;" title="Dismiss">&times;</button>
                 </div>
             <?php endif; ?>
 
@@ -619,11 +625,6 @@ $page = $pageNum;
                                                     <span>Preview</span>
                                                 </a>
 
-                                                <button type="button" class="action-menu-item" onclick="window.NutronyxProduct.openDetails('<?= $p['id'] ?>')">
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                                                    <span>Manage Images</span>
-                                                </button>
-
                                                 <button type="button" class="action-menu-item" onclick="window.NutronyxProduct.openRelations('<?= $p['id'] ?>', '<?= addslashes(htmlspecialchars($p['title'])) ?>')">
                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
                                                     <span>Related Products</span>
@@ -662,12 +663,16 @@ $page = $pageNum;
                                                 <tbody>
                                                     <?php foreach ($p['variants'] as $v): 
                                                         $vStock = (int)($v['stock_quantity'] ?? $v['quantity_on_hand'] ?? 0);
+                                                        $vRawImg = !empty($v['image_url']) ? $v['image_url'] : $rawImg;
+                                                        $vThumbSrc = ($vRawImg !== '' && (str_starts_with($vRawImg, 'http') || str_starts_with($vRawImg, '/'))) 
+                                                            ? $vRawImg 
+                                                            : ($vRawImg !== '' ? ('../' . $vRawImg) : '../assets/images/about-commitment-still-life.jpg');
                                                     ?>
                                                         <tr>
                                                             <td>
                                                                 <div style="display: flex; align-items: center; gap: 10px;">
                                                                     <div class="variant-thumb-box">
-                                                                        <img src="<?= htmlspecialchars($thumbSrc) ?>" alt="<?= htmlspecialchars($v['title']) ?>">
+                                                                        <img src="<?= htmlspecialchars($vThumbSrc) ?>" alt="<?= htmlspecialchars($v['title']) ?>" onerror="this.onerror=null; this.src='../assets/images/about-commitment-still-life.jpg';">
                                                                     </div>
                                                                     <span style="font-weight: 600; color: #1F2937;"><?= htmlspecialchars($v['title']) ?></span>
                                                                 </div>
@@ -802,10 +807,7 @@ $page = $pageNum;
                         <input type="text" name="title" id="productTitle" required class="form-control" placeholder="e.g. ABC+ Health Blend" onkeyup="window.NutronyxProduct.syncSlug()">
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Product slug</label>
-                        <input type="text" name="slug" id="productSlug" class="form-control" placeholder="auto-generated from name">
-                    </div>
+                    <input type="hidden" name="slug" id="productSlug">
 
                     <!-- 3. DESCRIPTIONS -->
                     <div class="form-group">
@@ -840,7 +842,7 @@ $page = $pageNum;
                     </div>
 
                     <!-- 5. PRICING & SKU -->
-                    <div class="form-grid-3">
+                    <div class="form-grid-2">
                         <div class="form-group">
                             <label class="form-label">Regular price (₹) *</label>
                             <input type="number" step="0.01" name="price_rupees" id="productRegularPrice" required class="form-control" placeholder="499">
@@ -849,11 +851,8 @@ $page = $pageNum;
                             <label class="form-label">Sale / Compare price (₹)</label>
                             <input type="number" step="0.01" name="sale_price" id="productSalePrice" class="form-control" placeholder="e.g. 599">
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Cost price (₹)</label>
-                            <input type="number" step="0.01" name="cost_price" id="productCostPrice" class="form-control" placeholder="for profit margins">
-                        </div>
                     </div>
+                    <input type="hidden" name="cost_price" id="productCostPrice" value="">
 
                     <div class="form-grid-2">
                         <div class="form-group">
@@ -874,45 +873,34 @@ $page = $pageNum;
 
                     <div class="product-accordions">
 
-                        <!-- 7. ACCORDION: VARIANT MATRIX GENERATOR -->
+                        <!-- 7. ACCORDION: PRODUCT VARIANTS -->
                         <div class="product-accordion-item">
                             <div class="product-accordion-header" onclick="window.NutronyxProduct.toggleAccordion(this)">
-                                <span class="product-accordion-title">Product Variants &amp; Matrix Generator</span>
+                                <span class="product-accordion-title">Product Variants</span>
                                 <span class="product-accordion-chevron">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </span>
                             </div>
-                            <div class="product-accordion-content">
-                                <p style="font-size: 12.5px; color: #6B7280; margin-bottom: 14px;">
-                                    Define multi-dimensional product attributes (Size, Weight, Volume, Material, Color, Flavors).
-                                </p>
-                                
-                                <div class="form-grid-2">
-                                    <div class="form-group">
-                                        <label class="form-label">Attribute Name</label>
-                                        <input type="text" id="attrNameInput" class="form-control" placeholder="e.g. Weight">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Options (comma-separated)</label>
-                                        <input type="text" id="attrValuesInput" class="form-control" placeholder="e.g. 150 g, 300 g, 500 g">
-                                    </div>
+                            <div class="product-accordion-content" style="display: block;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                    <p style="font-size: 12.5px; color: #6B7280; margin: 0;">
+                                        Add variants (e.g. 250g, 500g, 1kg) with individual pricing and stock levels.
+                                    </p>
+                                    <button type="button" class="btn-emerald-outline" onclick="window.NutronyxProduct.addNewVariantRow()" style="font-size: 12px; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        <span>+ Add Variant</span>
+                                    </button>
                                 </div>
 
-                                <button type="button" class="btn-emerald-outline" onclick="window.NutronyxProduct.generateVariantRowsFromInputs()" style="margin-bottom: 16px;">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                                    <span>Generate Variant Combinations</span>
-                                </button>
-
-                                <div id="generatedVariantsContainer" style="display: none;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 8px;">Configured Variant Matrix</div>
-                                    <table class="nested-variant-table" id="variantsMatrixTable" style="margin-bottom: 14px;">
+                                <div id="generatedVariantsContainer">
+                                    <table class="nested-variant-table" id="variantsMatrixTable" style="margin-bottom: 14px; width: 100%;">
                                         <thead>
                                             <tr>
-                                                <th>Title</th>
-                                                <th>SKU</th>
-                                                <th>Price (₹)</th>
-                                                <th>Stock</th>
-                                                <th>Action</th>
+                                                <th style="min-width: 140px;">Variant Title *</th>
+                                                <th style="min-width: 130px;">SKU</th>
+                                                <th style="width: 110px;">Price (₹) *</th>
+                                                <th style="width: 90px;">Stock</th>
+                                                <th style="width: 50px; text-align: center;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody id="variantsMatrixTbody"></tbody>
@@ -949,9 +937,7 @@ $page = $pageNum;
                 <input type="hidden" id="relCurrentProductId" value="">
                 
                 <div style="display: flex; gap: 10px; margin-bottom: 16px; border-bottom: 1px solid #E5E7EB; padding-bottom: 12px;">
-                    <button type="button" class="btn-emerald-brand" id="tabRelRelated" onclick="window.NutronyxProduct.switchRelTab('related')">Related Products</button>
-                    <button type="button" class="btn-emerald-outline" id="tabRelUpsell" onclick="window.NutronyxProduct.switchRelTab('upsell')">Upsell Products</button>
-                    <button type="button" class="btn-emerald-outline" id="tabRelCrossSell" onclick="window.NutronyxProduct.switchRelTab('cross_sell')">Cross-Sell Products</button>
+                    <button type="button" class="btn-emerald-brand" id="tabRelRelated">Related Products</button>
                 </div>
 
                 <div style="margin-bottom: 14px;">
@@ -1134,7 +1120,7 @@ $page = $pageNum;
         <input type="hidden" name="bulk_category_id" id="bulkCategoryIdField" value="">
     </form>
 
-    <script src="../assets/js/admin.js?v=20261119_v3"></script>
+    <script src="../assets/js/admin.js?v=20261124_v1"></script>
     <script>
         // Enhanced Product Controller Scripts
         document.addEventListener('click', function(e) {

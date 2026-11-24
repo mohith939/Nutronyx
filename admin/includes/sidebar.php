@@ -19,9 +19,6 @@ try {
 } catch (\Throwable $e) {}
 
 $navItems = [
-    'General' => [
-        ['id' => 'dashboard', 'label' => 'Dashboard', 'url' => 'dashboard.php', 'icon' => '<circle cx="12" cy="12" r="10"></circle><polygon points="12 8 8 12 12 16 16 12 12 8"></polygon>'],
-    ],
     'Catalog' => [
         ['id' => 'products', 'label' => 'Products & SKUs', 'url' => 'products.php', 'icon' => '<polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline>'],
         ['id' => 'categories', 'label' => 'Categories & Subcategories', 'url' => 'categories.php', 'icon' => '<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>'],
@@ -33,6 +30,7 @@ $navItems = [
         ['id' => 'shipping', 'label' => 'Shipping & Logistics', 'url' => 'shipping.php', 'icon' => '<rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle>'],
         ['id' => 'payments', 'label' => 'Payment Gateway (Cashfree)', 'url' => 'payments.php', 'icon' => '<rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line>'],
         ['id' => 'templates', 'label' => 'Invoice & Receipt Templates', 'url' => 'templates.php', 'icon' => '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>'],
+        ['id' => 'dashboard', 'label' => 'Dashboard', 'url' => 'dashboard.php', 'icon' => '<circle cx="12" cy="12" r="10"></circle><polygon points="12 8 8 12 12 16 16 12 12 8"></polygon>'],
     ],
     'Marketing & Trust' => [
         ['id' => 'inquiries', 'label' => 'Inquiries & Leads', 'url' => 'inquiries.php', 'icon' => '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>'],

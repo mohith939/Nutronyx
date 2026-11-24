@@ -336,7 +336,7 @@
             const tbody = document.getElementById('variantsMatrixTbody');
             const matrixContainer = document.getElementById('generatedVariantsContainer');
             if (tbody) tbody.innerHTML = '';
-            if (matrixContainer) matrixContainer.style.display = 'none';
+            if (matrixContainer) matrixContainer.style.display = 'block';
 
             window.NutronyxModal.open('productModal');
         },
@@ -399,23 +399,13 @@
             // Populate existing variants into matrix if present
             const tbody = document.getElementById('variantsMatrixTbody');
             const matrixContainer = document.getElementById('generatedVariantsContainer');
-            if (tbody && matrixContainer) {
+            if (tbody) {
                 tbody.innerHTML = '';
+                if (matrixContainer) matrixContainer.style.display = 'block';
                 if (p.variants && p.variants.length > 0) {
-                    p.variants.forEach((v, idx) => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td><input type="text" name="variants[${idx}][title]" value="${v.title || ''}" class="form-control" style="font-size:12px; padding:4px 8px;"></td>
-                            <td><input type="text" name="variants[${idx}][sku]" value="${v.sku || ''}" class="form-control" style="font-size:12px; padding:4px 8px;"></td>
-                            <td><input type="number" step="0.01" name="variants[${idx}][price_rupees]" value="${((v.price_amount || 0) / 100)}" class="form-control" style="font-size:12px; padding:4px 8px; width:80px;"></td>
-                            <td><input type="number" name="variants[${idx}][stock_quantity]" value="${(v.quantity_on_hand || v.stock_quantity || 100)}" class="form-control" style="font-size:12px; padding:4px 8px; width:70px;"></td>
-                            <td><button type="button" onclick="this.closest('tr').remove()" style="border:none; background:transparent; color:#DC2626; cursor:pointer;">&times;</button></td>
-                        `;
-                        tbody.appendChild(tr);
+                    p.variants.forEach(v => {
+                        this.addNewVariantRow(v);
                     });
-                    matrixContainer.style.display = 'block';
-                } else {
-                    matrixContainer.style.display = 'none';
                 }
             }
 
@@ -713,7 +703,16 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    window.NutronyxToast.success(originalState ? 'Product published to storefront.' : 'Product hidden from storefront.');
+                    const isVis = (data.is_visible !== undefined) ? (data.is_visible == 1) : originalState;
+                    checkbox.checked = isVis;
+                    // Synchronize all child variant toggles in nested subtable
+                    const subtable = document.getElementById('variant-subtable-' + productId);
+                    if (subtable) {
+                        subtable.querySelectorAll('.toggle-switch input[type="checkbox"]').forEach(cb => {
+                            cb.checked = isVis;
+                        });
+                    }
+                    window.NutronyxToast.success(isVis ? 'Product published to storefront.' : 'Product hidden from storefront.');
                 } else {
                     checkbox.checked = !originalState;
                     window.NutronyxToast.error(data.error || 'Failed to update visibility.');
@@ -1002,51 +1001,47 @@
             }
         },
 
-        generateVariantRowsFromInputs: function() {
-            const nameInput = document.getElementById('attrNameInput');
-            const valuesInput = document.getElementById('attrValuesInput');
-            const titleInput = document.getElementById('productTitle');
-            const priceInput = document.getElementById('productRegularPrice');
-            const baseSku = document.getElementById('productSku').value.trim() || 'NX-PROD';
-
-            if (!valuesInput || !valuesInput.value.trim()) {
-                window.NutronyxToast.warning('Please enter option values (e.g. 150 g, 300 g, 500 g).');
-                return;
-            }
-
-            const options = valuesInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        addNewVariantRow: function(v = null) {
             const tbody = document.getElementById('variantsMatrixTbody');
             const container = document.getElementById('generatedVariantsContainer');
-            if (!tbody || !container) return;
+            if (!tbody) return;
+            if (container) container.style.display = 'block';
 
-            tbody.innerHTML = '';
-            const defaultPrice = priceInput ? priceInput.value : '499';
+            const idx = tbody.querySelectorAll('tr').length;
+            const regPrice = document.getElementById('productRegularPrice')?.value || '499';
+            const baseSku = (document.getElementById('productSku')?.value || 'NX-PROD').trim();
+            const defStock = document.getElementById('productStockQty')?.value || '100';
 
-            options.forEach((opt, idx) => {
-                const optSku = baseSku + '-' + opt.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>
-                        <input type="text" name="variants[${idx}][title]" value="${opt}" class="form-control" style="font-size:12px; padding:4px 8px;">
-                    </td>
-                    <td>
-                        <input type="text" name="variants[${idx}][sku]" value="${optSku}" class="form-control" style="font-size:12px; padding:4px 8px;">
-                    </td>
-                    <td>
-                        <input type="number" step="0.01" name="variants[${idx}][price_rupees]" value="${defaultPrice}" class="form-control" style="font-size:12px; padding:4px 8px; width:80px;">
-                    </td>
-                    <td>
-                        <input type="number" name="variants[${idx}][stock_quantity]" value="100" class="form-control" style="font-size:12px; padding:4px 8px; width:70px;">
-                    </td>
-                    <td>
-                        <button type="button" onclick="this.closest('tr').remove()" style="border:none; background:transparent; color:#DC2626; cursor:pointer;">&times;</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+            const id = v && v.id ? v.id : '';
+            const title = v && v.title ? v.title : '';
+            const sku = v && v.sku ? v.sku : (id ? '' : (baseSku ? baseSku + '-V' + (idx + 1) : ''));
+            const price = v ? (v.price_rupees !== undefined ? v.price_rupees : ((v.price_amount || 0) / 100)) : regPrice;
+            const stock = v ? (v.stock_quantity !== undefined ? v.stock_quantity : (v.quantity_on_hand !== undefined ? v.quantity_on_hand : defStock)) : defStock;
 
-            container.style.display = 'block';
-            window.NutronyxToast.success(`Generated ${options.length} variant combinations.`);
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <input type="hidden" name="variants[${idx}][id]" value="${id}">
+                    <input type="text" name="variants[${idx}][title]" value="${title}" required placeholder="e.g. 500 g Pack" class="form-control" style="font-size:12.5px; padding:6px 10px;">
+                </td>
+                <td>
+                    <input type="text" name="variants[${idx}][sku]" value="${sku}" placeholder="Auto SKU" class="form-control" style="font-size:12px; padding:6px 8px; font-family:monospace;">
+                </td>
+                <td>
+                    <input type="number" step="0.01" name="variants[${idx}][price_rupees]" value="${price}" required class="form-control" style="font-size:12.5px; padding:6px 8px;">
+                </td>
+                <td>
+                    <input type="number" name="variants[${idx}][stock_quantity]" value="${stock}" min="0" class="form-control" style="font-size:12.5px; padding:6px 8px;">
+                </td>
+                <td style="text-align: center;">
+                    <button type="button" onclick="this.closest('tr').remove()" title="Remove variant" style="border:none; background:transparent; color:#EF4444; font-size:18px; font-weight:bold; cursor:pointer; padding:4px 8px; line-height:1;">&times;</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        },
+
+        generateVariantRowsFromInputs: function() {
+            this.addNewVariantRow();
         }
     };
 
@@ -2043,6 +2038,23 @@
         if (window.NutronyxOrder && document.querySelector('.order-select-checkbox')) {
             window.NutronyxOrder.handleRowCheckbox();
         }
+
+        // Auto-dismiss alert notifications after 15 seconds
+        document.querySelectorAll('.auto-dismiss-alert, .dash-panel[style*="ECFDF5"], .dash-panel[style*="FEF2F2"]').forEach(el => {
+            setTimeout(() => {
+                el.style.transition = 'opacity 0.6s ease, max-height 0.6s ease, margin 0.6s ease, padding 0.6s ease';
+                el.style.opacity = '0';
+                el.style.overflow = 'hidden';
+                setTimeout(() => {
+                    el.style.maxHeight = '0px';
+                    el.style.paddingTop = '0px';
+                    el.style.paddingBottom = '0px';
+                    el.style.marginTop = '0px';
+                    el.style.marginBottom = '0px';
+                    setTimeout(() => el.remove(), 600);
+                }, 300);
+            }, 15000);
+        });
     }
 
     if (document.readyState === 'loading') {
