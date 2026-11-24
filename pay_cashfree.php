@@ -522,7 +522,7 @@ $isRealCashfreeSession = !empty($sessionId) && !str_starts_with($sessionId, 'ses
             </a>
 
             <div>
-                <a href="cart.php" class="btn-cf-secondary">
+                <a href="cart" class="btn-cf-secondary">
                     <span>&larr;</span> Cancel and Return to Cart
                 </a>
             </div>

@@ -224,7 +224,7 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                                 <div class="concierge-content">
                                     <h3 class="concierge-title">Have a specific question?</h3>
                                     <p class="concierge-text">Our wellness concierge is on hand to guide your daily ritual and address personal preferences.</p>
-                                    <a href="contact.php" class="concierge-link" style="margin-bottom: 8px;">
+                                    <a href="contact" class="concierge-link" style="margin-bottom: 8px;">
                                         <span>Contact Ritual Concierge</span>
                                         <span class="concierge-arrow" aria-hidden="true">↗</span>
                                     </a>
@@ -471,11 +471,11 @@ $pageTitle = 'Frequently Asked Questions — Knowledge & Clarity | NUTRONYX';
                 <h3>Ready to Begin Your Daily Ritual?</h3>
                 <p>Discover clean, sustained plant vitality with NUTRONYX ABC+. Pure 100% whole foods designed for lifelong health.</p>
                 <div class="faq-cta-btn-group">
-                    <a href="shop.php" class="btn-faq-shop">
+                    <a href="shop" class="btn-faq-shop">
                         <span>Shop ABC+ Ritual</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </a>
-                    <a href="contact.php" class="btn-faq-contact">
+                    <a href="contact" class="btn-faq-contact">
                         <span>Talk to Concierge</span>
                     </a>
                 </div>

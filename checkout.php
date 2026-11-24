@@ -38,7 +38,7 @@ $gstAmount = round($cart['subtotal_rupees'] - ($cart['subtotal_rupees'] / 1.18),
 
 // Check if user reached checkout directly with empty cart
 if (empty($cart['items']) && $_SERVER['REQUEST_METHOD'] !== 'POST' && empty($_GET['confirmed'])) {
-    header('Location: cart.php');
+    header('Location: cart');
     exit;
 }
 
@@ -301,11 +301,11 @@ $currentPage = 'checkout';
 
                     <!-- Actions -->
                     <div class="order-success-actions">
-                        <a href="track-order.php?order_number=<?= urlencode($placedOrder['order_number']) ?>&mobile=<?= urlencode($placedOrder['shipping_phone']) ?>" 
+                        <a href="track-order?order_number=<?= urlencode($placedOrder['order_number']) ?>&mobile=<?= urlencode($placedOrder['shipping_phone']) ?>" 
                            class="btn-cart-proceed" style="display:inline-flex; width:auto; padding:12px 28px;">
                             Track Live Dispatch
                         </a>
-                        <a href="shop.php" class="btn-cart-proceed" style="display:inline-flex; width:auto; padding:12px 28px; background:#FAF7F2; color:#14221A; border:1px solid #DDD6C9;">
+                        <a href="shop" class="btn-cart-proceed" style="display:inline-flex; width:auto; padding:12px 28px; background:#FAF7F2; color:#14221A; border:1px solid #DDD6C9;">
                             Return to Shop
                         </a>
                     </div>
@@ -320,7 +320,7 @@ $currentPage = 'checkout';
 
                 <!-- Top Meta Row: Breadcrumbs & Secure Tag (Image 2) -->
                 <div class="checkout-top-meta">
-                    <a href="cart.php" class="checkout-crumb-link">
+                    <a href="cart" class="checkout-crumb-link">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                         <span>Cart / Checkout</span>
                     </a>
@@ -359,7 +359,7 @@ $currentPage = 'checkout';
                 <?php endif; ?>
 
                 <!-- Checkout 2-Column Grid (Image 2) -->
-                <form method="POST" action="checkout.php" id="checkoutForm">
+                <form method="POST" action="checkout" id="checkoutForm">
                     <input type="hidden" name="action" value="place_order">
 
                     <div class="cart-grid-main">

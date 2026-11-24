@@ -306,7 +306,7 @@ $currentPage = 'contact';
                                         <span>Send Another Message</span>
                                         <span aria-hidden="true">&rarr;</span>
                                     </button>
-                                    <a href="shop.php" class="btn-explore-shop">
+                                    <a href="shop" class="btn-explore-shop">
                                         <span>Explore Shop Collection</span>
                                     </a>
                                 </div>

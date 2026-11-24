@@ -730,7 +730,7 @@ $currentPage = "about";
 
                         <!-- Solid Pill CTA Button -->
                         <div class="journey-cta-wrapper">
-                            <a href="shop.php" class="journey-cta-btn" aria-label="Be a Part of Our Journey">
+                            <a href="shop" class="journey-cta-btn" aria-label="Be a Part of Our Journey">
                                 <span>Be a Part of Our Journey</span>
                                 <span class="journey-cta-arrow" aria-hidden="true">&rarr;</span>
                             </a>

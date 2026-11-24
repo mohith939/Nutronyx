@@ -21,12 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $vid = trim((string)($_POST['variant_id'] ?? ''));
         $qty = (int)($_POST['quantity'] ?? 1);
         CartService::updateQuantity($vid, $qty);
-        header('Location: cart.php');
+        header('Location: cart');
         exit;
     } elseif ($action === 'remove') {
         $vid = trim((string)($_POST['variant_id'] ?? ''));
         CartService::removeItem($vid);
-        header('Location: cart.php');
+        header('Location: cart');
         exit;
     } elseif ($action === 'apply_coupon') {
         $code = trim((string)($_POST['coupon_code'] ?? ''));
@@ -41,13 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $notice = 'Coupon removed.';
     } elseif ($action === 'clear') {
         CartService::clear();
-        header('Location: cart.php');
+        header('Location: cart');
         exit;
     } elseif ($action === 'add') {
         $vid = trim((string)($_POST['variant_id'] ?? ''));
         $qty = (int)($_POST['quantity'] ?? 1);
         CartService::addItem($vid, $qty);
-        header('Location: cart.php');
+        header('Location: cart');
         exit;
     }
 }
@@ -162,7 +162,7 @@ $currentPage = 'cart';
                     </div>
                     <h2 class="cart-empty-title">Your Wellness Cart is Empty</h2>
                     <p class="cart-empty-text">It seems you haven't added any items to your ritual yet. Explore our cold-milled single-origin powders and revitalize your daily routine.</p>
-                    <a href="shop.php" class="btn-cart-proceed" style="display:inline-flex; width:auto; padding:12px 28px;">
+                    <a href="shop" class="btn-cart-proceed" style="display:inline-flex; width:auto; padding:12px 28px;">
                         Explore Products
                     </a>
                 </div>
@@ -186,7 +186,7 @@ $currentPage = 'cart';
                                              alt="<?= htmlspecialchars($it['product_title']) ?>" 
                                              class="cart-prod-img">
                                         <div class="cart-prod-details">
-                                            <a href="shop.php" class="cart-prod-name"><?= htmlspecialchars($it['product_title']) ?></a>
+                                            <a href="shop" class="cart-prod-name"><?= htmlspecialchars($it['product_title']) ?></a>
                                             <span class="cart-variant-badge"><?= htmlspecialchars($it['variant_title']) ?></span>
                                             <span class="cart-sku-code">SKU: <?= htmlspecialchars($it['sku']) ?></span>
                                         </div>
@@ -203,7 +203,7 @@ $currentPage = 'cart';
                                     </div>
                                     <div class="cart-total-col">
                                         <span class="cart-line-total" id="line-total-<?= htmlspecialchars($it['variant_id']) ?>">
-                                            ₹<?= number_format($it['line_total_rupees'], 2) ?>
+                                             ₹<?= number_format($it['line_total_rupees'], 2) ?>
                                         </span>
                                         <button type="button" class="cart-trash-btn" onclick="removeCartItem('<?= $it['variant_id'] ?>')" title="Remove item" aria-label="Remove item">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -220,7 +220,7 @@ $currentPage = 'cart';
 
                         <!-- Footer Toolbar -->
                         <div class="cart-panel-footer">
-                            <a href="shop.php" class="cart-continue-link">
+                            <a href="shop" class="cart-continue-link">
                                 &larr; Continue Shopping
                             </a>
                             <button type="button" class="cart-clear-btn" onclick="clearCart()">
@@ -305,7 +305,7 @@ $currentPage = 'cart';
                         </div>
 
                         <!-- Proceed Button -->
-                        <a href="checkout.php" class="btn-cart-proceed" id="proceedCheckoutBtn">
+                        <a href="checkout" class="btn-cart-proceed" id="proceedCheckoutBtn">
                             <span>PROCEED TO CHECKOUT</span>
                             <span>&rarr;</span>
                         </a>

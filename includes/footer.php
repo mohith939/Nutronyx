@@ -17,7 +17,7 @@
             <!-- Column 1: Brand & Nature Thoughtfully -->
             <div class="footer-col footer-col-brand">
                 <div class="footer-brand-logo-wrap">
-                    <a href="index.php">
+                    <a href="/">
                         <img src="assets/images/logo.png?v=20261119_v3" alt="NUTRONYX" class="footer-brand-logo" loading="lazy">
                     </a>
                 </div>
@@ -35,10 +35,10 @@
                 <h3 class="footer-col-heading">POLICIES</h3>
                 <span class="col-accent-dash" aria-hidden="true"></span>
                 <ul class="footer-nav-list" role="list">
-                    <li><a href="privacy-policy.php" class="footer-nav-link">Privacy Policy</a></li>
-                    <li><a href="shipping-policy.php" class="footer-nav-link">Shipping Policy</a></li>
-                    <li><a href="refund-policy.php" class="footer-nav-link">Refund Policy</a></li>
-                    <li><a href="terms-and-conditions.php" class="footer-nav-link">Terms &amp; Conditions</a></li>
+                    <li><a href="privacy-policy" class="footer-nav-link">Privacy Policy</a></li>
+                    <li><a href="shipping-policy" class="footer-nav-link">Shipping Policy</a></li>
+                    <li><a href="refund-policy" class="footer-nav-link">Refund Policy</a></li>
+                    <li><a href="terms-and-conditions" class="footer-nav-link">Terms &amp; Conditions</a></li>
                 </ul>
             </div>
 
@@ -47,10 +47,10 @@
                 <h3 class="footer-col-heading">EXPLORE</h3>
                 <span class="col-accent-dash" aria-hidden="true"></span>
                 <ul class="footer-nav-list" role="list">
-                    <li><a href="index.php#product-showcase" class="footer-nav-link">Ingredients</a></li>
-                    <li><a href="index.php#nutronyx-experience" class="footer-nav-link">Reviews</a></li>
-                    <li><a href="faq.php" class="footer-nav-link">FAQs</a></li>
-                    <li><a href="contact.php" class="footer-nav-link">Contact</a></li>
+                    <li><a href="/#product-showcase" class="footer-nav-link">Ingredients</a></li>
+                    <li><a href="/#nutronyx-experience" class="footer-nav-link">Reviews</a></li>
+                    <li><a href="faq" class="footer-nav-link">FAQs</a></li>
+                    <li><a href="contact" class="footer-nav-link">Contact</a></li>
                 </ul>
             </div>
 
@@ -63,8 +63,9 @@
                 <!-- Contact WhatsApp Feature -->
                 <a href="https://wa.me/919392633211" target="_blank" rel="noopener noreferrer" class="footer-phone-badge" aria-label="Chat with Wellness Concierge on WhatsApp at 93926 33211">
                     <span class="phone-round-icon" aria-hidden="true">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m-3.53 4.75c-.19 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.47 1.07 2.89 1.21 3.09.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.75-.71 2-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.57-.35-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.34.22-.64.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.79-1.67-2.09-.17-.3-.02-.46.13-.61.13-.13.3-.34.45-.51.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.56-.01z"/>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.63C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2Z" fill="#25D366"/>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.04 3.67C16.58 3.67 20.28 7.37 20.28 11.92C20.28 14.12 19.42 16.18 17.86 17.74C16.3 19.3 14.24 20.16 12.04 20.16C10.56 20.16 9.11 19.76 7.84 19.01L7.54 18.83L4.42 19.65L5.25 16.61L5.05 16.3C4.24 15 3.8 13.48 3.8 11.92C3.8 7.37 7.5 3.67 12.04 3.67ZM8.51 8.42C8.32 8.42 7.99 8.49 7.72 8.79C7.45 9.09 6.68 9.81 6.68 11.27C6.68 12.73 7.75 14.15 7.89 14.35C8.04 14.55 9.99 17.55 12.97 18.84C13.68 19.15 14.23 19.33 14.66 19.47C15.37 19.7 16.02 19.67 16.53 19.59C17.1 19.5 18.28 18.88 18.53 18.19C18.77 17.5 18.77 16.91 18.7 16.79C18.63 16.67 18.43 16.59 18.13 16.44C17.83 16.29 16.38 15.58 16.11 15.48C15.84 15.38 15.64 15.33 15.44 15.63C15.24 15.93 14.67 16.59 14.5 16.79C14.33 16.99 14.16 17.01 13.86 16.86C13.56 16.71 12.59 16.39 11.44 15.37C10.54 14.57 9.94 13.58 9.77 13.28C9.6 12.98 9.75 12.82 9.9 12.67C10.03 12.54 10.2 12.33 10.35 12.16C10.5 11.99 10.55 11.86 10.65 11.66C10.75 11.46 10.7 11.29 10.63 11.14C10.55 10.99 9.96 9.53 9.71 8.93C9.47 8.35 9.22 8.43 9.04 8.42C8.87 8.41 8.67 8.41 8.51 8.42Z" fill="white"/>
                         </svg>
                     </span>
                     <span class="phone-vert-divider" aria-hidden="true"></span>

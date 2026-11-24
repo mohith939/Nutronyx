@@ -687,7 +687,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
 
                 <div id="reviewModalErrorNotice" class="review-modal-alert-error" style="display: none;"></div>
 
-                <form id="storeReviewForm" method="POST" action="shop.php" onsubmit="handleReviewSubmit(event)">
+                <form id="storeReviewForm" method="POST" action="shop" onsubmit="handleReviewSubmit(event)">
                     <input type="hidden" name="action" value="submit_customer_review">
                     <input type="hidden" name="product_id" value="prod_abc_powder">
 
@@ -798,7 +798,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
         }
 
         try {
-            const response = await fetch('shop.php', {
+            const response = await fetch('shop', {
                 method: 'POST',
                 body: formData,
                 headers: {

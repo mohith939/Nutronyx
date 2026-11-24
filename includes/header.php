@@ -7,7 +7,7 @@ $isAbout = ($currentPage === 'about');
 $isHome = ($currentPage === 'home');
 $isCart = ($currentPage === 'cart');
 $isFaq = ($currentPage === 'faq');
-$homePath = !$isHome ? 'index.php' : '';
+$homePath = !$isHome ? '/' : '';
 
 if (!class_exists('Nutronyx\Services\CartService')) {
     require_once __DIR__ . '/../src/bootstrap.php';
@@ -63,7 +63,7 @@ $isAnnouncementActive = (!empty($announcement) && !empty($announcement['is_enabl
     <div class="header-main-nav">
         <div class="header-container">
             <!-- Brand Logo -->
-            <a href="<?= !$isHome ? 'index.php' : '#home' ?>" class="brand-logo" aria-label="Nutronyx Home">
+            <a href="<?= !$isHome ? '/' : '#home' ?>" class="brand-logo" aria-label="Nutronyx Home">
                 <img src="assets/images/logo.png?v=20261119_v3" alt="Nutronyx Logo" class="logo-img">
             </a>
 
@@ -71,17 +71,17 @@ $isAnnouncementActive = (!empty($announcement) && !empty($announcement['is_enabl
             <nav class="main-nav" aria-label="Main Navigation">
                 <ul class="nav-list">
                     <li class="nav-item"><a href="<?= $homePath ?>#home" class="nav-link <?= $isHome ? 'active' : '' ?>">Home</a></li>
-                    <li class="nav-item"><a href="shop.php" class="nav-link <?= $isShop ? 'active' : '' ?>">Shop</a></li>
-                    <li class="nav-item"><a href="about.php" class="nav-link <?= $isAbout ? 'active' : '' ?>">About</a></li>
-                    <li class="nav-item"><a href="partner.php" class="nav-link <?= $isPartner ? 'active' : '' ?>">Partner</a></li>
-                    <li class="nav-item"><a href="contact.php" class="nav-link <?= $isContact ? 'active' : '' ?>">Contact</a></li>
+                    <li class="nav-item"><a href="shop" class="nav-link <?= $isShop ? 'active' : '' ?>">Shop</a></li>
+                    <li class="nav-item"><a href="about" class="nav-link <?= $isAbout ? 'active' : '' ?>">About</a></li>
+                    <li class="nav-item"><a href="partner" class="nav-link <?= $isPartner ? 'active' : '' ?>">Partner</a></li>
+                    <li class="nav-item"><a href="contact" class="nav-link <?= $isContact ? 'active' : '' ?>">Contact</a></li>
                 </ul>
             </nav>
 
             <!-- Right Header Icons -->
             <div class="header-actions">
-                <a href="shop.php" class="header-shop-btn <?= $isShop ? 'active' : '' ?>">Buy Now</a>
-                <a href="cart.php" class="action-btn cart-btn <?= $isCart ? 'active' : '' ?>" aria-label="Shopping Cart" title="Shopping Cart">
+                <a href="shop" class="header-shop-btn <?= $isShop ? 'active' : '' ?>">Buy Now</a>
+                <a href="cart" class="action-btn cart-btn <?= $isCart ? 'active' : '' ?>" aria-label="Shopping Cart" title="Shopping Cart">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                         <line x1="3" y1="6" x2="21" y2="6"></line>

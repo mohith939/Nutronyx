@@ -67,7 +67,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
                     </p>
 
                     <div class="hero-cta-group">
-                        <a href="shop.php" class="btn-discover">
+                        <a href="shop" class="btn-discover">
                             <span>Shop ABC+</span>
                             <span class="cta-arrow" aria-hidden="true">&rarr;</span>
                         </a>
@@ -410,7 +410,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
 
             <!-- Bottom CTA Button -->
             <div class="power-cta-row">
-                <a href="shop.php" class="btn-explore-ingredients">
+                <a href="shop" class="btn-explore-ingredients">
                     <span>Explore the Ingredients</span>
                     <span class="cta-arrow" aria-hidden="true">&rarr;</span>
                 </a>
@@ -557,7 +557,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
 
                     <!-- Primary Action CTA -->
                     <div class="showcase-cta-wrap">
-                        <a href="shop.php?variant=<?= urlencode($defaultVariantKey) ?>" class="btn-shop-abc" id="showcaseCtaBtn">
+                        <a href="shop?variant=<?= urlencode($defaultVariantKey) ?>" class="btn-shop-abc" id="showcaseCtaBtn">
                             <span>SHOP ABC+</span>
                             <span class="btn-arrow" aria-hidden="true">→</span>
                         </a>
@@ -793,7 +793,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
 
                     <!-- CTA Button -->
                     <div class="ritual-cta-block">
-                        <a href="shop.php" class="btn-discover-ritual" aria-label="Explore Our Products">
+                        <a href="shop" class="btn-discover-ritual" aria-label="Explore Our Products">
                             <span class="btn-caption">Explore Our Products</span>
                             <span class="btn-icon" aria-hidden="true">&rarr;</span>
                         </a>
@@ -990,7 +990,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
                 </p>
 
                 <div class="manifesto-cta-wrap">
-                    <a href="about.php" class="btn-manifesto-story" aria-label="Discover our Story">
+                    <a href="about" class="btn-manifesto-story" aria-label="Discover our Story">
                         <span>Discover our Story</span>
                         <span class="manifesto-arrow" aria-hidden="true">&rarr;</span>
                     </a>
@@ -1072,7 +1072,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
                 </p>
 
                 <div class="generational-cta-wrap">
-                    <a href="shop.php" class="btn-generational-promise" aria-label="Explore Our Products">
+                    <a href="shop" class="btn-generational-promise" aria-label="Explore Our Products">
                         <span>Explore Our Products</span>
                         <span class="promise-arrow" aria-hidden="true">&rarr;</span>
                     </a>
@@ -1562,7 +1562,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
         const ctaBtn = document.getElementById('showcaseCtaBtn');
         
         if (priceEl) priceEl.textContent = '₹' + parseInt(price, 10).toLocaleString('en-IN');
-        if (ctaBtn) ctaBtn.href = 'shop.php?variant=' + encodeURIComponent(variantId);
+        if (ctaBtn) ctaBtn.href = 'shop?variant=' + encodeURIComponent(variantId);
     }
 
     function onShowcaseVariantChange(variantId) {

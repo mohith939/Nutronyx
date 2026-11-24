@@ -108,7 +108,7 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
 
         <div class="track-card">
             <!-- Tracking Query Form -->
-            <form action="track-order.php" method="GET" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+            <form action="track-order" method="GET" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                     <div>
                         <label style="font-size: 12.5px; font-weight: 600; color: #14221A; display: block; margin-bottom: 6px;">Order Number</label>

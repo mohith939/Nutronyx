@@ -509,7 +509,7 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                                 <div class="concierge-content">
                                     <h3 class="concierge-title">Track an Existing Order</h3>
                                     <p class="concierge-text">Check your live dispatch and courier tracking status anytime.</p>
-                                    <a href="track-order.php" class="concierge-link">
+                                    <a href="track-order" class="concierge-link">
                                         <span>Go to Order Tracker</span>
                                         <span class="concierge-arrow" aria-hidden="true">↗</span>
                                     </a>
@@ -658,11 +658,11 @@ $pageTitle = 'Shipping Policy — Delivery, Care & Fulfillment | NUTRONYX';
                 <h3>Ready to Begin Your Daily Ritual?</h3>
                 <p>Discover clean, sustained plant vitality with NUTRONYX ABC+. Pure 100% whole foods designed for lifelong health.</p>
                 <div class="policy-cta-btn-group">
-                    <a href="shop.php" class="btn-policy-shop">
+                    <a href="shop" class="btn-policy-shop">
                         <span>Shop ABC+ Ritual</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </a>
-                    <a href="contact.php" class="btn-policy-contact">
+                    <a href="contact" class="btn-policy-contact">
                         <span>Talk to Concierge</span>
                     </a>
                 </div>

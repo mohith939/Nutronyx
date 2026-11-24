@@ -15,34 +15,6 @@ class CartService
         }
         if (!isset($_SESSION['nutronyx_cart']) || !is_array($_SESSION['nutronyx_cart'])) {
             $_SESSION['nutronyx_cart'] = [];
-            // Seed 1 default flagship item if totally empty for instant visual demonstration
-            self::seedDefaultItem();
-        }
-    }
-
-    private static function seedDefaultItem(): void
-    {
-        $db = Database::getConnection();
-        $stmt = $db->query("
-            SELECT pv.id as variant_id, pv.sku, pv.title as variant_title, pv.price_amount, 
-                   p.title as product_title, p.image_url
-            FROM product_variants pv
-            JOIN products p ON pv.product_id = p.id
-            WHERE UPPER(p.status) = 'ACTIVE'
-            ORDER BY CASE WHEN p.id = 'prod_abc_powder' THEN 0 ELSE 1 END, pv.price_amount ASC
-            LIMIT 1
-        ");
-        $item = $stmt->fetch();
-        if ($item) {
-            $_SESSION['nutronyx_cart'][$item['variant_id']] = [
-                'variant_id' => $item['variant_id'],
-                'sku' => $item['sku'],
-                'product_title' => $item['product_title'],
-                'variant_title' => $item['variant_title'],
-                'price_amount' => (int)$item['price_amount'], // In paise (e.g. 59900 = ₹599.00)
-                'quantity' => 1,
-                'image_url' => $item['image_url'] ?: 'assets/images/nutronyx-box.png'
-            ];
         }
     }
 
