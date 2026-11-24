@@ -44,7 +44,7 @@ $currentPage = 'partner';
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Global Base Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css?v=20261124_v1">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261124_v3">
     <!-- Scoped Partner Page Stylesheet -->
     <link rel="stylesheet" href="assets/css/partner.css?v=20261119_v2">
 </head>

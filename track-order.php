@@ -78,7 +78,7 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css?v=20261124_v1">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261124_v3">
     <style>
     .track-body { background-color: #FAF7F2; min-height: 100vh; display: flex; flex-direction: column; }
     .track-hero { padding: 120px 4vw 40px; text-align: center; max-width: 720px; margin: 0 auto; }

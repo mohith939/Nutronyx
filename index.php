@@ -39,7 +39,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css?v=20261124_v1">
+    <link rel="stylesheet" href="assets/css/style.css?v=20261124_v3">
 </head>
 <body class="nutronyx-body">
 
