@@ -60,13 +60,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
+// Handle Direct Ekart Dispatch
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'ship_ekart') {
+    try {
+        $res = OrderService::fulfillWithEkart($orderId);
+        $notice = "Order dispatched with Ekart Logistics! Tracking AWB: " . htmlspecialchars($res['tracking_number']);
+        $order = OrderService::getOrder($orderId);
+    } catch (\Throwable $e) {
+        $error = "Ekart Logistics Error: " . $e->getMessage();
+    }
+}
+
 // Handle Fulfillment Dispatch
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'fulfill_order') {
-    $carrier = trim($_POST['carrier'] ?: 'BlueDart Express');
-    $tracking = trim($_POST['tracking_number'] ?: ('BD-' . rand(100000000, 999999999)));
-    OrderService::markFulfilled($orderId, $carrier, $tracking);
-    $notice = "Order fulfilled via {$carrier} with tracking #{$tracking}.";
-    $order = OrderService::getOrder($orderId);
+    $carrier = trim($_POST['carrier'] ?: 'Ekart Logistics');
+    $tracking = trim($_POST['tracking_number'] ?? '');
+    try {
+        if (str_contains(strtolower($carrier), 'ekart') && empty($tracking)) {
+            $res = OrderService::fulfillWithEkart($orderId);
+            $notice = "Order dispatched with Ekart Logistics! Tracking AWB: " . htmlspecialchars($res['tracking_number']);
+        } else {
+            $res = OrderService::markFulfilled($orderId, $carrier, $tracking);
+            $notice = "Order fulfilled via {$carrier} with tracking #{$res['tracking_number']}.";
+        }
+        $order = OrderService::getOrder($orderId);
+    } catch (\Throwable $e) {
+        $error = "Dispatch Error: " . $e->getMessage();
+    }
 }
 
 // Handle Order Cancellation
@@ -143,9 +163,16 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
                     </a>
 
                     <?php if ($order['order_status'] !== 'CANCELLED'): ?>
-                        <?php if ($order['fulfillment_status'] !== 'FULFILLED'): ?>
-                            <button type="button" class="btn-action btn-action-sm" onclick="window.NutronyxModal.open('fulfillModal')">
-                                <span>&check; Dispatch Order</span>
+                        <?php if ($order['fulfillment_status'] !== 'FULFILLED' && $order['order_status'] !== 'DELIVERED'): ?>
+                            <form method="POST" action="order-detail.php?id=<?= urlencode($order['id']) ?>" style="display: inline-block; margin: 0;" onsubmit="return confirm('Dispatch order immediately via direct Ekart Logistics Enterprise Gateway?');">
+                                <input type="hidden" name="action" value="ship_ekart">
+                                <button type="submit" class="btn-action btn-action-sm" style="background: #144D29; color: #FFFFFF; border-color: #144D29; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                    <span>Ship with Ekart Logistics</span>
+                                </button>
+                            </form>
+                            <button type="button" class="btn-action btn-action-sm btn-action-outline" onclick="window.NutronyxModal.open('fulfillModal')">
+                                <span>Other Carrier &hellip;</span>
                             </button>
                         <?php endif; ?>
                         
@@ -422,14 +449,17 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
                     <div class="form-group">
                         <label class="form-label">Logistics Carrier *</label>
                         <select name="carrier" class="form-control">
+                            <option value="Ekart Logistics" selected>Ekart Logistics (Direct Integration)</option>
                             <option value="BlueDart Express">BlueDart Express</option>
                             <option value="Delhivery Surface">Delhivery Surface</option>
                             <option value="DTDC Air">DTDC Air</option>
+                            <option value="Shiprocket">Shiprocket</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">AWB / Courier Tracking Number *</label>
-                        <input type="text" name="tracking_number" value="BD-<?= rand(100000000, 999999999) ?>" required class="form-control">
+                        <label class="form-label">AWB / Courier Tracking Number</label>
+                        <input type="text" name="tracking_number" placeholder="Leave blank to auto-generate via Ekart Logistics" class="form-control">
+                        <small style="display: block; margin-top: 4px; font-size: 11.5px; color: #047857;">Ekart Logistics Enterprise automatically assigns a live AWB (e.g. 500...A...).</small>
                     </div>
                 </div>
                 <div class="modal-footer">

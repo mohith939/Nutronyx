@@ -69,15 +69,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Manual admin order creation
             $order = OrderService::createOrder($_POST);
             $notice = "Order " . htmlspecialchars($order['order_number']) . " created successfully.";
+        } elseif ($action === 'ship_ekart') {
+            $orderId = trim($_POST['order_id'] ?? '');
+            $res = OrderService::fulfillWithEkart($orderId);
+            $notice = "Order dispatched with Ekart Logistics! Tracking AWB: " . htmlspecialchars($res['tracking_number']);
         } elseif ($action === 'ship_order') {
             $orderId = trim($_POST['order_id'] ?? '');
-            $carrier = trim($_POST['carrier'] ?? 'BlueDart Express');
+            $carrier = trim($_POST['carrier'] ?? 'Ekart Logistics');
             $trackingNumber = trim($_POST['tracking_number'] ?? '');
             $trackingUrl = trim($_POST['tracking_url'] ?? '');
             $notes = trim($_POST['notes'] ?? '');
 
-            OrderService::createShipment($orderId, $carrier, $trackingNumber, $trackingUrl, $notes);
-            $notice = "Shipment created via {$carrier} (Tracking: {$trackingNumber}).";
+            if (empty($trackingNumber) && str_contains(strtolower($carrier), 'ekart')) {
+                $res = OrderService::fulfillWithEkart($orderId);
+                $notice = "Order dispatched with Ekart Logistics! Tracking AWB: " . htmlspecialchars($res['tracking_number']);
+            } else {
+                if (empty($trackingNumber)) {
+                    $trackingNumber = '500' . rand(100, 999) . 'A' . rand(1000000, 9999999);
+                }
+                $res = OrderService::createShipment($orderId, $carrier, $trackingNumber, $trackingUrl, $notes);
+                $notice = "Shipment created via {$carrier} (Tracking: {$res['tracking_number']}).";
+            }
         } elseif ($action === 'refund_order') {
             $orderId = trim($_POST['order_id'] ?? '');
             $refundRupees = (float)($_POST['refund_amount_rupees'] ?? 0);
@@ -606,7 +618,7 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                             ?>
                                             <tr id="row-<?= htmlspecialchars($order['id']) ?>" 
                                                 class="order-row-item order-table-row <?= $isSelected ? 'selected-order-row' : '' ?>"
-                                                onclick="window.NutronyxOrder.loadOrderDetails('<?= htmlspecialchars($order['id']) ?>', event)">
+                                                onclick="window.location.href = 'order-detail.php?id=' + encodeURIComponent('<?= htmlspecialchars($order['id']) ?>');">
                                                 
                                                 <!-- Checkbox Column -->
                                                 <td style="text-align: center; padding: 12px 10px;" onclick="event.stopPropagation()">
@@ -615,7 +627,7 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
 
                                                 <!-- Order ID Column -->
                                                 <td>
-                                                    <a href="order-detail.php?id=<?= urlencode($order['id']) ?>" onclick="window.NutronyxOrder.loadOrderDetails('<?= htmlspecialchars($order['id']) ?>', event); return false;" style="font-weight: 700; color: #111827; text-decoration: none; font-size: 13.5px;">
+                                                    <a href="order-detail.php?id=<?= urlencode($order['id']) ?>" style="font-weight: 700; color: #111827; text-decoration: none; font-size: 13.5px;">
                                                         #<?= htmlspecialchars($order['order_number']) ?>
                                                     </a>
                                                 </td>
@@ -683,9 +695,19 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                                                 <span>Download Receipt (PDF)</span>
                                                             </a>
                                                             <div style="height: 1px; background: #F3F4F6; margin: 4px 0;"></div>
+                                                            <?php if ($order['fulfillment_status'] !== 'FULFILLED' && $order['order_status'] !== 'DELIVERED' && $order['order_status'] !== 'CANCELLED'): ?>
+                                                                <form method="POST" action="orders.php" style="margin: 0;" onsubmit="return confirm('Dispatch order via direct Ekart Logistics Enterprise Gateway?');">
+                                                                    <input type="hidden" name="action" value="ship_ekart">
+                                                                    <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['id']) ?>">
+                                                                    <button type="submit" class="action-menu-item" style="color: #047857; font-weight: 600;">
+                                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                                                        <span>Ship with Ekart (1-Click)</span>
+                                                                    </button>
+                                                                </form>
+                                                            <?php endif; ?>
                                                             <button type="button" class="action-menu-item" onclick="window.NutronyxOrder.openShipModal('<?= htmlspecialchars($order['id']) ?>')">
                                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                                                                <span>Ship / Add Tracking</span>
+                                                                <span>Ship / Carrier Options</span>
                                                             </button>
                                                             <button type="button" class="action-menu-item" onclick="window.NutronyxOrder.markDelivered('<?= htmlspecialchars($order['id']) ?>')">
                                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -1190,16 +1212,17 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                     <div style="margin-bottom: 14px;">
                         <label class="form-label" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 4px;">Carrier Name *</label>
                         <select name="carrier" id="shipCarrierInput" class="filter-select" style="width: 100%;" required>
+                            <option value="Ekart Logistics" selected>Ekart Logistics (Direct Integration)</option>
                             <option value="BlueDart Express">BlueDart Express</option>
                             <option value="Delhivery Logistics">Delhivery Logistics</option>
                             <option value="DTDC Courier">DTDC Courier</option>
                             <option value="Shiprocket">Shiprocket</option>
-                            <option value="Ekart Logistics">Ekart Logistics</option>
                         </select>
                     </div>
                     <div style="margin-bottom: 14px;">
-                        <label class="form-label" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 4px;">Tracking Number / AWB *</label>
-                        <input type="text" name="tracking_number" id="shipTrackingInput" class="form-control" required placeholder="e.g. BD-89234821" style="width: 100%; padding: 8px 12px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 13px;">
+                        <label class="form-label" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 4px;">Tracking Number / AWB</label>
+                        <input type="text" name="tracking_number" id="shipTrackingInput" class="form-control" placeholder="Leave blank to auto-generate via Ekart Logistics" style="width: 100%; padding: 8px 12px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 13px;">
+                        <small style="display: block; margin-top: 4px; font-size: 11.5px; color: #047857;">Ekart Logistics automatically assigns a live AWB (e.g. 500...A...).</small>
                     </div>
                     <div style="margin-bottom: 14px;">
                         <label class="form-label" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 4px;">Tracking URL (Optional)</label>

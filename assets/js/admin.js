@@ -1754,8 +1754,8 @@
 
         openShipModal: function(orderId, carrier, tracking) {
             document.getElementById('shipOrderIdField').value = orderId;
-            if (carrier) document.getElementById('shipCarrierInput').value = carrier;
-            if (tracking) document.getElementById('shipTrackingInput').value = tracking;
+            document.getElementById('shipCarrierInput').value = carrier || 'Ekart Logistics';
+            document.getElementById('shipTrackingInput').value = tracking || '';
             window.NutronyxModal.open('shipOrderModal');
         },
 
