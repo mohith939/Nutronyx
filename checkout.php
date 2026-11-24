@@ -149,11 +149,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $_SESSION['nutronyx_last_order'] = $placedOrder;
                 $_SESSION['nutronyx_last_cart_summary'] = $cart;
 
-                header('Location: pay_cashfree?order_id=' . urlencode($placedOrder['order_number']) . '&session_id=' . urlencode($cfRes['payment_session_id'] ?? ''));
-                exit;
+                if (!empty($cfRes['payment_session_id']) && !str_starts_with($cfRes['payment_session_id'], 'session_cf_')) {
+                    $env = strtoupper($cfRes['environment'] ?? 'PRODUCTION');
+                    $cfHostedBase = ($env === 'PRODUCTION') 
+                        ? 'https://payments.cashfree.com/order/#' 
+                        : 'https://payments-test.cashfree.com/order/#';
+                    
+                    // Redirect directly to the original Cashfree payment panel
+                    header('Location: ' . $cfHostedBase . urlencode($cfRes['payment_session_id']));
+                    exit;
+                } else {
+                    // Fallback to pay_cashfree page
+                    header('Location: pay_cashfree?order_id=' . urlencode($placedOrder['order_number']));
+                    exit;
+                }
             }
 
         } catch (\Throwable $e) {
+            $placedOrder = null;
             $errorMessage = 'Failed to process order: ' . $e->getMessage();
         }
     }
@@ -218,7 +231,7 @@ $currentPage = 'checkout';
     <main id="main-content">
         <div class="cart-page-wrap">
 
-            <?php if ($placedOrder): ?>
+            <?php if ($placedOrder && isset($_GET['confirmed'])): ?>
                 <!-- ==============================================================
                      ORDER CONFIRMATION / SUCCESS STATE
                      ============================================================== -->

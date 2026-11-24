@@ -179,6 +179,12 @@ $hostedCheckoutUrl = ($isRealCashfreeSession && !empty($sessionId))
     : ('pay_cashfree?order_id=' . urlencode($orderNumber) . '&retry=1');
 
 $amountRupees = (float)($order['grand_total_amount'] / 100);
+
+// If not returning from payment and no error, redirect directly to the original Cashfree payment panel
+if ($isRealCashfreeSession && !empty($sessionId) && !isset($_GET['cf_action']) && empty($returnErrorMessage)) {
+    header('Location: ' . $hostedCheckoutUrl);
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
