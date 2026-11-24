@@ -266,7 +266,9 @@ class CashfreePaymentService
         $cfg = self::getConfig($wid);
 
         $orderId = $params['order_id'] ?? ('NX-CF-' . strtoupper(substr(uniqid(), -6)));
-        $amount = (float)($params['order_amount'] ?? 1499.00);
+        $rawAmount = (float)($params['order_amount'] ?? 1499.00);
+        $amount = max(1.00, round($rawAmount, 2));
+        $amountFormatted = number_format($amount, 2, '.', '');
         $currency = $params['order_currency'] ?? 'INR';
         $customer = $params['customer_details'] ?? [];
         $rawCustId = !empty($customer['customer_id']) ? trim((string)$customer['customer_id']) : '';
@@ -317,7 +319,7 @@ class CashfreePaymentService
 
         $payload = [
             'order_id' => $orderId,
-            'order_amount' => $amount,
+            'order_amount' => $amountFormatted,
             'order_currency' => $currency,
             'customer_details' => [
                 'customer_id' => $customerId,
@@ -334,6 +336,10 @@ class CashfreePaymentService
         $paymentSessionId = null;
         $cfOrderId = null;
         $apiError = null;
+
+        if (function_exists('ini_set')) {
+            @ini_set('serialize_precision', '-1');
+        }
 
         if (!empty($cfg['app_id']) && !empty($cfg['secret_key']) && function_exists('curl_init')) {
             $ch = curl_init($baseUrl . '/orders');
