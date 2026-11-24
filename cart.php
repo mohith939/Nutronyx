@@ -52,6 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// The cart page presents items prior to entering destination details; clear any stale checkout shipping estimates
+CartService::clearShippingEstimate();
 $cart = CartService::getCart();
 $items = $cart['items'];
 $cartItemVids = array_column($items, 'variant_id');

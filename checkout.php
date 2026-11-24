@@ -13,6 +13,11 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
 
+// Clear lingering shipping estimates when loading checkout for a new order
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && empty($_GET['confirmed'])) {
+    CartService::clearShippingEstimate();
+}
+
 $cart = CartService::getCart();
 $placedOrder = null;
 $errorMessage = '';
@@ -148,6 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
                 $_SESSION['nutronyx_last_order'] = $placedOrder;
                 $_SESSION['nutronyx_last_cart_summary'] = $cart;
+                CartService::clearShippingEstimate();
 
                 if (!empty($cfRes['payment_session_id']) && !str_starts_with($cfRes['payment_session_id'], 'session_cf_')) {
                     $env = strtolower($cfRes['environment'] ?? 'production');
@@ -579,10 +585,10 @@ $currentPage = 'checkout';
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path></svg>
                                             <input type="text" id="pincode" name="pincode" class="form-input-control" 
                                                    placeholder="Enter 6-digit PIN Code" pattern="[0-9]{6}" maxlength="6" required 
-                                                   value="<?= htmlspecialchars($_POST['pincode'] ?? $_SESSION['checkout_shipping_pincode'] ?? '') ?>"
+                                                   value="<?= htmlspecialchars($_POST['pincode'] ?? '') ?>"
                                                    oninput="onPincodeInput(this.value)">
                                         </div>
-                                        <div id="pincodeEkartNotice" style="font-size: 11.5px; color: #166534; margin-top: 5px; display: <?= (!empty($_SESSION['checkout_shipping_pincode'])) ? 'flex' : 'none' ?>; align-items: center; gap: 4px;">
+                                        <div id="pincodeEkartNotice" style="font-size: 11.5px; color: #166534; margin-top: 5px; display: <?= (!empty($_POST['pincode']) && !empty($_SESSION['checkout_shipping_pincode'])) ? 'flex' : 'none' ?>; align-items: center; gap: 4px;">
                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                             <span id="pincodeEkartText"><?= htmlspecialchars($_SESSION['checkout_courier_name'] ?? 'Ekart Express Logistics') ?> • <?= ($cart['is_free_shipping']) ? 'FREE Delivery' : ('₹' . number_format($cart['shipping_rupees'], 2)) ?></span>
                                         </div>
@@ -809,10 +815,31 @@ $currentPage = 'checkout';
     function onPincodeInput(val) {
         const pin = val.replace(/\D/g, '');
         clearTimeout(pincodeTimer);
+        const noticeEl = document.getElementById('pincodeEkartNotice');
+        const noticeTxt = document.getElementById('pincodeEkartText');
+        const shipEl = document.getElementById('checkoutShippingText');
+
         if (pin.length === 6) {
             pincodeTimer = setTimeout(() => {
                 calculateEkartShipping(pin);
             }, 250);
+        } else {
+            if (noticeEl) noticeEl.style.display = 'none';
+            if (shipEl && !<?= $cart['is_free_shipping'] ? 'true' : 'false' ?>) {
+                shipEl.innerHTML = '<span style="color:#6B7280; font-size:12.5px;">Enter PIN code</span>';
+            }
+            fetch('api/cart.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'clear_shipping' })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.cart) {
+                    updateCheckoutPriceUI(data.cart);
+                }
+            })
+            .catch(() => {});
         }
     }
 

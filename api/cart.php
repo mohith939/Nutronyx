@@ -175,6 +175,18 @@ if ($method === 'POST') {
                 ]);
                 break;
 
+            case 'clear_shipping':
+                CartService::clearShippingEstimate();
+                $updatedCart = CartService::getCart();
+                echo json_encode([
+                    'success' => true,
+                    'shipping_rupees' => 0,
+                    'shipping_paise' => 0,
+                    'is_free' => $updatedCart['is_free_shipping'],
+                    'cart' => $updatedCart
+                ]);
+                break;
+
             default:
                 http_response_code(400);
                 echo json_encode(['success' => false, 'error' => 'Unknown action.']);

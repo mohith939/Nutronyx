@@ -53,6 +53,7 @@ class CartService
             'image_url' => $prod['image_url'] ?: 'assets/images/nutronyx-box.png'
         ];
 
+        self::clearShippingEstimate();
         return ['success' => true, 'cart' => self::getCart()];
     }
 
@@ -67,6 +68,7 @@ class CartService
             $_SESSION['nutronyx_cart'][$variantId]['quantity'] = $quantity;
         }
 
+        self::clearShippingEstimate();
         return ['success' => true, 'cart' => self::getCart()];
     }
 
@@ -74,7 +76,17 @@ class CartService
     {
         self::initSession();
         unset($_SESSION['nutronyx_cart'][$variantId]);
+        self::clearShippingEstimate();
         return ['success' => true, 'cart' => self::getCart()];
+    }
+
+    public static function clearShippingEstimate(): void
+    {
+        self::initSession();
+        unset($_SESSION['checkout_shipping_paise']);
+        unset($_SESSION['checkout_shipping_pincode']);
+        unset($_SESSION['checkout_shipping_zone']);
+        unset($_SESSION['checkout_courier_name']);
     }
 
     public static function clear(): void
@@ -82,6 +94,7 @@ class CartService
         self::initSession();
         $_SESSION['nutronyx_cart'] = [];
         unset($_SESSION['nutronyx_applied_coupon']);
+        self::clearShippingEstimate();
     }
 
     public static function applyCoupon(string $code): array
