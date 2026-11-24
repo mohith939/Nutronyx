@@ -477,10 +477,10 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
                             <span class="faq-eyebrow">POLICIES &amp; TRANSPARENCY</span>
                             <h2 class="faq-headline">
                                 <span class="faq-headline-line">Your Privacy,</span>
-                                <span class="faq-headline-line faq-headline-accent">Thoughtfully Protected.</span>
+                                <span class="faq-headline-line faq-headline-accent">Our Responsibility.</span>
                             </h2>
                             <p class="faq-intro-subtext">
-                                We believe transparency builds trust. Protecting your personal information is an essential part of delivering the Nutronyx experience.
+                                We believe trust begins with transparency. At NUTRONYX, we are committed to handling your personal information responsibly and keeping you informed about how your data is collected, used, and protected.
                             </p>
 
                             <!-- Table of Contents Quick Nav -->
@@ -497,23 +497,6 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
                                     <li><a href="#section-08" class="policy-toc-link"><span class="policy-toc-num">08</span> Policy Updates</a></li>
                                 </ul>
                             </nav>
-
-                            <!-- Editorial Concierge Card -->
-                            <div class="faq-concierge-card" style="margin-top: 24px;">
-                                <div class="concierge-icon-wrap" aria-hidden="true">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                    </svg>
-                                </div>
-                                <div class="concierge-content">
-                                    <h3 class="concierge-title">Privacy Assistance</h3>
-                                    <p class="concierge-text">Have a specific request regarding your personal information? Our team is here to assist.</p>
-                                    <a href="mailto:support@nutronyx.in" class="concierge-link">
-                                        <span>Email support@nutronyx.in</span>
-                                        <span class="concierge-arrow" aria-hidden="true">↗</span>
-                                    </a>
-                                </div>
-                            </div>
                         </div>
                     </aside>
 
@@ -527,7 +510,10 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Information We Collect</h2>
                                     <p class="policy-text">
-                                        We may collect personal information including your name, email address, phone number, shipping address, billing details, and order information when you place an order or contact us.
+                                        We may collect personal information such as your name, email address, phone number, shipping address, billing details, and order information when you place an order, contact us, or submit a partnership enquiry.
+                                    </p>
+                                    <p class="policy-text">
+                                        We may also collect basic website usage information to improve our website and services.
                                     </p>
                                 </div>
                             </article>
@@ -543,23 +529,27 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
                                     <ul class="policy-bullet-list" role="list">
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Process and deliver your orders</span>
+                                            <span>Process and deliver your orders.</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Respond to customer support requests</span>
+                                            <span>Respond to customer support requests and enquiries.</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Improve our products and website</span>
+                                            <span>Communicate important order updates and service information.</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Send important order updates and service communications</span>
+                                            <span>Review and respond to partnership enquiries.</span>
                                         </li>
                                         <li class="policy-bullet-item">
                                             <span class="policy-bullet-dot" aria-hidden="true"></span>
-                                            <span>Comply with applicable legal requirements</span>
+                                            <span>Improve our products, website, and customer experience.</span>
+                                        </li>
+                                        <li class="policy-bullet-item">
+                                            <span class="policy-bullet-dot" aria-hidden="true"></span>
+                                            <span>Comply with applicable legal requirements.</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -585,7 +575,10 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Cookies</h2>
                                     <p class="policy-text">
-                                        Our website may use cookies and similar technologies to improve your browsing experience, remember your preferences, and analyze website performance.
+                                        Our website may use cookies and similar technologies to improve your browsing experience, remember your preferences, understand website performance, and support essential website functionality.
+                                    </p>
+                                    <p class="policy-text">
+                                        You can manage cookies through your browser settings and any cookie preference controls provided on our website.
                                     </p>
                                 </div>
                             </article>
@@ -599,7 +592,10 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
                                         We do not sell or rent your personal information.
                                     </p>
                                     <p class="policy-text">
-                                        Your information may only be shared with trusted service providers involved in payment processing, shipping, or website operations when necessary.
+                                        We may share necessary information with trusted third-party service providers, including payment gateways, shipping partners, and website service providers, to process orders, deliver products, and operate our services.
+                                    </p>
+                                    <p class="policy-text">
+                                        We may also disclose information when required by applicable law.
                                     </p>
                                 </div>
                             </article>
@@ -610,7 +606,10 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Data Security</h2>
                                     <p class="policy-text">
-                                        We implement reasonable technical and organizational measures to help protect your personal information from unauthorized access, disclosure, or misuse.
+                                        We implement reasonable technical and organizational security measures to protect your personal information from unauthorized access, disclosure, alteration, or misuse.
+                                    </p>
+                                    <p class="policy-text">
+                                        While we take appropriate precautions to safeguard your information, no method of electronic transmission or storage can be guaranteed completely secure.
                                     </p>
                                 </div>
                             </article>
@@ -621,7 +620,10 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
                                 <div class="policy-body">
                                     <h2 class="policy-title">Your Rights</h2>
                                     <p class="policy-text">
-                                        You may contact us to update, correct, or request deletion of your personal information, subject to applicable legal requirements.
+                                        You may contact us to request access to, correction of, or deletion of your personal information, subject to applicable legal requirements.
+                                    </p>
+                                    <p class="policy-text">
+                                        For privacy-related requests or concerns, please contact us at <a href="mailto:support@nutronyx.in" style="color: #1E5736; font-weight: 600; text-decoration: underline;">support@nutronyx.in</a>
                                     </p>
                                 </div>
                             </article>
@@ -643,13 +645,13 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
                         </div>
 
                         <!-- ==================================================================
-                             PRIVACY SUPPORT CARD (From Reference Image 6)
+                             PRIVACY SUPPORT CARD (From Reference Image 1)
                              ================================================================== -->
                         <section class="policy-support-section" aria-label="Privacy Support Contact">
                             <span class="policy-support-eyebrow">PRIVACY SUPPORT</span>
                             <h2 class="policy-support-title">Questions about your privacy?</h2>
                             <p class="policy-support-desc">
-                                If you have any questions about how we collect, use, or protect your information, we're here to help.
+                                If you have any questions or concerns about how your personal information is collected, used, stored, or protected, please contact our support team.
                             </p>
                             <a href="mailto:support@nutronyx.in" class="policy-support-email-btn">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -658,9 +660,6 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
                                 </svg>
                                 <span>support@nutronyx.in</span>
                             </a>
-                            <p class="policy-support-note">
-                                We believe transparency builds trust. Protecting your information is an important part of delivering the Nutronyx experience.
-                            </p>
                         </section>
 
                     </div>
@@ -674,15 +673,15 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
              ========================================================================== -->
         <section class="policy-bottom-cta">
             <div class="policy-bottom-cta-inner">
-                <h3>Ready to Begin Your Daily Ritual?</h3>
-                <p>Discover clean, sustained plant vitality with NUTRONYX ABC+. Pure 100% whole foods designed for lifelong health.</p>
+                <h3>Ready to Make Wellness Part of Your Day?</h3>
+                <p>Discover thoughtfully crafted natural nutrition designed to complement your everyday wellness routine.</p>
                 <div class="policy-cta-btn-group">
                     <a href="shop" class="btn-policy-shop">
-                        <span>Shop ABC+ Ritual</span>
+                        <span>Explore Our Products</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </a>
                     <a href="contact" class="btn-policy-contact">
-                        <span>Talk to Concierge</span>
+                        <span>Contact Our Team</span>
                     </a>
                 </div>
             </div>
@@ -695,7 +694,7 @@ $pageTitle = 'Privacy Policy — Transparency & Data Protection | NUTRONYX';
     <!-- Scripts: GSAP & Smooth Scrolling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="assets/js/main.js?v=20261124_v1"></script>
+    <script src="assets/js/main.js?v=20261124_v3"></script>
 
     <script>
         // Smooth scroll & active state tracking for TOC links

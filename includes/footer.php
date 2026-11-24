@@ -118,6 +118,9 @@
     </div>
 </footer>
 
+<!-- Welcome 10% Discount Popup Modal Component -->
+<?php include __DIR__ . '/welcome-popup.php'; ?>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     // Direct phone dialer trigger for Finstics agency badge
