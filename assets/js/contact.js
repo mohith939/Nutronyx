@@ -247,6 +247,7 @@ function initContactForm() {
 
         const fullName = document.getElementById("full_name")?.value.trim() || "";
         const email = document.getElementById("email")?.value.trim() || "";
+        const subject = document.getElementById("subject")?.value.trim() || "";
         const message = document.getElementById("message")?.value.trim() || "";
 
         let hasError = false;
@@ -263,6 +264,13 @@ function initContactForm() {
         if (!email || !emailRegex.test(email)) {
             setFieldError("wrap-email");
             showAlert("Please enter a valid email address.");
+            hasError = true;
+        }
+
+        // Validation: Subject
+        if (subject.length < 2) {
+            setFieldError("wrap-subject");
+            showAlert("Please enter a subject for your message.");
             hasError = true;
         }
 

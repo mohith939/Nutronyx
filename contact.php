@@ -45,7 +45,7 @@ $currentPage = 'contact';
     <!-- Global Base & Component Stylesheet -->
     <link rel="stylesheet" href="assets/css/style.css?v=20261124_v3">
     <!-- Scoped Contact Page Stylesheet -->
-    <link rel="stylesheet" href="assets/css/contact.css?v=20261119_v1">
+    <link rel="stylesheet" href="assets/css/contact.css?v=20261124_v3">
 </head>
 <body class="nutronyx-body contact-page-body">
 
@@ -79,7 +79,7 @@ $currentPage = 'contact';
 
                         <!-- Supporting Copy -->
                         <p class="contact-narrative-subtext">
-                            Whether you have a question about our products, need assistance with an order, have feedback, or would like to discuss a partnership, we’d love to hear from you.
+                            Whether you have a question about our products, need assistance with an order, want to share feedback, or are interested in partnering with NUTRONYX, we're here to help.
                         </p>
 
                         <!-- Subtle Hairline Divider -->
@@ -206,7 +206,7 @@ $currentPage = 'contact';
                                                maxlength="120">
                                     </div>
 
-                                    <!-- Phone Number (Optional) -->
+                                    <!-- Phone / WhatsApp Number -->
                                     <div class="form-input-pill-wrap" id="wrap-phone">
                                         <span class="field-icon" aria-hidden="true">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -217,11 +217,11 @@ $currentPage = 'contact';
                                                id="phone" 
                                                name="phone" 
                                                class="field-input-control" 
-                                               placeholder="Phone Number" 
+                                               placeholder="Phone / WhatsApp Number" 
                                                autocomplete="tel">
                                     </div>
 
-                                    <!-- Subject -->
+                                    <!-- Subject * -->
                                     <div class="form-input-pill-wrap" id="wrap-subject">
                                         <span class="field-icon" aria-hidden="true">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -233,16 +233,11 @@ $currentPage = 'contact';
                                                id="subject" 
                                                name="subject" 
                                                class="field-input-control" 
-                                               placeholder="Subject" 
-                                               list="contactSubjectOptions"
-                                               autocomplete="off">
-                                        <datalist id="contactSubjectOptions">
-                                            <option value="Product Questions">
-                                            <option value="Order Support">
-                                            <option value="Partnership Inquiries">
-                                            <option value="Daily Ritual &amp; Dosage">
-                                            <option value="General Conversation">
-                                        </datalist>
+                                               placeholder="Subject *" 
+                                               required
+                                               autocomplete="off"
+                                               minlength="2"
+                                               maxlength="150">
                                     </div>
 
                                 </div>
@@ -336,12 +331,12 @@ $currentPage = 'contact';
 
                     <!-- Headline -->
                     <h2 class="partnership-headline">
-                        Let’s build <em class="hl-italic-green">healthier habits</em> together.
+                        Let's Grow <em class="hl-italic-green">Together</em>
                     </h2>
 
                     <!-- Supporting Narrative -->
                     <p class="partnership-narrative">
-                        Nutronyx works with retailers, wellness professionals, corporate teams, and distribution partners who believe in making daily nutrition simpler.
+                        At NUTRONYX, we believe meaningful partnerships create lasting value. We welcome retailers, distributors, corporate wellness teams, fitness centres, wellness professionals, and content creators who share our vision for better everyday nutrition.
                     </p>
                 </div>
 
@@ -429,7 +424,7 @@ $currentPage = 'contact';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
     <!-- Scoped Contact Interaction Script -->
-    <script src="assets/js/contact.js?v=20261117_v2"></script>
+    <script src="assets/js/contact.js?v=20261124_v3"></script>
 
     <!-- Finstics Tap Handler -->
     <script>
