@@ -269,17 +269,23 @@ class CashfreePaymentService
         $amount = (float)($params['order_amount'] ?? 1499.00);
         $currency = $params['order_currency'] ?? 'INR';
         $customer = $params['customer_details'] ?? [];
-        $customerId = $customer['customer_id'] ?? ('cust_' . rand(1000, 9999));
-        $customerPhone = $customer['customer_phone'] ?? '9876543210';
-        // Clean customer phone to ensure 10 digits
+        $rawCustId = !empty($customer['customer_id']) ? trim((string)$customer['customer_id']) : '';
+        $customerId = preg_replace('/[^a-zA-Z0-9_\-]/', '', $rawCustId);
+        
+        $customerPhone = (string)($customer['customer_phone'] ?? '');
         $cleanPhone = preg_replace('/[^\d]/', '', $customerPhone);
         if (strlen($cleanPhone) > 10) {
             $cleanPhone = substr($cleanPhone, -10);
         } elseif (strlen($cleanPhone) < 10) {
             $cleanPhone = '9876543210';
         }
-        $customerEmail = !empty($customer['customer_email']) ? $customer['customer_email'] : 'customer@nutronyx.com';
-        $customerName = !empty($customer['customer_name']) ? $customer['customer_name'] : 'Nutronyx Patron';
+
+        if (empty($customerId) || strlen($customerId) < 3) {
+            $customerId = 'cust_' . ($cleanPhone ?: bin2hex(random_bytes(4)));
+        }
+
+        $customerEmail = !empty($customer['customer_email']) ? trim((string)$customer['customer_email']) : 'care@nutronyx.in';
+        $customerName = !empty($customer['customer_name']) ? trim((string)$customer['customer_name']) : 'Nutronyx Patron';
 
         $env = $cfg['environment'] ?? 'SANDBOX';
         $baseUrl = ($env === 'PRODUCTION') ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg';
@@ -378,32 +384,34 @@ class CashfreePaymentService
             }
         }
 
-        $db = Database::getConnection();
-        $txStmt = $db->prepare("
-            INSERT INTO cashfree_transactions (
-                id, website_id, order_id, payment_session_id, cf_payment_id, customer_id, 
-                amount, currency, payment_method, bank_code, status, mcp_invoked
-            ) VALUES (
-                :id, :wid, :oid, :sid, :cfpid, :cid, :amt, :curr, :pm, :bcode, 'PENDING', :mcp
-            )
-        ");
-        $txId = 'tx_cf_' . substr(md5(uniqid()), 0, 10);
-        $txStmt->execute([
-            ':id' => $txId,
-            ':wid' => $wid,
-            ':oid' => $orderId,
-            ':sid' => $paymentSessionId,
-            ':cfpid' => $cfOrderId ?? ('cf_pay_' . rand(10000000, 99999999)),
-            ':cid' => $customerId,
-            ':amt' => $amount,
-            ':curr' => $currency,
-            ':pm' => $params['payment_method'] ?? 'UPI',
-            ':bcode' => $params['bank_code'] ?? null,
-            ':mcp' => !empty($params['is_mcp']) ? 1 : 0
-        ]);
+        if (!empty($paymentSessionId)) {
+            $db = Database::getConnection();
+            $txStmt = $db->prepare("
+                INSERT INTO cashfree_transactions (
+                    id, website_id, order_id, payment_session_id, cf_payment_id, customer_id, 
+                    amount, currency, payment_method, bank_code, status, mcp_invoked
+                ) VALUES (
+                    :id, :wid, :oid, :sid, :cfpid, :cid, :amt, :curr, :pm, :bcode, 'PENDING', :mcp
+                )
+            ");
+            $txId = 'tx_cf_' . substr(md5(uniqid()), 0, 10);
+            $txStmt->execute([
+                ':id' => $txId,
+                ':wid' => $wid,
+                ':oid' => $orderId,
+                ':sid' => $paymentSessionId,
+                ':cfpid' => $cfOrderId ?? ('cf_pay_' . rand(10000000, 99999999)),
+                ':cid' => $customerId,
+                ':amt' => $amount,
+                ':curr' => $currency,
+                ':pm' => $params['payment_method'] ?? 'UPI',
+                ':bcode' => $params['bank_code'] ?? null,
+                ':mcp' => !empty($params['is_mcp']) ? 1 : 0
+            ]);
+        }
 
         return [
-            'success' => !empty($cfOrderId) || !empty($paymentSessionId),
+            'success' => !empty($paymentSessionId),
             'order_id' => $orderId,
             'cf_order_id' => $cfOrderId,
             'payment_session_id' => $paymentSessionId,
@@ -411,7 +419,7 @@ class CashfreePaymentService
             'order_currency' => $currency,
             'customer_id' => $customerId,
             'environment' => $env,
-            'status' => 'ACTIVE',
+            'status' => !empty($paymentSessionId) ? 'ACTIVE' : 'FAILED',
             'api_error' => $apiError
         ];
     }
