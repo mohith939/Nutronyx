@@ -451,7 +451,7 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
 
                     <!-- Product Description -->
                     <p class="showcase-description">
-                        A thoughtfully crafted blend of Amla, Beetroot, Carrot, Ginger and Lemon, bringing natural plant-based goodness into your everyday routine.
+                        ABC+ is a carefully crafted blend of Beetroot, Carrot, Amla, Lemon, and Ginger, created to bring the goodness of five natural ingredients into your everyday routine. Rich in naturally occurring antioxidants and key nutrients, it provides Vitamin C, beta-carotene, and plant-based compounds that support everyday immunity, digestion, healthy circulation, and overall wellness. A simple, convenient way to make natural nutrition part of every day.
                     </p>
 
                     <!-- Product Specifications Bar with Interactive Size Pills -->
