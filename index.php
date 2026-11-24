@@ -1,6 +1,28 @@
 <?php
 declare(strict_types=1);
 
+// Handle extensionless URL routing on local PHP server or environments without Apache mod_rewrite
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+$requestPath = parse_url($requestUri, PHP_URL_PATH) ?? '';
+$scriptDir = trim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
+$trimmedPath = trim($requestPath, '/');
+if ($scriptDir !== '' && strpos($trimmedPath, $scriptDir) === 0) {
+    $trimmedPath = trim(substr($trimmedPath, strlen($scriptDir)), '/');
+}
+
+if ($trimmedPath !== '' && $trimmedPath !== 'index') {
+    $candidatePhp = __DIR__ . '/' . $trimmedPath . '.php';
+    if (file_exists($candidatePhp) && is_file($candidatePhp)) {
+        require $candidatePhp;
+        exit;
+    }
+    $candidateDir = __DIR__ . '/' . $trimmedPath;
+    if (is_dir($candidateDir) && file_exists($candidateDir . '/index.php')) {
+        require $candidateDir . '/index.php';
+        exit;
+    }
+}
+
 require_once __DIR__ . '/src/bootstrap.php';
 
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
