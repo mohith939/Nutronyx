@@ -283,14 +283,15 @@ $currentPage = 'partner';
                                 <div class="why-provenance-pill">
                                     <div class="provenance-pill-icon" aria-hidden="true">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M12 22v-8"/>
-                                            <path d="M12 14c0-5.5 4.5-9 9-9 0 4.5-3.5 9-9 9z"/>
-                                            <path d="M12 18c0-3.5-3-6-6-6 0 3 2.5 6 6 6z"/>
+                                            <path d="M11 17l2 2a1 1 0 0 0 1.4 0l4.24-4.24a1 1 0 0 0 0-1.42l-2.12-2.12a1 1 0 0 0-1.41 0l-1.42 1.42"/>
+                                            <path d="M14.5 9 12 6.5a2 2 0 0 0-2.83 0L3.5 12.17a2 2 0 0 0 0 2.83l2 2a2 2 0 0 0 2.83 0L12 13.5"/>
+                                            <path d="m14 12 3-3a2 2 0 0 1 2.83 0l.17.17"/>
+                                            <path d="m8 11 3 3"/>
                                         </svg>
                                     </div>
                                     <div class="provenance-pill-text">
-                                        <span class="provenance-pill-title">PROVENANCE &bull; CRAFTSMANSHIP</span>
-                                        <span class="provenance-pill-sub">Botanical Purity &bull; Built for Enduring Enterprise</span>
+                                        <span class="provenance-pill-title">ROOTED IN TRUST &bull; GROWING TOGETHER</span>
+                                        <span class="provenance-pill-sub">Shared Values &bull; Lasting Partnerships</span>
                                     </div>
                                 </div>
                             </div>
