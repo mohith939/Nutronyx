@@ -19,7 +19,7 @@ $orderNumber = trim((string)($_GET['order_id'] ?? $_POST['order_id'] ?? ''));
 $sessionId = trim((string)($_GET['session_id'] ?? $_POST['session_id'] ?? ''));
 
 if (empty($orderNumber)) {
-    header('Location: cart.php');
+    header('Location: cart');
     exit;
 }
 
@@ -29,14 +29,14 @@ $stmt->execute([':onum' => $orderNumber, ':wid' => $websiteId]);
 $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$order) {
-    header('Location: cart.php?error=order_not_found');
+    header('Location: cart?error=order_not_found');
     exit;
 }
 
 // If already paid, redirect to confirmation immediately
 if ($order['payment_status'] === 'PAID') {
     $_SESSION['nutronyx_last_order'] = $order;
-    header('Location: checkout.php?confirmed=' . urlencode($order['order_number']));
+    header('Location: checkout?confirmed=' . urlencode($order['order_number']));
     exit;
 }
 
@@ -121,7 +121,7 @@ if (isset($_GET['cf_action']) && $_GET['cf_action'] === 'return') {
 
         $_SESSION['nutronyx_last_order'] = $updatedOrder;
 
-        header('Location: checkout.php?confirmed=' . urlencode($orderNumber));
+        header('Location: checkout?confirmed=' . urlencode($orderNumber));
         exit;
     } else {
         $paymentReturnStatus = $orderStatus ?: 'INCOMPLETE';
@@ -130,22 +130,25 @@ if (isset($_GET['cf_action']) && $_GET['cf_action'] === 'return') {
 }
 
 // 2. Fetch existing session or generate a fresh session via Cashfree API
-if (empty($sessionId)) {
+$isRealCashfreeSession = !empty($sessionId) && !str_starts_with($sessionId, 'session_cf_');
+
+if (!$isRealCashfreeSession) {
     $txStmt = $db->prepare("
         SELECT payment_session_id 
         FROM cashfree_transactions 
-        WHERE order_id = :onum AND website_id = :wid 
-        ORDER BY CASE WHEN payment_session_id NOT LIKE 'session_cf_%' THEN 1 ELSE 2 END, created_at DESC 
+        WHERE order_id = :onum AND website_id = :wid AND payment_session_id NOT LIKE 'session_cf_%'
+        ORDER BY created_at DESC 
         LIMIT 1
     ");
     $txStmt->execute([':onum' => $orderNumber, ':wid' => $websiteId]);
     $existingSession = (string)($txStmt->fetchColumn() ?: '');
     if (!empty($existingSession)) {
         $sessionId = $existingSession;
+        $isRealCashfreeSession = true;
     }
 }
 
-if (empty($sessionId) || isset($_GET['retry'])) {
+if (!$isRealCashfreeSession || isset($_GET['retry'])) {
     $amountRupees = (float)($order['grand_total_amount'] / 100);
     $cfRes = CashfreePaymentService::createOrder([
         'order_id' => $order['order_number'],
@@ -159,19 +162,23 @@ if (empty($sessionId) || isset($_GET['retry'])) {
         ]
     ], $websiteId);
 
-    if (!empty($cfRes['payment_session_id'])) {
+    if (!empty($cfRes['payment_session_id']) && !str_starts_with($cfRes['payment_session_id'], 'session_cf_')) {
         $sessionId = $cfRes['payment_session_id'];
+        $isRealCashfreeSession = true;
+        $returnErrorMessage = null;
     } elseif (!empty($cfRes['api_error'])) {
         $returnErrorMessage = 'Cashfree Gateway Response: ' . $cfRes['api_error'];
+        $isRealCashfreeSession = false;
     }
 }
 
 // Cashfree Hosted URL fallback
 $hostedCheckoutBase = $isProduction ? 'https://payments.cashfree.com/order/#' : 'https://payments-test.cashfree.com/order/#';
-$hostedCheckoutUrl = !empty($sessionId) ? ($hostedCheckoutBase . urlencode($sessionId)) : '#';
+$hostedCheckoutUrl = ($isRealCashfreeSession && !empty($sessionId)) 
+    ? ($hostedCheckoutBase . urlencode($sessionId)) 
+    : ('pay_cashfree?order_id=' . urlencode($orderNumber) . '&retry=1');
 
 $amountRupees = (float)($order['grand_total_amount'] / 100);
-$isRealCashfreeSession = !empty($sessionId) && !str_starts_with($sessionId, 'session_cf_sandbox_') && !str_starts_with($sessionId, 'session_cf_production_');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -486,11 +493,13 @@ $isRealCashfreeSession = !empty($sessionId) && !str_starts_with($sessionId, 'ses
             <?php endif; ?>
 
             <!-- Loading Spinner -->
-            <div class="spinner-ring" id="cfSpinner"></div>
+            <div class="spinner-ring" id="cfSpinner" style="display: <?= $isRealCashfreeSession ? 'block' : 'none' ?>;"></div>
 
-            <h1 class="checkout-title" id="cfTitle">Connecting to Cashfree Secure Checkout</h1>
+            <h1 class="checkout-title" id="cfTitle"><?= $isRealCashfreeSession ? 'Connecting to Cashfree Secure Checkout' : 'Cashfree Payment Notice' ?></h1>
             <p class="checkout-subtitle" id="cfSub">
-                Transferring your order safely to the official Cashfree Payment Gateway. Please do not refresh or close this tab.
+                <?= $isRealCashfreeSession 
+                    ? 'Transferring your order safely to the official Cashfree Payment Gateway. Please do not refresh or close this tab.' 
+                    : 'We could not start an instant payment session automatically. You can retry with fresh payment details below or return to your cart.' ?>
             </p>
 
             <!-- Order Summary -->
@@ -517,7 +526,7 @@ $isRealCashfreeSession = !empty($sessionId) && !str_starts_with($sessionId, 'ses
 
             <!-- Direct Action Button -->
             <a href="<?= htmlspecialchars($hostedCheckoutUrl) ?>" id="cfActionBtn" class="btn-cf-proceed">
-                <span>Proceed to Cashfree Checkout</span>
+                <span><?= $isRealCashfreeSession ? 'Proceed to Cashfree Checkout' : 'Retry Cashfree Checkout' ?></span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </a>
 
@@ -550,8 +559,8 @@ $isRealCashfreeSession = !empty($sessionId) && !str_starts_with($sessionId, 'ses
     const isRealSession = <?= $isRealCashfreeSession ? 'true' : 'false' ?>;
 
     function launchCashfreeCheckout() {
-        if (!paymentSessionId) {
-            console.warn('Waiting for payment session ID...');
+        if (!paymentSessionId || !isRealSession) {
+            console.warn('Waiting for valid payment session ID...');
             return;
         }
 
@@ -573,7 +582,7 @@ $isRealCashfreeSession = !empty($sessionId) && !str_starts_with($sessionId, 'ses
             console.error('Cashfree SDK invocation error:', err);
             // Fallback direct link
             const actionBtn = document.getElementById('cfActionBtn');
-            if (actionBtn && paymentSessionId) {
+            if (actionBtn && paymentSessionId && isRealSession) {
                 const targetBase = (cfMode === 'production') 
                     ? 'https://payments.cashfree.com/order/#' 
                     : 'https://payments-test.cashfree.com/order/#';
@@ -582,10 +591,9 @@ $isRealCashfreeSession = !empty($sessionId) && !str_starts_with($sessionId, 'ses
         }
     }
 
-    // Auto-launch checkout upon page load
+    // Auto-launch checkout upon page load only when session is real
     document.addEventListener('DOMContentLoaded', () => {
-        if (paymentSessionId) {
-            // Initiate redirect
+        if (isRealSession && paymentSessionId) {
             setTimeout(launchCashfreeCheckout, 150);
         }
     });

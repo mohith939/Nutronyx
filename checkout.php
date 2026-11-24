@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $_SESSION['nutronyx_last_order'] = $placedOrder;
                 $_SESSION['nutronyx_last_cart_summary'] = $cart;
 
-                header('Location: pay_cashfree.php?order_id=' . urlencode($placedOrder['order_number']) . '&session_id=' . urlencode($cfRes['payment_session_id'] ?? ''));
+                header('Location: pay_cashfree?order_id=' . urlencode($placedOrder['order_number']) . '&session_id=' . urlencode($cfRes['payment_session_id'] ?? ''));
                 exit;
             }
 
