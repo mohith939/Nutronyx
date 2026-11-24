@@ -32,7 +32,7 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
     <link rel=manifest href="/site.webmanifest">
     <meta name=theme-color content="#174529">
 
-    <meta name="description" content="Learn about our return, replacement, refund, and cancellation policies to ensure a smooth, worry-free shopping experience with Nutronyx.">
+    <meta name="description" content="Understand our policies on returns, replacements, refunds, and order cancellations for a clear and hassle-free shopping experience with NUTRONYX.">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

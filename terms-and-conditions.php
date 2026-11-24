@@ -32,7 +32,7 @@ $pageTitle = 'Terms & Conditions — Transparency & Trust | NUTRONYX';
     <link rel=manifest href="/site.webmanifest">
     <meta name=theme-color content="#174529">
 
-    <meta name="description" content="Please read these Terms & Conditions carefully before using Nutronyx. They explain your rights, responsibilities, and the terms governing your use of our website and products.">
+    <meta name="description" content="Please review these Terms &amp; Conditions to understand the guidelines, rights, and responsibilities associated with using the NUTRONYX website and purchasing our products.">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
