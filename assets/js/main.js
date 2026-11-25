@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
             function updatePowerOrbitPositions() {
                 const stageWidth = stage.offsetWidth || 800;
                 // Base SVG viewBox is -400 -220 800 440, rx=335, ry=135
-                const scale = Math.min(1.05, stageWidth / 800);
+                const scale = stageWidth / 800;
                 const rx = 335 * scale;
                 const ry = 135 * scale;
 

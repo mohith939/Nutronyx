@@ -1192,7 +1192,7 @@ $reviewMetaMap = [
 
                         <!-- Circular Media Frame -->
                         <div class="stage-circle-inner">
-                            <img src="assets/images/ritual-scoop.jpg" alt="Scooping ABC+ whole food powder" class="stage-base-img scoop-base-img" loading="lazy">
+                            <img src="assets/images/ritual-scoop.jpg?v=<?= file_exists(__DIR__ . '/assets/images/ritual-scoop.jpg') ? filemtime(__DIR__ . '/assets/images/ritual-scoop.jpg') : '1' ?>" alt="Scooping ABC+ whole food powder" class="stage-base-img scoop-base-img" loading="lazy">
                             <!-- Continuous Falling Granular Powder Canvas -->
                             <canvas class="stage-canvas canvas-powder" width="340" height="340" aria-hidden="true"></canvas>
                         </div>
@@ -1234,7 +1234,7 @@ $reviewMetaMap = [
 
                         <!-- Circular Media Frame -->
                         <div class="stage-circle-inner">
-                            <img src="assets/images/ritual-mix.png" alt="Mixing ABC+ powder with fresh water" class="stage-base-img mix-base-img" loading="lazy">
+                            <img src="assets/images/ritual-mix.png?v=<?= file_exists(__DIR__ . '/assets/images/ritual-mix.png') ? filemtime(__DIR__ . '/assets/images/ritual-mix.png') : '1' ?>" alt="Mixing ABC+ powder with fresh water" class="stage-base-img mix-base-img" loading="lazy">
                             <!-- Continuous Pouring Water Stream & Ripples Canvas -->
                             <canvas class="stage-canvas canvas-water" width="340" height="340" aria-hidden="true"></canvas>
                         </div>
@@ -1276,7 +1276,7 @@ $reviewMetaMap = [
 
                         <!-- Circular Media Frame -->
                         <div class="stage-circle-inner">
-                            <img src="assets/images/ritual-enjoy.jpg" alt="Enjoying fresh sparkling ABC+ wellness drink" class="stage-base-img enjoy-base-img" loading="lazy">
+                            <img src="assets/images/ritual-enjoy.jpg?v=<?= file_exists(__DIR__ . '/assets/images/ritual-enjoy.jpg') ? filemtime(__DIR__ . '/assets/images/ritual-enjoy.jpg') : '1' ?>" alt="Enjoying fresh sparkling ABC+ wellness drink" class="stage-base-img enjoy-base-img" loading="lazy">
                             <!-- Continuous Rising Effervescent Micro-Bubbles Canvas -->
                             <canvas class="stage-canvas canvas-bubbles" width="340" height="340" aria-hidden="true"></canvas>
                         </div>

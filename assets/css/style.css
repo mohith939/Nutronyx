@@ -1433,8 +1433,8 @@ button {
 .power-orbit-stage {
     position: relative;
     width: 100%;
-    max-width: 980px;
-    height: 480px;
+    max-width: 880px;
+    aspect-ratio: 800 / 440;
     margin: 20px auto 35px auto;
     display: flex;
     align-items: center;
@@ -1458,6 +1458,7 @@ button {
 .power-orbit-svg {
     width: 100%;
     height: 100%;
+    display: block;
     overflow: visible;
     filter: drop-shadow(0 0 16px rgba(245, 205, 110, 0.45));
 }
@@ -1489,7 +1490,10 @@ button {
 /* Center Cup / Ceramic Powder Bowl */
 .power-center-cup-container {
     position: absolute;
-    width: clamp(230px, 25vw, 310px);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(210px, 23vw, 290px);
     z-index: 10;
     display: flex;
     align-items: center;
@@ -1540,8 +1544,10 @@ button {
 
 .power-orbit-item {
     position: absolute;
-    width: clamp(105px, 12vw, 135px);
-    height: clamp(105px, 12vw, 135px);
+    left: 50%;
+    top: 50%;
+    width: clamp(95px, 11vw, 125px);
+    height: clamp(95px, 11vw, 125px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1753,11 +1759,13 @@ button {
         padding: 50px 0 60px 0;
     }
     .power-orbit-stage {
-        height: 400px;
+        max-width: 740px;
+        height: auto;
+        aspect-ratio: 800 / 440;
         margin: 15px auto 25px auto;
     }
     .power-center-cup-container {
-        width: 240px;
+        width: 220px;
     }
     .power-ingredients-strip {
         grid-template-columns: repeat(3, 1fr);
@@ -1784,15 +1792,17 @@ button {
         font-size: 14.5px;
     }
     .power-orbit-stage {
-        height: 320px;
+        max-width: 100%;
+        height: auto;
+        aspect-ratio: 800 / 440;
         margin: 10px auto 20px auto;
     }
     .power-center-cup-container {
-        width: 180px;
+        width: 170px;
     }
     .power-orbit-item {
-        width: 85px;
-        height: 85px;
+        width: 82px;
+        height: 82px;
     }
     .orbit-item-chip {
         font-size: 10px;
