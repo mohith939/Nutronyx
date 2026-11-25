@@ -777,89 +777,107 @@ class OrderService
     /**
      * Fulfill an order directly via Ekart Logistics Enterprise Gateway
      */
-    public static function fulfillWithEkart(string $orderId): array
+    public static function fulfillWithEkart(string $orderId, ?string $manualAwb = null): array
     {
         $order = self::getOrder($orderId);
         if (!$order) {
             throw new \InvalidArgumentException("Order not found: {$orderId}");
         }
 
-        // Format items for Ekart payload
-        $orderItems = [];
-        $totalQty = 0;
-        if (!empty($order['items'])) {
-            foreach ($order['items'] as $it) {
+        $trackingId = trim((string)$manualAwb);
+
+        // If manual AWB was not provided, attempt to create via live Ekart API
+        if (empty($trackingId)) {
+            $liveStatus = EkartLogisticsService::isLiveConnected();
+            if (empty($liveStatus['is_live'])) {
+                throw new \RuntimeException("Ekart Logistics live API is not connected. Please open the Ekart Logistics Portal (https://app.elite.ekartlogistics.in/) to book the shipment and enter the authentic AWB tracking number.");
+            }
+
+            // Format items for Ekart payload
+            $orderItems = [];
+            $totalQty = 0;
+            if (!empty($order['items'])) {
+                foreach ($order['items'] as $it) {
+                    $orderItems[] = [
+                        'item_name' => $it['title'] ?? 'Nutronyx Wellness Nutrition',
+                        'sku' => $it['sku'] ?? 'NX-SKU',
+                        'quantity' => (int)($it['quantity'] ?? 1),
+                        'price' => (float)(($it['unit_price_amount'] ?? 0) / 100)
+                    ];
+                    $totalQty += (int)($it['quantity'] ?? 1);
+                }
+            }
+
+            if (empty($orderItems)) {
                 $orderItems[] = [
-                    'item_name' => $it['title'] ?? 'Nutronyx Wellness Nutrition',
-                    'sku' => $it['sku'] ?? 'NX-SKU',
-                    'quantity' => (int)($it['quantity'] ?? 1),
-                    'price' => (float)(($it['unit_price_amount'] ?? 0) / 100)
+                    'item_name' => 'Nutronyx Wellness Nutrition',
+                    'sku' => 'NX-WELLNESS-DEFAULT',
+                    'quantity' => 1,
+                    'price' => (float)(($order['grand_total_amount'] ?? 0) / 100)
                 ];
-                $totalQty += (int)($it['quantity'] ?? 1);
+                $totalQty = 1;
+            }
+
+            $custPhone = preg_replace('/[^0-9]/', '', $order['shipping_phone'] ?? $order['customer_phone'] ?? '');
+            if (strlen($custPhone) > 10) {
+                $custPhone = substr($custPhone, -10);
+            }
+            if (strlen($custPhone) < 10) {
+                $custPhone = '9876543210';
+            }
+
+            $custPincode = (int)preg_replace('/[^0-9]/', '', $order['shipping_postal_code'] ?? '500081');
+            if ($custPincode < 100000) {
+                $custPincode = 500081;
+            }
+
+            $addressLine = trim(($order['shipping_address_line1'] ?? '') . ' ' . ($order['shipping_address_line2'] ?? ''));
+            if (empty($addressLine)) {
+                $addressLine = 'Customer Delivery Address';
+            }
+
+            $ekartPayload = [
+                'order_number' => $order['order_number'],
+                'consignee_name' => $order['shipping_name'] ?? $order['customer_name'] ?? 'Customer',
+                'consignee_alternate_phone' => $custPhone,
+                'payment_mode' => (strtoupper($order['payment_method'] ?? '') === 'COD') ? 'COD' : 'Prepaid',
+                'total_amount' => (float)(($order['grand_total_amount'] ?? 0) / 100),
+                'tax_value' => (float)(($order['tax_amount'] ?? 0) / 100),
+                'taxable_amount' => (float)((($order['grand_total_amount'] ?? 0) - ($order['tax_amount'] ?? 0)) / 100),
+                'quantity' => $totalQty,
+                'drop_location' => [
+                    'location_type' => 'Home',
+                    'address' => $addressLine,
+                    'city' => $order['shipping_city'] ?? 'Hyderabad',
+                    'state' => $order['shipping_state'] ?? 'Telangana',
+                    'country' => 'India',
+                    'name' => $order['shipping_name'] ?? $order['customer_name'] ?? 'Customer',
+                    'phone' => (int)$custPhone,
+                    'pin' => $custPincode
+                ],
+                'items' => $orderItems
+            ];
+
+            $ekartRes = EkartLogisticsService::createShipment($ekartPayload);
+            $trackingId = $ekartRes['tracking_id'] ?? $ekartRes['barcodes']['wbn'] ?? null;
+            if (empty($trackingId)) {
+                $err = $ekartRes['error'] ?? 'Ekart API could not generate a live shipment.';
+                throw new \RuntimeException("Ekart Logistics API Error: {$err}. Please book manually on the Ekart Portal (https://app.elite.ekartlogistics.in/) and enter the real AWB.");
             }
         }
 
-        if (empty($orderItems)) {
-            $orderItems[] = [
-                'item_name' => 'Nutronyx Wellness Nutrition',
-                'sku' => 'NX-WELLNESS-DEFAULT',
-                'quantity' => 1,
-                'price' => (float)(($order['grand_total_amount'] ?? 0) / 100)
-            ];
-            $totalQty = 1;
+        if (empty($trackingId)) {
+            throw new \InvalidArgumentException("A valid Ekart Tracking AWB number is required.");
         }
 
-        $custPhone = preg_replace('/[^0-9]/', '', $order['shipping_phone'] ?? $order['customer_phone'] ?? '');
-        if (strlen($custPhone) > 10) {
-            $custPhone = substr($custPhone, -10);
-        }
-        if (strlen($custPhone) < 10) {
-            $custPhone = '9876543210';
-        }
-
-        $custPincode = (int)preg_replace('/[^0-9]/', '', $order['shipping_postal_code'] ?? '500081');
-        if ($custPincode < 100000) {
-            $custPincode = 500081;
-        }
-
-        $addressLine = trim(($order['shipping_address_line1'] ?? '') . ' ' . ($order['shipping_address_line2'] ?? ''));
-        if (empty($addressLine)) {
-            $addressLine = 'Customer Delivery Address';
-        }
-
-        $ekartPayload = [
-            'order_number' => $order['order_number'],
-            'consignee_name' => $order['shipping_name'] ?? $order['customer_name'] ?? 'Customer',
-            'consignee_alternate_phone' => $custPhone,
-            'payment_mode' => (strtoupper($order['payment_method'] ?? '') === 'COD') ? 'COD' : 'Prepaid',
-            'total_amount' => (float)(($order['grand_total_amount'] ?? 0) / 100),
-            'tax_value' => (float)(($order['tax_amount'] ?? 0) / 100),
-            'taxable_amount' => (float)((($order['grand_total_amount'] ?? 0) - ($order['tax_amount'] ?? 0)) / 100),
-            'quantity' => $totalQty,
-            'drop_location' => [
-                'location_type' => 'Home',
-                'address' => $addressLine,
-                'city' => $order['shipping_city'] ?? 'Hyderabad',
-                'state' => $order['shipping_state'] ?? 'Telangana',
-                'country' => 'India',
-                'name' => $order['shipping_name'] ?? $order['customer_name'] ?? 'Customer',
-                'phone' => (int)$custPhone,
-                'pin' => $custPincode
-            ],
-            'items' => $orderItems
-        ];
-
-        $ekartRes = EkartLogisticsService::createShipment($ekartPayload);
-
-        $trackingId = $ekartRes['tracking_id'] ?? $ekartRes['barcodes']['wbn'] ?? ('500' . rand(100, 999) . 'A' . rand(1000000, 9999999));
-        $trackingUrl = $ekartRes['tracking_url'] ?? ("https://app.elite.ekartlogistics.in/track/" . urlencode($trackingId));
+        $trackingUrl = "https://app.elite.ekartlogistics.in/track/" . urlencode($trackingId);
 
         return self::createShipment(
             $order['id'],
             'Ekart Logistics',
             $trackingId,
             $trackingUrl,
-            'Dispatched via Ekart Logistics Enterprise Gateway'
+            'Dispatched via Ekart Logistics'
         );
     }
 
@@ -869,16 +887,12 @@ class OrderService
     public static function markFulfilled(string $orderId, string $carrier = 'Ekart Logistics', ?string $trackingNumber = null, ?string $trackingUrl = null, ?string $notes = null): array
     {
         $carrierLower = strtolower($carrier);
-        if (str_contains($carrierLower, 'ekart') && (empty($trackingNumber) || str_starts_with($trackingNumber, 'BD-'))) {
-            return self::fulfillWithEkart($orderId);
+        if (str_contains($carrierLower, 'ekart')) {
+            return self::fulfillWithEkart($orderId, $trackingNumber);
         }
 
         if (empty($trackingNumber)) {
-            if (str_contains($carrierLower, 'ekart')) {
-                $trackingNumber = '500' . rand(100, 999) . 'A' . rand(1000000, 9999999);
-            } else {
-                $trackingNumber = strtoupper(substr($carrier, 0, 2)) . '-' . rand(100000000, 999999999);
-            }
+            throw new \InvalidArgumentException("A valid tracking number / AWB is required to fulfill the order.");
         }
 
         return self::createShipment($orderId, $carrier, $trackingNumber, $trackingUrl, $notes);
@@ -1093,11 +1107,8 @@ class OrderService
                 try {
                     if (str_contains(strtolower($carrier), 'ekart')) {
                         self::fulfillWithEkart($oid);
-                    } else {
-                        $tracking = strtoupper(substr($carrier, 0, 2)) . '-' . rand(100000000, 999999999);
-                        self::createShipment($oid, $carrier, $tracking);
+                        $count++;
                     }
-                    $count++;
                 } catch (\Throwable $e) {}
             }
         }

@@ -1537,14 +1537,28 @@
             let shipmentHtml = '';
             if (o.shipments && o.shipments.length > 0) {
                 o.shipments.forEach(s => {
+                    const sCarrier = s.carrier || 'Ekart Logistics';
+                    let trackingUrl = s.tracking_url;
+                    if (!trackingUrl && s.tracking_number) {
+                        if (sCarrier.toLowerCase().includes('ekart')) {
+                            trackingUrl = 'https://app.elite.ekartlogistics.in/track/' + encodeURIComponent(s.tracking_number);
+                        } else if (sCarrier.toLowerCase().includes('delhivery')) {
+                            trackingUrl = 'https://www.delhivery.com/track/package/' + encodeURIComponent(s.tracking_number);
+                        }
+                    }
                     shipmentHtml += `
                         <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <span style="font-weight: 700; font-size: 13px; color: #111827;">${s.carrier}</span>
+                                <span style="font-weight: 700; font-size: 13px; color: #111827;">${sCarrier}</span>
                                 <span class="status-pill-dot ${s.status ? s.status.toLowerCase() : 'shipped'}"><span class="dot"></span><span>${s.status || 'SHIPPED'}</span></span>
                             </div>
-                            <div style="font-size: 12px; color: #4B5563; margin-bottom: 4px;">
-                                Tracking: <a href="${s.tracking_url || '#'}" target="_blank" style="color: #10B981; font-weight: 600; text-decoration: underline;">${s.tracking_number}</a>
+                            <div style="font-size: 12px; color: #4B5563; margin-bottom: 6px;">
+                                Tracking AWB: <strong style="color: #111827; font-family: monospace;">${s.tracking_number}</strong>
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <a href="${trackingUrl || '#'}" target="_blank" rel="noopener noreferrer" style="color: #047857; font-weight: 600; text-decoration: underline; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                    <span>Track on ${sCarrier} &rarr;</span>
+                                </a>
                             </div>
                             <div style="font-size: 11px; color: #9CA3AF;">
                                 Shipped: ${s.shipped_at || 'Just now'} &middot; Delivered: ${s.delivered_at || 'Pending'}
@@ -1555,8 +1569,11 @@
             } else {
                 shipmentHtml = `
                     <div style="text-align: center; padding: 20px 10px; background: #F9FAFB; border-radius: 8px; border: 1px dashed #D1D5DB;">
-                        <div style="font-size: 12.5px; color: #6B7280; margin-bottom: 8px;">No active shipments created for this order.</div>
-                        <button type="button" class="btn-emerald-brand" style="font-size: 12px; padding: 6px 12px;" onclick="window.NutronyxOrder.openShipModal('${o.id}')">Create Shipment</button>
+                        <div style="font-size: 12.5px; color: #6B7280; margin-bottom: 10px;">No active shipments created for this order.</div>
+                        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                            <button type="button" class="btn-emerald-brand" style="font-size: 12px; padding: 7px 14px; background: #047857;" onclick="window.NutronyxOrder.openEkartShipModal('${o.id}', '${o.order_number}', '${(o.shipping_name || o.customer_name || '').replace(/'/g, "\\'")}', '${(o.shipping_phone || o.customer_phone || '').replace(/'/g, "\\'")}', '${fullAddress.replace(/'/g, "\\'")}', ${(o.grand_total_amount || 0)/100}, '${o.payment_method || 'Prepaid'}')">Ship on Ekart</button>
+                            <button type="button" class="btn-action btn-action-outline" style="font-size: 12px; padding: 7px 14px;" onclick="window.NutronyxOrder.openShipModal('${o.id}')">Other Carrier</button>
+                        </div>
                     </div>
                 `;
             }
@@ -1711,9 +1728,14 @@
                             <span>Download Receipt</span>
                         </a>
 
+                        <button type="button" class="btn-order-action-card" onclick="window.NutronyxOrder.openEkartShipModal('${o.id}', '${o.order_number}', '${(o.shipping_name || o.customer_name || '').replace(/'/g, "\\'")}', '${(o.shipping_phone || o.customer_phone || '').replace(/'/g, "\\'")}', '${fullAddress.replace(/'/g, "\\'")}', ${(o.grand_total_amount || 0)/100}, '${o.payment_method || 'Prepaid'}')">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            <span>Ship on Ekart</span>
+                        </button>
+
                         <button type="button" class="btn-order-action-card" onclick="window.NutronyxOrder.openShipModal('${o.id}')">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                            <span>Track Shipment</span>
+                            <span>Other Carrier</span>
                         </button>
 
                         <button type="button" class="btn-order-action-card" onclick="window.NutronyxOrder.openRefundModal('${o.id}', ${(o.refundable_balance || o.grand_total_amount || 0)/100})">
@@ -1787,6 +1809,107 @@
             document.getElementById('shipCarrierInput').value = carrier || 'Ekart Logistics';
             document.getElementById('shipTrackingInput').value = tracking || '';
             window.NutronyxModal.open('shipOrderModal');
+        },
+
+        openEkartShipModal: function(orderId, orderNum, name, phone, address, totalRupees, payMode) {
+            const idField = document.getElementById('ekartShipOrderId');
+            if (idField) idField.value = orderId;
+
+            const subTitle = document.getElementById('ekartModalOrderSubtitle');
+            if (subTitle && orderNum) subTitle.textContent = `Order #${orderNum} • Divert to Ekart Portal & Enter Authentic AWB`;
+
+            const numSpan = document.getElementById('ekartFieldOrderNum');
+            if (numSpan && orderNum) numSpan.textContent = orderNum;
+
+            const nameSpan = document.getElementById('ekartFieldName');
+            if (nameSpan && name) nameSpan.textContent = name;
+
+            const phoneSpan = document.getElementById('ekartFieldPhone');
+            if (phoneSpan && phone) phoneSpan.textContent = phone;
+
+            const addrSpan = document.getElementById('ekartFieldAddress');
+            if (addrSpan && address) addrSpan.textContent = address;
+
+            const amtSpan = document.getElementById('ekartFieldAmount');
+            if (amtSpan && totalRupees !== undefined) amtSpan.textContent = (parseFloat(totalRupees) || 0).toLocaleString('en-IN');
+
+            const modeSpan = document.getElementById('ekartFieldPayMode');
+            if (modeSpan && payMode) modeSpan.textContent = payMode;
+
+            const awbInput = document.getElementById('ekartAwbInput');
+            if (awbInput) {
+                awbInput.value = '';
+                this.previewEkartTrackingUrl('');
+            }
+
+            this._currentEkartShippingText = `Order: ${orderNum || orderId}\nCustomer: ${name || ''}\nPhone: ${phone || ''}\nAddress: ${address || ''}\nAmount: ₹${totalRupees || ''}\nPayment: ${payMode || 'Prepaid'}`;
+
+            if (!name || !address) {
+                fetch('orders.php?ajax=1&action=get_order_details&order_id=' + encodeURIComponent(orderId))
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success && data.order) {
+                            const o = data.order;
+                            const ordNum = o.order_number || ('#' + o.id);
+                            const custName = o.shipping_name || o.customer_name || 'Customer';
+                            const custPhone = o.shipping_phone || o.customer_phone || '';
+                            const fullAddr = `${o.shipping_address_line1 || ''}${o.shipping_address_line2 ? ', ' + o.shipping_address_line2 : ''}, ${o.shipping_city || ''}, ${o.shipping_state || ''} - ${o.shipping_postal_code || ''}`;
+                            const tot = (parseFloat(o.grand_total_amount) || 0) / 100;
+                            const mode = (o.payment_method && o.payment_method.toUpperCase() === 'COD') ? 'COD' : 'Prepaid';
+
+                            if (subTitle) subTitle.textContent = `Order #${ordNum} • Divert to Ekart Portal & Enter Authentic AWB`;
+                            if (numSpan) numSpan.textContent = ordNum;
+                            if (nameSpan) nameSpan.textContent = custName;
+                            if (phoneSpan) phoneSpan.textContent = custPhone;
+                            if (addrSpan) addrSpan.textContent = fullAddr;
+                            if (amtSpan) amtSpan.textContent = tot.toLocaleString('en-IN');
+                            if (modeSpan) modeSpan.textContent = mode;
+
+                            this._currentEkartShippingText = `Order: ${ordNum}\nCustomer: ${custName}\nPhone: ${custPhone}\nAddress: ${fullAddr}\nAmount: ₹${tot}\nPayment: ${mode}`;
+                        }
+                    })
+                    .catch(() => {});
+            }
+
+            window.NutronyxModal.open('ekartShipModal');
+
+            try {
+                const ekartWin = window.open('https://app.elite.ekartlogistics.in/', '_blank');
+                if (ekartWin) ekartWin.focus();
+            } catch (e) {}
+        },
+
+        copyEkartShippingInfo: function() {
+            const text = this._currentEkartShippingText || '';
+            if (!text) return;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const btnText = document.getElementById('copyEkartDetailsText');
+                    if (btnText) {
+                        const orig = btnText.textContent;
+                        btnText.textContent = 'Copied!';
+                        setTimeout(() => { btnText.textContent = orig; }, 2000);
+                    }
+                    if (window.NutronyxToast) window.NutronyxToast.success('Consignee details copied for Ekart!');
+                });
+            } else {
+                window.NutronyxOrder.copyText(text, 'Consignee Details');
+            }
+        },
+
+        previewEkartTrackingUrl: function(awb) {
+            const box = document.getElementById('ekartTrackingPreviewBox');
+            const link = document.getElementById('ekartTrackingPreviewLink');
+            if (!box || !link) return;
+            const clean = (awb || '').trim();
+            if (clean.length > 0) {
+                const url = 'https://app.elite.ekartlogistics.in/track/' + encodeURIComponent(clean);
+                link.href = url;
+                link.textContent = url;
+                box.style.display = 'block';
+            } else {
+                box.style.display = 'none';
+            }
         },
 
         openRefundModal: function(orderId, maxRefundRupees) {

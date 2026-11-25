@@ -770,21 +770,18 @@ class EkartLogisticsService
             return $data;
         }
 
-        // Schema-compliant authentic Ekart creation response
-        $randomWaybill = "500" . rand(100, 999) . "A" . rand(1000000, 9999999);
+        $errData = $response['data'] ?? [];
+        $errMsg = is_array($errData) 
+            ? ($errData['message'] ?? $errData['description'] ?? $response['error'] ?? 'Ekart Logistics API request failed.') 
+            : ($response['error'] ?? 'Ekart Logistics API request failed.');
 
         return [
-            'status' => true,
-            'remark' => 'Successfully created shipment via Ekart Logistics Enterprise',
-            'tracking_id' => $randomWaybill,
+            'status' => false,
+            'success' => false,
+            'remark' => $errMsg,
+            'error' => $errMsg,
+            'tracking_id' => null,
             'vendor' => 'EKART_LOGISTICS',
-            'barcodes' => [
-                'wbn' => $randomWaybill,
-                'order' => $orderNumber,
-                'cod' => ($shipment['payment_mode'] ?? '') === 'COD' ? "COD-{$randomWaybill}" : ''
-            ],
-            'tracking_url' => "https://app.elite.ekartlogistics.in/track/{$randomWaybill}",
-            'created_at' => date('Y-m-d H:i:s'),
             'is_live_shipment' => false
         ];
     }

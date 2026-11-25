@@ -63,8 +63,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 // Handle Direct Ekart Dispatch
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'ship_ekart') {
     try {
-        $res = OrderService::fulfillWithEkart($orderId);
-        $notice = "Order dispatched with Ekart Logistics! Tracking AWB: " . htmlspecialchars($res['tracking_number']);
+        $trackingNumber = trim($_POST['tracking_number'] ?? '');
+        if (empty($trackingNumber)) {
+            throw new \InvalidArgumentException("Tracking AWB is required. Please enter the authentic AWB from your Ekart Merchant Portal.");
+        }
+        $res = OrderService::fulfillWithEkart($orderId, $trackingNumber);
+        $notice = "Order dispatched with Ekart Logistics! Real AWB: " . htmlspecialchars($res['tracking_number']);
         $order = OrderService::getOrder($orderId);
     } catch (\Throwable $e) {
         $error = "Ekart Logistics Error: " . $e->getMessage();
@@ -76,8 +80,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $carrier = trim($_POST['carrier'] ?: 'Ekart Logistics');
     $tracking = trim($_POST['tracking_number'] ?? '');
     try {
-        if (str_contains(strtolower($carrier), 'ekart') && empty($tracking)) {
-            $res = OrderService::fulfillWithEkart($orderId);
+        if (empty($tracking)) {
+            throw new \InvalidArgumentException("Tracking AWB number is required to confirm dispatch.");
+        }
+        if (str_contains(strtolower($carrier), 'ekart')) {
+            $res = OrderService::fulfillWithEkart($orderId, $tracking);
             $notice = "Order dispatched with Ekart Logistics! Tracking AWB: " . htmlspecialchars($res['tracking_number']);
         } else {
             $res = OrderService::markFulfilled($orderId, $carrier, $tracking);
@@ -164,13 +171,18 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
 
                     <?php if ($order['order_status'] !== 'CANCELLED'): ?>
                         <?php if ($order['fulfillment_status'] !== 'FULFILLED' && $order['order_status'] !== 'DELIVERED'): ?>
-                            <form method="POST" action="order-detail.php?id=<?= urlencode($order['id']) ?>" style="display: inline-block; margin: 0;" onsubmit="return confirm('Dispatch order immediately via direct Ekart Logistics Enterprise Gateway?');">
-                                <input type="hidden" name="action" value="ship_ekart">
-                                <button type="submit" class="btn-action btn-action-sm" style="background: #144D29; color: #FFFFFF; border-color: #144D29; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                                    <span>Ship with Ekart Logistics</span>
-                                </button>
-                            </form>
+                            <?php
+                                $detailShippingAddr = trim(($order['shipping_address_line1'] ?? '') . ' ' . ($order['shipping_address_line2'] ?? '') . ', ' . ($order['shipping_city'] ?? '') . ', ' . ($order['shipping_state'] ?? '') . ' - ' . ($order['shipping_postal_code'] ?? ''));
+                                $detailShippingName = $order['shipping_name'] ?: ($order['customer_name'] ?: 'Customer');
+                                $detailShippingPhone = $order['shipping_phone'] ?: ($order['customer_phone'] ?: '');
+                                $detailTotalRupees = (float)(($order['grand_total_amount'] ?? 0) / 100);
+                                $detailPayMode = strtoupper($order['payment_method'] ?? '') === 'COD' ? 'COD' : 'Prepaid';
+                            ?>
+                            <button type="button" class="btn-action btn-action-sm" style="background: #144D29; color: #FFFFFF; border-color: #144D29; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"
+                                onclick="window.NutronyxOrder.openEkartShipModal('<?= htmlspecialchars($order['id'], ENT_QUOTES) ?>', '<?= htmlspecialchars($order['order_number'], ENT_QUOTES) ?>', '<?= htmlspecialchars($detailShippingName, ENT_QUOTES) ?>', '<?= htmlspecialchars($detailShippingPhone, ENT_QUOTES) ?>', '<?= htmlspecialchars($detailShippingAddr, ENT_QUOTES) ?>', '<?= $detailTotalRupees ?>', '<?= $detailPayMode ?>')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                <span>Ship on Ekart</span>
+                            </button>
                             <button type="button" class="btn-action btn-action-sm btn-action-outline" onclick="window.NutronyxModal.open('fulfillModal')">
                                 <span>Other Carrier &hellip;</span>
                             </button>
@@ -363,8 +375,23 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
                                         <button type="button" onclick="window.NutronyxCopy('<?= htmlspecialchars($shipment['tracking_number']) ?>', this)" style="background: none; border: none; color: var(--admin-forest); cursor: pointer; font-size: 12px; text-decoration: underline;">Copy</button>
                                     </div>
                                     <div style="font-size: 12px; color: #697C70; margin-bottom: 8px;">Dispatched on: <?= date('d M Y, h:i A', strtotime($shipment['shipped_at'])) ?></div>
-                                    <a href="<?= htmlspecialchars($shipment['tracking_url']) ?>" target="_blank" class="dash-tool-link" style="display: inline-flex;">
-                                        <span>Open Tracking Portal &rarr;</span>
+<?php 
+                                        $shipCarrier = $shipment['carrier_name'] ?? $shipment['carrier'] ?? 'Ekart Logistics';
+                                        $shipCarrierLower = strtolower($shipCarrier);
+                                        $shipAwb = $shipment['tracking_number'] ?? '';
+                                        $shipUrl = $shipment['tracking_url'] ?? '';
+                                        if (empty($shipUrl) && !empty($shipAwb)) {
+                                            if (str_contains($shipCarrierLower, 'ekart')) {
+                                                $shipUrl = 'https://app.elite.ekartlogistics.in/track/' . urlencode($shipAwb);
+                                            } elseif (str_contains($shipCarrierLower, 'delhivery')) {
+                                                $shipUrl = 'https://www.delhivery.com/track/package/' . urlencode($shipAwb);
+                                            } else {
+                                                $shipUrl = 'https://app.elite.ekartlogistics.in/track/' . urlencode($shipAwb);
+                                            }
+                                        }
+                                    ?>
+                                    <a href="<?= htmlspecialchars($shipUrl ?: 'https://app.elite.ekartlogistics.in/') ?>" target="_blank" class="dash-tool-link" style="display: inline-flex;">
+                                        <span>Track on <?= htmlspecialchars($shipCarrier) ?> &rarr;</span>
                                     </a>
                                 </div>
                             <?php endforeach; ?>
@@ -437,6 +464,9 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
     </div>
 
     <!-- Fulfillment Dispatch Modal -->
+    <!-- Ekart Ship Modal -->
+    <?php include __DIR__ . '/includes/ekart-ship-modal.php'; ?>
+
     <div id="fulfillModal" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
@@ -457,9 +487,9 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">AWB / Courier Tracking Number</label>
-                        <input type="text" name="tracking_number" placeholder="Leave blank to auto-generate via Ekart Logistics" class="form-control">
-                        <small style="display: block; margin-top: 4px; font-size: 11.5px; color: #047857;">Ekart Logistics Enterprise automatically assigns a live AWB (e.g. 500...A...).</small>
+                        <label class="form-label">AWB / Courier Tracking Number *</label>
+                        <input type="text" name="tracking_number" placeholder="Enter carrier AWB or tracking number" required class="form-control">
+                        <small style="display: block; margin-top: 4px; font-size: 11.5px; color: var(--admin-text-muted);">Enter the authentic AWB from your shipping carrier dashboard.</small>
                     </div>
                 </div>
                 <div class="modal-footer">
