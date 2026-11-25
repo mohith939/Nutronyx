@@ -30,12 +30,29 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
 }
 
 use Nutronyx\Services\ProductService;
+use Nutronyx\Services\ReviewService;
 
 $flagshipProduct = ProductService::getProduct('prod_abc_powder', true);
 $flagshipVariants = array_column($flagshipProduct['variants'] ?? [], null, 'id');
 $showShowcase = ($flagshipProduct !== null && !empty($flagshipVariants));
 $defaultVariantKey = isset($flagshipVariants['var_abc_250g']) ? 'var_abc_250g' : (array_key_first($flagshipVariants) ?? 'var_abc_250g');
 $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round(($flagshipVariants[$defaultVariantKey]['sale_price_amount'] ?? 29900) / 100) : 299;
+
+// Fetch approved customer reviews for the community section
+$homeReviews = ReviewService::getApprovedReviewsForProduct('prod_abc_powder', 10);
+if (count($homeReviews) < 3) {
+    $homeReviews = ReviewService::getApprovedReviewsForProduct('all', 10);
+}
+
+// Location and routine metadata mapping for authentic customer stories
+$reviewMetaMap = [
+    'Ananya R.' => 'Mumbai, India • Daily Ritualist since Oct 2024',
+    'Rohit K.' => 'Hyderabad, India • Daily Ritualist since Nov 2024',
+    'Meghana S.' => 'Visakhapatnam, India • Daily Ritualist since Dec 2024',
+    'Dr. Vikram M.' => 'Bengaluru, India • Daily Ritualist since Jan 2025',
+    'Pooja N.' => 'Pune, India • Daily Ritualist since Feb 2025',
+    'Kavita S.' => 'Chennai, India • Daily Ritualist since Feb 2025',
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1282,151 +1299,56 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
                 </div>
             </div>
 
-            <!-- CAROUSEL WRAPPER WITH PEEKING SIDE CARDS -->
+            <!-- CAROUSEL WRAPPER WITH CLEAN EDITORIAL REVIEW CARDS -->
             <div class="experience-carousel-wrapper">
                 <div class="experience-carousel-track" id="experienceCarouselTrack">
-                    
-                    <!-- SLIDE 01: ROHIT K. (PREV / LEFT) -->
-                    <div class="experience-card is-prev slide-rohit" data-slide="0" tabindex="0" role="group" aria-label="Review by Rohit K.">
-                        <div class="card-featured-layout">
-                            <!-- Left: Lifestyle Photography -->
-                            <div class="card-visual-col">
-                                <img src="assets/images/ritual-with-nutronyx.jpg" 
-                                     alt="Rohit enjoying his daily wellness ritual" 
-                                     class="card-visual-img"
-                                     loading="lazy">
-                                <div class="card-visual-tag">
-                                    <span class="tag-leaf-icon" aria-hidden="true">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#2E7D4E">
-                                            <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66l.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/>
-                                        </svg>
-                                    </span>
-                                    <span>Clean energy &amp; daily vitality</span>
+                    <?php foreach ($homeReviews as $idx => $hRev): 
+                        $custName = $hRev['customer_name'] ?? 'Verified Customer';
+                        $firstLetter = strtoupper(substr($custName, 0, 1));
+                        $metaText = $reviewMetaMap[$custName] ?? (!empty($hRev['product_title']) ? $hRev['product_title'] : 'Verified Daily Ritualist');
+                    ?>
+                        <div class="experience-card experience-review-card <?= $idx === 0 ? 'is-active' : '' ?>" data-index="<?= $idx ?>" tabindex="0" role="group" aria-label="Review by <?= htmlspecialchars($custName) ?>">
+                            <div class="review-card-top">
+                                <div class="review-avatar-monogram" aria-hidden="true">
+                                    <?= $firstLetter ?>
+                                </div>
+                                <div class="review-stars-quote">
+                                    <div class="review-stars" aria-label="<?= (int)($hRev['rating'] ?? 5) ?> out of 5 stars">
+                                        <?= str_repeat('★', (int)($hRev['rating'] ?? 5)) ?>
+                                    </div>
+                                    <?php if (!empty($hRev['title'])): ?>
+                                        <div class="review-card-title">
+                                            <?= htmlspecialchars($hRev['title']) ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <blockquote class="review-card-text">
+                                        &ldquo;<?= htmlspecialchars($hRev['comment'] ?? '') ?>&rdquo;
+                                    </blockquote>
+                                    <?php if (!empty($hRev['admin_reply'])): ?>
+                                        <div class="review-admin-reply">
+                                            <strong>Nutronyx Response:</strong> <?= htmlspecialchars($hRev['admin_reply']) ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
-
-                            <!-- Right: Testimonial & Editorial Details -->
-                            <div class="card-content-col">
-                                <div class="card-stars" aria-label="5 out of 5 stars">
-                                    ★★★★★
+                            <div class="review-author-meta">
+                                <div class="author-name-line">
+                                    <span class="author-name"><?= htmlspecialchars($custName) ?></span>
+                                    <?php if (!empty($hRev['is_verified_buyer']) && (int)$hRev['is_verified_buyer'] === 1): ?>
+                                        <span class="author-verified-tag" title="Verified Customer">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="#2E7D4E">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
+                                            <span>Verified Buyer</span>
+                                        </span>
+                                    <?php endif; ?>
                                 </div>
-                                <div class="card-quote-mark" aria-hidden="true">&ldquo;</div>
-                                <blockquote class="card-quote-text">
-                                    The taste is natural and it blends so well into my routine. I feel more energetic throughout the day, and it has become an effortless morning habit.
-                                </blockquote>
-                                <div class="card-author-row">
-                                    <img src="assets/images/avatar-rohit.jpg" alt="Rohit K." class="card-avatar-img">
-                                    <div class="card-author-info">
-                                        <div class="author-name-line">
-                                            <span class="author-name">Rohit K.</span>
-                                            <span class="author-verified" title="Verified Customer" aria-hidden="true">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="#2E7D4E">
-                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <span class="author-location">Hyderabad, India</span>
-                                        <span class="author-since-badge">DAILY RITUALIST SINCE NOV 2024</span>
-                                    </div>
+                                <div class="author-location-info">
+                                    <span class="author-location-text"><?= htmlspecialchars($metaText) ?></span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- SLIDE 02: ANANYA R. (ACTIVE / CENTER FEATURED CARD) -->
-                    <div class="experience-card is-active slide-ananya" data-slide="1" tabindex="0" role="group" aria-label="Review by Ananya R.">
-                        <div class="card-featured-layout">
-                            <!-- Left: Sunlit Window Lifestyle Photography -->
-                            <div class="card-visual-col">
-                                <img src="assets/images/experience-lifestyle-new.jpg" 
-                                     alt="Ananya enjoying her morning wellness ritual in warm natural sunlight" 
-                                     class="card-visual-img"
-                                     loading="eager">
-                                <div class="card-visual-tag">
-                                    <span class="tag-leaf-icon" aria-hidden="true">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#2E7D4E">
-                                            <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66l.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/>
-                                        </svg>
-                                    </span>
-                                    <span>Morning sunlight &amp; a mindful living</span>
-                                </div>
-                            </div>
-
-                            <!-- Right: Testimonial & Editorial Details -->
-                            <div class="card-content-col">
-                                <div class="card-stars" aria-label="5 out of 5 stars">
-                                    ★★★★★
-                                </div>
-                                <div class="card-quote-mark" aria-hidden="true">&ldquo;</div>
-                                <blockquote class="card-quote-text">
-                                    I replaced my sluggish second coffee with ABC+ in warm water each morning. It feels gentle, deeply grounding, and gives me clean, lasting vitality without the afternoon crash.
-                                </blockquote>
-                                <div class="card-author-row">
-                                    <img src="assets/images/avatar-ananya.jpg" alt="Ananya R." class="card-avatar-img">
-                                    <div class="card-author-info">
-                                        <div class="author-name-line">
-                                            <span class="author-name">Ananya R.</span>
-                                            <span class="author-verified" title="Verified Customer" aria-hidden="true">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="#2E7D4E">
-                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <span class="author-location">Mumbai, India</span>
-                                        <span class="author-since-badge">DAILY RITUALIST SINCE OCT 2024</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SLIDE 03: MEGHANA S. (NEXT / RIGHT) -->
-                    <div class="experience-card is-next slide-meghana" data-slide="2" tabindex="0" role="group" aria-label="Review by Meghana S.">
-                        <div class="card-featured-layout">
-                            <!-- Left: Lifestyle Photography -->
-                            <div class="card-visual-col">
-                                <img src="assets/images/ritual-editorial.jpg" 
-                                     alt="Meghana preparing her daily wellness drink" 
-                                     class="card-visual-img"
-                                     loading="lazy">
-                                <div class="card-visual-tag">
-                                    <span class="tag-leaf-icon" aria-hidden="true">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#2E7D4E">
-                                            <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66l.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/>
-                                        </svg>
-                                    </span>
-                                    <span>Pure ingredients &amp; daily routine</span>
-                                </div>
-                            </div>
-
-                            <!-- Right: Testimonial & Editorial Details -->
-                            <div class="card-content-col">
-                                <div class="card-stars" aria-label="5 out of 5 stars">
-                                    ★★★★★
-                                </div>
-                                <div class="card-quote-mark" aria-hidden="true">&ldquo;</div>
-                                <blockquote class="card-quote-text">
-                                    I love that it's 100% pure, natural, and has no added preservatives. It's now a daily staple at home that our entire family enjoys every single morning.
-                                </blockquote>
-                                <div class="card-author-row">
-                                    <img src="assets/images/avatar-meghana.jpg" alt="Meghana S." class="card-avatar-img">
-                                    <div class="card-author-info">
-                                        <div class="author-name-line">
-                                            <span class="author-name">Meghana S.</span>
-                                            <span class="author-verified" title="Verified Customer" aria-hidden="true">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="#2E7D4E">
-                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <span class="author-location">Visakhapatnam, India</span>
-                                        <span class="author-since-badge">DAILY RITUALIST SINCE DEC 2024</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                    <?php endforeach; ?>
                 </div>
             </div>
 
@@ -1438,9 +1360,9 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
                     </svg>
                 </button>
                 <div class="carousel-dots" role="tablist" aria-label="Slide indicators">
-                    <button type="button" class="dot" data-index="0" aria-label="Go to slide 1" role="tab" aria-selected="false"></button>
-                    <button type="button" class="dot is-active" data-index="1" aria-label="Go to slide 2" role="tab" aria-selected="true"></button>
-                    <button type="button" class="dot" data-index="2" aria-label="Go to slide 3" role="tab" aria-selected="false"></button>
+                    <?php foreach ($homeReviews as $idx => $hRev): ?>
+                        <button type="button" class="dot <?= $idx === 0 ? 'is-active' : '' ?>" data-index="<?= $idx ?>" aria-label="Go to review <?= $idx + 1 ?>" role="tab" aria-selected="<?= $idx === 0 ? 'true' : 'false' ?>"></button>
+                    <?php endforeach; ?>
                 </div>
                 <button type="button" class="carousel-btn btn-next" aria-label="Next review">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

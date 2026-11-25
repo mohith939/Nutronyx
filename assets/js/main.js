@@ -1203,62 +1203,67 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================================================================
     // SECTION 10 — THE NUTRONYX EXPERIENCE (WHAT OUR CUSTOMERS SAY)
     // =========================================================================
+    // SECTION 10 — THE NUTRONYX COMMUNITY (Clean Review Cards Carousel)
+    // =========================================================================
     const experienceSection = document.querySelector(".section-experience");
     if (experienceSection) {
-        const cards = Array.from(experienceSection.querySelectorAll(".experience-card"));
+        const cards = Array.from(experienceSection.querySelectorAll(".experience-review-card"));
         const dots = Array.from(experienceSection.querySelectorAll(".carousel-dots .dot"));
         const prevBtn = experienceSection.querySelector(".experience-controls .btn-prev");
         const nextBtn = experienceSection.querySelector(".experience-controls .btn-next");
         const track = experienceSection.querySelector("#experienceCarouselTrack");
 
-        let currentIndex = 1; // Start with Ananya R. (index 1) in the center
-        let isTransitioning = false;
+        let currentIndex = 0;
 
-        function updateCarousel(newIndex, direction = 1) {
-            if (isTransitioning || cards.length === 0) return;
-            isTransitioning = true;
+        function getCardsPerView() {
+            if (window.innerWidth <= 680) return 1;
+            if (window.innerWidth <= 1080) return 2;
+            return 3;
+        }
 
-            const total = cards.length;
-            const targetIndex = (newIndex + total) % total;
-            const prevIdx = (targetIndex - 1 + total) % total;
-            const nextIdx = (targetIndex + 1) % total;
+        function getMaxIndex() {
+            const perView = getCardsPerView();
+            return Math.max(0, cards.length - perView);
+        }
 
-            // Update card states
+        function updateCarousel(newIndex) {
+            if (cards.length === 0 || !track) return;
+
+            const maxIdx = getMaxIndex();
+            let targetIdx = newIndex;
+            if (targetIdx > maxIdx) {
+                targetIdx = 0;
+            } else if (targetIdx < 0) {
+                targetIdx = maxIdx;
+            }
+
+            currentIndex = targetIdx;
+
+            const cardEl = cards[0];
+            const cardWidth = cardEl ? cardEl.getBoundingClientRect().width : 0;
+            const gap = 24;
+            const offset = currentIndex * (cardWidth + gap);
+
+            track.style.transform = `translateX(-${offset}px)`;
+
+            // Update card states & accessibility
             cards.forEach((card, idx) => {
-                card.classList.remove("is-active", "is-prev", "is-next");
-                if (idx === targetIndex) {
+                const perView = getCardsPerView();
+                const isVisible = idx >= currentIndex && idx < currentIndex + perView;
+                if (isVisible) {
                     card.classList.add("is-active");
                     card.setAttribute("aria-hidden", "false");
                     card.setAttribute("tabindex", "0");
-                } else if (idx === prevIdx) {
-                    card.classList.add("is-prev");
-                    card.setAttribute("aria-hidden", "true");
-                    card.setAttribute("tabindex", "-1");
-                } else if (idx === nextIdx) {
-                    card.classList.add("is-next");
+                } else {
+                    card.classList.remove("is-active");
                     card.setAttribute("aria-hidden", "true");
                     card.setAttribute("tabindex", "-1");
                 }
             });
 
-            // Re-order DOM elements in track so layout remains visually centered: [prev, active, next]
-            if (track) {
-                track.appendChild(cards[prevIdx]);
-                track.appendChild(cards[targetIndex]);
-                track.appendChild(cards[nextIdx]);
-            }
-
-            // Animate transition with GSAP if available
-            if (typeof gsap !== "undefined") {
-                gsap.fromTo(cards[targetIndex], 
-                    { scale: 0.94, opacity: 0.8 }, 
-                    { scale: 1.0, opacity: 1, duration: 0.45, ease: "power2.out" }
-                );
-            }
-
             // Update pagination dots
             dots.forEach((dot, idx) => {
-                if (idx === targetIndex) {
+                if (idx === currentIndex) {
                     dot.classList.add("is-active");
                     dot.setAttribute("aria-selected", "true");
                 } else {
@@ -1266,26 +1271,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     dot.setAttribute("aria-selected", "false");
                 }
             });
-
-            currentIndex = targetIndex;
-            setTimeout(() => {
-                isTransitioning = false;
-            }, 300);
         }
 
         // Initialize state
-        updateCarousel(1);
+        updateCarousel(0);
+
+        // Window resize handler
+        let resizeTimer;
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                updateCarousel(currentIndex);
+            }, 100);
+        });
 
         // Prev & Next Buttons
         if (prevBtn) {
             prevBtn.addEventListener("click", () => {
-                updateCarousel(currentIndex - 1, -1);
+                updateCarousel(currentIndex - 1);
             });
         }
 
         if (nextBtn) {
             nextBtn.addEventListener("click", () => {
-                updateCarousel(currentIndex + 1, 1);
+                updateCarousel(currentIndex + 1);
             });
         }
 
@@ -1293,20 +1302,8 @@ document.addEventListener("DOMContentLoaded", () => {
         dots.forEach((dot) => {
             dot.addEventListener("click", () => {
                 const targetIdx = parseInt(dot.getAttribute("data-index"), 10);
-                if (!isNaN(targetIdx) && targetIdx !== currentIndex) {
-                    updateCarousel(targetIdx, targetIdx > currentIndex ? 1 : -1);
-                }
-            });
-        });
-
-        // Click side card to navigate directly to it
-        cards.forEach((card, idx) => {
-            card.addEventListener("click", () => {
-                if (!card.classList.contains("is-active")) {
-                    const cardIdx = parseInt(card.getAttribute("data-slide"), 10);
-                    if (!isNaN(cardIdx)) {
-                        updateCarousel(cardIdx);
-                    }
+                if (!isNaN(targetIdx)) {
+                    updateCarousel(targetIdx);
                 }
             });
         });
@@ -1315,10 +1312,10 @@ document.addEventListener("DOMContentLoaded", () => {
         experienceSection.addEventListener("keydown", (e) => {
             if (e.key === "ArrowLeft") {
                 e.preventDefault();
-                updateCarousel(currentIndex - 1, -1);
+                updateCarousel(currentIndex - 1);
             } else if (e.key === "ArrowRight") {
                 e.preventDefault();
-                updateCarousel(currentIndex + 1, 1);
+                updateCarousel(currentIndex + 1);
             }
         });
 
@@ -1336,9 +1333,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 const diff = touchStartX - touchEndX;
                 if (Math.abs(diff) > 45) {
                     if (diff > 0) {
-                        updateCarousel(currentIndex + 1, 1);
+                        updateCarousel(currentIndex + 1);
                     } else {
-                        updateCarousel(currentIndex - 1, -1);
+                        updateCarousel(currentIndex - 1);
                     }
                 }
             }, { passive: true });
@@ -1374,15 +1371,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)" },
                     "-=0.3"
                 )
-                .fromTo(".experience-card.is-active",
-                    { y: 30, opacity: 0, scale: 0.96 },
-                    { y: 0, opacity: 1, scale: 1, duration: 0.85, ease: "power3.out" },
+                .fromTo(".experience-review-card",
+                    { y: 24, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power2.out" },
                     "-=0.3"
-                )
-                .fromTo([".experience-card.is-prev", ".experience-card.is-next"],
-                    { opacity: 0, y: 20 },
-                    { opacity: 0.65, y: 0, duration: 0.65, stagger: 0.1, ease: "power2.out" },
-                    "-=0.55"
                 )
                 .fromTo(".experience-controls",
                     { y: 16, opacity: 0 },

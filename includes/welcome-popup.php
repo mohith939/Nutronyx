@@ -616,12 +616,30 @@
  * Multi-layer persistence prevents re-prompts once submitted or dismissed
  */
 (function() {
-    const SUBMITTED_KEY = 'nutronyx_welcome_lead_submitted';
-    const POPUP_SEEN_KEY = 'nutronyx_welcome_popup_seen';
+    const SUBMITTED_KEY = 'nutronyx_welcome_lead_v3';
+    const POPUP_SEEN_KEY = 'nutronyx_welcome_seen_v3';
     const POPUP_DELAY_MS = 1400; // 1.4s delay for natural page loading
     const ACTIVE_COUPON = 'FIRST10';
 
+    // Clear any stale test blockages from previous testing rounds
+    try {
+        localStorage.removeItem('nutronyx_welcome_popup_seen');
+        localStorage.removeItem('nutronyx_welcome_lead_submitted');
+        localStorage.removeItem('nutronyx_welcome_lead_v2');
+        localStorage.removeItem('nutronyx_welcome_seen_v2');
+    } catch(e) {}
+
     function hasUserCompletedOrDismissed() {
+        const urlParams = new URLSearchParams(window.location.search);
+        // Force open popup if ?welcome=1, ?popup=1, or #welcome is in URL
+        if (urlParams.has('welcome') || urlParams.has('popup') || window.location.hash === '#welcome') {
+            try {
+                localStorage.removeItem(SUBMITTED_KEY);
+                sessionStorage.removeItem(POPUP_SEEN_KEY);
+            } catch(e) {}
+            return false;
+        }
+
         try {
             // 1. Permanent submission check (once submitted, never show phone prompt again)
             if (localStorage.getItem(SUBMITTED_KEY) === '1') {
@@ -631,16 +649,8 @@
             if (document.cookie.indexOf(SUBMITTED_KEY + '=1') !== -1) {
                 return true;
             }
-            // 3. Current session dismissed check
+            // 3. Current session dismissed check (only for active session)
             if (sessionStorage.getItem(POPUP_SEEN_KEY) === '1') {
-                return true;
-            }
-            // 4. LocalStorage popup seen check (valid for 30 days)
-            if (localStorage.getItem(POPUP_SEEN_KEY) === '1') {
-                return true;
-            }
-            // 5. Cookie seen check
-            if (document.cookie.indexOf(POPUP_SEEN_KEY + '=1') !== -1) {
                 return true;
             }
         } catch (e) {
@@ -650,10 +660,6 @@
     }
 
     function initWelcomeModal() {
-        if (hasUserCompletedOrDismissed()) {
-            return;
-        }
-
         const modal = document.getElementById('nutronyxWelcomeModal');
         const closeBtn = document.getElementById('welcomeModalClose');
         const backdrop = document.getElementById('welcomeModalBackdrop');
@@ -677,6 +683,16 @@
             document.body.classList.add('welcome-modal-open');
         }
 
+        // Expose global triggers for testing and header/footer links
+        window.openNutronyxWelcomePopup = showModal;
+        window.resetNutronyxWelcomePopup = function() {
+            try {
+                localStorage.removeItem(SUBMITTED_KEY);
+                sessionStorage.removeItem(POPUP_SEEN_KEY);
+            } catch (e) {}
+            showModal();
+        };
+
         function closeModal() {
             modal.classList.remove('is-active');
             document.body.classList.remove('welcome-modal-open');
@@ -685,27 +701,21 @@
             }, 360);
             try {
                 sessionStorage.setItem(POPUP_SEEN_KEY, '1');
-                localStorage.setItem(POPUP_SEEN_KEY, '1');
-                document.cookie = POPUP_SEEN_KEY + '=1; path=/; max-age=2592000; SameSite=Lax';
             } catch (e) {}
         }
 
         function markCompletedPermanently() {
             try {
                 localStorage.setItem(SUBMITTED_KEY, '1');
-                localStorage.setItem(POPUP_SEEN_KEY, '1');
                 sessionStorage.setItem(POPUP_SEEN_KEY, '1');
                 document.cookie = SUBMITTED_KEY + '=1; path=/; max-age=31536000; SameSite=Lax';
-                document.cookie = POPUP_SEEN_KEY + '=1; path=/; max-age=31536000; SameSite=Lax';
             } catch (e) {}
         }
 
-        // Schedule popup entrance
-        setTimeout(() => {
-            if (!hasUserCompletedOrDismissed()) {
-                showModal();
-            }
-        }, POPUP_DELAY_MS);
+        // Schedule popup entrance if not already completed or dismissed
+        if (!hasUserCompletedOrDismissed()) {
+            setTimeout(showModal, POPUP_DELAY_MS);
+        }
 
         // Close triggers
         if (closeBtn) closeBtn.addEventListener('click', closeModal);
