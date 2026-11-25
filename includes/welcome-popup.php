@@ -29,12 +29,6 @@
                         Enjoy 10% off your first order and stay connected for exclusive offers and product updates.
                     </p>
 
-                    <!-- Feature: USE CODE AT CHECKOUT FIRST10 -->
-                    <div class="welcome-coupon-banner">
-                        <span class="coupon-banner-sub">USE CODE AT CHECKOUT</span>
-                        <span class="coupon-banner-code">FIRST10</span>
-                    </div>
-
                     <form id="welcomeLeadForm" class="welcome-form" novalidate>
                         <!-- Phone Input Group (IN +91 | Enter mobile number) -->
                         <div class="welcome-input-group" id="welcomeInputGroup">
@@ -71,7 +65,7 @@
                     </p>
                 </div>
 
-                <!-- Success Screen (Shown on valid submission) -->
+                <!-- Success Screen (Shown on valid submission to avail coupon) -->
                 <div id="welcomeSuccessContainer" class="welcome-success-screen" style="display: none;">
                     <div class="welcome-success-icon" aria-hidden="true">
                         <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#143D24" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -81,14 +75,20 @@
                     </div>
                     <h3 class="welcome-success-title">You're on the list!</h3>
                     <p class="welcome-success-desc">
-                        Enjoy <strong>10% off</strong> your first order with this welcome coupon:
+                        Enjoy <strong>10% off</strong> your first order with your welcome coupon:
                     </p>
-                    <div class="welcome-coupon-box" id="welcomeCouponBox" role="button" tabindex="0" title="Click to copy coupon code">
-                        <span class="coupon-code-text" id="welcomeCouponCode">FIRST10</span>
-                        <button type="button" class="btn-copy-code" id="btnCopyCode" aria-label="Copy code">
-                            Copied!
-                        </button>
+                    
+                    <!-- Avail Coupon Banner -->
+                    <div class="welcome-coupon-banner avail" id="welcomeCouponBox" role="button" tabindex="0" title="Click to copy coupon code">
+                        <span class="coupon-banner-sub">USE CODE AT CHECKOUT</span>
+                        <div class="coupon-code-row">
+                            <span class="coupon-banner-code" id="welcomeCouponCode">FIRST10</span>
+                            <button type="button" class="btn-copy-code" id="btnCopyCode" aria-label="Copy code">
+                                Copy
+                            </button>
+                        </div>
                     </div>
+
                     <p id="copyFeedback" class="copy-feedback-text">Code FIRST10 copied to clipboard!</p>
                     <a href="shop" class="welcome-shop-btn">
                         <span>Shop Now with 10% Off &rarr;</span>
@@ -106,9 +106,6 @@
                     </div>
                     <span class="welcome-brand-dash"></span>
                     <p class="welcome-brand-tagline">A quieter kind of wellness.</p>
-                    <div class="welcome-media-badge">
-                        <span>100% Pure Botanical Nutrition</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -537,18 +534,31 @@
     line-height: 1.4;
 }
 
-.welcome-media-badge {
-    background: #FFFFFF;
-    border: 1px solid rgba(20, 61, 36, 0.12);
-    border-radius: 999px;
-    padding: 6px 14px;
-    font-family: var(--font-sans, sans-serif);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #143D24;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.welcome-coupon-banner.avail {
+    background: #F7F5EE;
+    border: 1.5px dashed #B8860B;
+    border-radius: 10px;
+    padding: 14px 20px;
+    text-align: center;
+    margin: 16px auto 12px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.welcome-coupon-banner.avail:hover {
+    background: #EFE8DA;
+    border-color: #143D24;
+}
+
+.coupon-code-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
 }
 
 /* Responsive Handling */
