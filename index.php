@@ -1254,38 +1254,6 @@ $defaultVariantPrice = isset($flagshipVariants[$defaultVariantKey]) ? (int)round
         </div>
     </section>
 
-    <!-- ==========================================================================
-         SECTION 9 — BOTANICAL EXPLOSION
-         Suspended Botanical Ingredient Explosion — Nature Heals
-         ========================================================================== -->
-    <section class="section-explosion" id="botanical-explosion" aria-label="Botanical Explosion — Nature Heals">
-        <div class="explosion-outer-container">
-            <!-- Large Rounded Botanical Canvas Wrapper -->
-            <div class="explosion-canvas-wrapper">
-                <!-- 1. Lower Botanical Misty Hills Landscape -->
-                <div class="explosion-landscape-layer" aria-hidden="true">
-                    <img src="assets/images/botanical-hills.jpg" alt="" class="landscape-hills-img" loading="lazy">
-                    <div class="landscape-overlay-gradient"></div>
-                </div>
-
-                <!-- 2. Oversized Editorial Typography: NATURE & HEALS -->
-                <div class="explosion-typography-stage" aria-hidden="true">
-                    <div class="typo-word typo-nature">NATURE</div>
-                    <div class="typo-word typo-heals">HEALS</div>
-                </div>
-
-                <!-- 3. Central Botanical Ingredient Explosion Stage -->
-                <div class="explosion-center-stage">
-                    <!-- Particle FX Canvas -->
-                    <canvas class="explosion-particles-canvas" width="1000" height="700" aria-hidden="true"></canvas>
-
-                    <!-- Suspended Ingredients & Leaves Removed per request -->
-                </div>
-
-
-            </div>
-        </div>
-    </section>
 
     <!-- ==========================================================================
          SECTION 10 — THE NUTRONYX EXPERIENCE (WHAT OUR CUSTOMERS SAY)
