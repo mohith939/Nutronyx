@@ -304,116 +304,141 @@ $reviewMetaMap = [
                 </p>
             </div>
 
-            <!-- Central Interactive Stage with Unified Coordinates -->
-            <div class="power-stage">
-                <!-- SVG Connecting Lines Layer -->
-                <svg class="power-lines-svg" viewBox="0 0 1100 620" preserveAspectRatio="none" aria-hidden="true">
-                    <!-- Left: Amla Line (From Card Amla x:265, y:105 to Amla cut face x:492, y:148) -->
-                    <path class="conn-path conn-path-amla" d="M 265 105 C 365 105, 435 120, 488 148" />
-                    <circle class="line-dot dot-amla" cx="492" cy="148" r="4" />
+            <!-- Central 3D Elliptical Orbit Stage (Matching Image 2 & Section 4) -->
+            <div class="power-orbit-stage" id="powerOrbitStage">
+                <!-- Glowing 3D Elliptical Orbit Track -->
+                <div class="power-orbit-track-wrap" aria-hidden="true">
+                    <svg class="power-orbit-svg" viewBox="-400 -220 800 440" fill="none">
+                        <g transform="rotate(-10)">
+                            <ellipse cx="0" cy="0" rx="335" ry="135" class="power-orbit-glow-line" stroke="url(#powerOrbitGoldGlow)" stroke-width="2.5" fill="none"/>
+                            <ellipse cx="0" cy="0" rx="335" ry="135" class="power-orbit-dash-line" stroke="rgba(247, 215, 125, 0.85)" stroke-width="1.3" stroke-dasharray="6 8" fill="none"/>
+                        </g>
+                        <defs>
+                            <linearGradient id="powerOrbitGoldGlow" x1="-335" y1="-135" x2="335" y2="135" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#F7D070" stop-opacity="0.95"/>
+                                <stop offset="35%" stop-color="#FFE8A3" stop-opacity="1"/>
+                                <stop offset="70%" stop-color="#E5B25D" stop-opacity="0.85"/>
+                                <stop offset="100%" stop-color="#FAF1D2" stop-opacity="0.5"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
 
-                    <!-- Left: Beetroot Line (From Card Beetroot x:265, y:270 to Beetroot cut slice x:410, y:270) -->
-                    <path class="conn-path conn-path-beetroot" d="M 265 270 L 408 270" />
-                    <circle class="line-dot dot-beetroot" cx="410" cy="270" r="4" />
+                    <!-- Orbit Ambient Sparkles -->
+                    <div class="power-sparkle p-sparkle-1"></div>
+                    <div class="power-sparkle p-sparkle-2"></div>
+                    <div class="power-sparkle p-sparkle-3"></div>
+                </div>
 
-                    <!-- Left: Ginger Line (From Card Ginger x:265, y:440 to Ginger slice x:400, y:440) -->
-                    <path class="conn-path conn-path-ginger" d="M 265 440 L 398 440" />
-                    <circle class="line-dot dot-ginger" cx="400" cy="440" r="4" />
+                <!-- Center Cup / Powder Bowl with continuous rotation & levitation -->
+                <div class="power-center-cup-container" id="powerCenterCup">
+                    <div class="power-cup-radial-glow" aria-hidden="true"></div>
+                    <div class="power-cup-rotator" id="powerCupRotator">
+                        <img src="assets/images/five natural ingredients bowl image.png" alt="Natural Orange-Red Wellness Powder in Ceramic Bowl" class="power-cup-img">
+                    </div>
+                </div>
 
-                    <!-- Right: Carrot Line (From Carrot cut/body x:645, y:260 to Card Carrot x:835, y:260) -->
-                    <path class="conn-path conn-path-carrot" d="M 648 260 L 835 260" />
-                    <circle class="line-dot dot-carrot" cx="645" cy="260" r="4" />
+                <!-- 5 Orbiting Natural Ingredients (3D loop around cup) -->
+                <div class="power-orbiting-group" id="powerOrbitingGroup">
+                    <!-- 1. Amla -->
+                    <div class="power-orbit-item" id="orbitAmla" data-ingredient="amla" role="button" tabindex="0" aria-label="Amla">
+                        <div class="orbit-item-visual">
+                            <img src="assets/images/amla.png" alt="Amla" class="orbit-ing-img">
+                            <div class="orbit-item-halo"></div>
+                        </div>
+                        <div class="orbit-item-chip">
+                            <span class="chip-dot"></span>
+                            <span class="chip-name">Amla</span>
+                        </div>
+                    </div>
 
-                    <!-- Right: Lemon Line (From Lemon slice edge x:665, y:430 to Card Lemon x:835, y:430) -->
-                    <path class="conn-path conn-path-lemon" d="M 668 430 L 835 430" />
-                    <circle class="line-dot dot-lemon" cx="665" cy="430" r="4" />
-                </svg>
+                    <!-- 2. Beetroot -->
+                    <div class="power-orbit-item" id="orbitBeetroot" data-ingredient="beetroot" role="button" tabindex="0" aria-label="Beetroot">
+                        <div class="orbit-item-visual">
+                            <img src="assets/images/beetroot.png" alt="Beetroot" class="orbit-ing-img">
+                            <div class="orbit-item-halo"></div>
+                        </div>
+                        <div class="orbit-item-chip">
+                            <span class="chip-dot"></span>
+                            <span class="chip-name">Beetroot</span>
+                        </div>
+                    </div>
 
-                <!-- LEFT CALLOUT CARDS -->
-                <!-- Amla Card -->
-                <div class="power-card card-amla">
-                    <div class="card-icon-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#486B45" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- 3. Carrot -->
+                    <div class="power-orbit-item" id="orbitCarrot" data-ingredient="carrot" role="button" tabindex="0" aria-label="Carrot">
+                        <div class="orbit-item-visual">
+                            <img src="assets/images/carrot.png" alt="Carrot" class="orbit-ing-img">
+                            <div class="orbit-item-halo"></div>
+                        </div>
+                        <div class="orbit-item-chip">
+                            <span class="chip-dot"></span>
+                            <span class="chip-name">Carrot</span>
+                        </div>
+                    </div>
+
+                    <!-- 4. Ginger -->
+                    <div class="power-orbit-item" id="orbitGinger" data-ingredient="ginger" role="button" tabindex="0" aria-label="Ginger">
+                        <div class="orbit-item-visual">
+                            <img src="assets/images/ginger.png" alt="Ginger" class="orbit-ing-img">
+                            <div class="orbit-item-halo"></div>
+                        </div>
+                        <div class="orbit-item-chip">
+                            <span class="chip-dot"></span>
+                            <span class="chip-name">Ginger</span>
+                        </div>
+                    </div>
+
+                    <!-- 5. Lemon -->
+                    <div class="power-orbit-item" id="orbitLemon" data-ingredient="lemon" role="button" tabindex="0" aria-label="Lemon">
+                        <div class="orbit-item-visual">
+                            <img src="assets/images/lemon image.png" alt="Lemon" class="orbit-ing-img">
+                            <div class="orbit-item-halo"></div>
+                        </div>
+                        <div class="orbit-item-chip">
+                            <span class="chip-dot"></span>
+                            <span class="chip-name">Lemon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unified 5-Ingredient Descriptive Cards Strip (Replacing 3 on left & 2 on right tags) -->
+            <div class="power-ingredients-strip" id="powerIngredientsStrip">
+                <!-- Card 1: Amla -->
+                <div class="power-ing-card" data-ingredient="amla" tabindex="0">
+                    <div class="ing-card-icon-wrap">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D6038" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="9" cy="14" r="5" />
                             <circle cx="16" cy="11" r="4.5" />
                             <path d="M9 9 C 9 6, 12 4, 15 3" />
                             <path d="M12 5 C 14 6, 15 8, 15 9" />
                         </svg>
                     </div>
-                    <div class="card-text">
-                        <h3 class="card-name">Amla</h3>
-                        <p class="card-desc">A natural source of<br>plant nutrients.</p>
+                    <div class="ing-card-content">
+                        <h3 class="ing-card-title">Amla</h3>
+                        <p class="ing-card-desc">A natural source of plant nutrients.</p>
                     </div>
                 </div>
 
-                <!-- Beetroot Card -->
-                <div class="power-card card-beetroot">
-                    <div class="card-icon-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#486B45" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Card 2: Beetroot -->
+                <div class="power-ing-card" data-ingredient="beetroot" tabindex="0">
+                    <div class="ing-card-icon-wrap">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D6038" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 21 C 8 21, 5 17, 5 13 C 5 9.5, 8 7.5, 12 7.5 C 16 7.5, 19 9.5, 19 13 C 19 17, 16 21, 12 21 Z" />
                             <path d="M12 7.5 C 12 4, 10 2, 8 2" />
                             <path d="M12 7.5 C 13.5 4.5, 15.5 3, 17 3" />
                             <path d="M12 21 L 12 23" />
                         </svg>
                     </div>
-                    <div class="card-text">
-                        <h3 class="card-name">Beetroot</h3>
-                        <p class="card-desc">Rich in naturally<br>occurring nutrients.</p>
+                    <div class="ing-card-content">
+                        <h3 class="ing-card-title">Beetroot</h3>
+                        <p class="ing-card-desc">Rich in naturally occurring nutrients.</p>
                     </div>
                 </div>
 
-                <!-- Ginger Card -->
-                <div class="power-card card-ginger">
-                    <div class="card-icon-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#486B45" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 14 C 3 11, 5 8, 8 7 C 9 4, 12 3, 15 5 C 18 3, 21 5, 21 8 C 21 11, 19 13, 18 15 C 17 18, 14 20, 11 20 C 7 20, 4 17, 4 14 Z" />
-                            <path d="M8 12 C 10 13, 13 13, 15 11" />
-                        </svg>
-                    </div>
-                    <div class="card-text">
-                        <h3 class="card-name">Ginger</h3>
-                        <p class="card-desc">A time-honored<br>ingredient.</p>
-                    </div>
-                </div>
-
-                <!-- CENTRAL FLOATING INGREDIENTS COMPOSITION -->
-                <div class="power-center-composition">
-                    <!-- 1. Amla: Top Center -->
-                    <div class="power-ingredient ing-amla">
-                        <img src="assets/images/amla.png" alt="Amla" class="ing-img">
-                    </div>
-
-                    <!-- 2. Beetroot: Mid Left -->
-                    <div class="power-ingredient ing-beetroot">
-                        <img src="assets/images/beetroot.png" alt="Beetroot" class="ing-img">
-                    </div>
-
-                    <!-- 3. Carrot: Mid Right -->
-                    <div class="power-ingredient ing-carrot">
-                        <img src="assets/images/carrot.png" alt="Carrot" class="ing-img">
-                    </div>
-
-                    <!-- 4. Ginger: Lower Left -->
-                    <div class="power-ingredient ing-ginger">
-                        <img src="assets/images/ginger.png" alt="Ginger" class="ing-img">
-                    </div>
-
-                    <!-- 5. Lemon: Lower Right -->
-                    <div class="power-ingredient ing-lemon">
-                        <img src="assets/images/lemon image.png" alt="Fresh Lemon with Leaves" class="ing-img">
-                    </div>
-
-                    <!-- 6. Powder Bowl: Bottom Center with Natural Orange-Red Powder -->
-                    <div class="power-powder-bowl">
-                        <img src="assets/images/five natural ingredients bowl image.png" alt="Natural Orange-Red Wellness Powder in Ceramic Bowl" class="powder-bowl-img">
-                    </div>
-                </div>
-
-                <!-- RIGHT CALLOUT CARDS -->
-                <!-- Carrot Card -->
-                <div class="power-card card-carrot">
-                    <div class="card-icon-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#486B45" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Card 3: Carrot -->
+                <div class="power-ing-card" data-ingredient="carrot" tabindex="0">
+                    <div class="ing-card-icon-wrap">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D6038" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M7 17 L 17 7" />
                             <path d="M17 7 C 19 5, 21 6, 21 8 C 21 10, 19 12, 17 12 C 15 12, 14 11, 13 9" />
                             <path d="M7 17 C 5.5 18.5, 4 20, 3 21 C 4 20, 5.5 18.5, 7 17 Z" />
@@ -421,16 +446,30 @@ $reviewMetaMap = [
                             <path d="M17 7 L 21 5" />
                         </svg>
                     </div>
-                    <div class="card-text">
-                        <h3 class="card-name">Carrot</h3>
-                        <p class="card-desc">A wholesome<br>plant ingredient.</p>
+                    <div class="ing-card-content">
+                        <h3 class="ing-card-title">Carrot</h3>
+                        <p class="ing-card-desc">A wholesome plant ingredient.</p>
                     </div>
                 </div>
 
-                <!-- Lemon Card -->
-                <div class="power-card card-lemon">
-                    <div class="card-icon-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#486B45" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Card 4: Ginger -->
+                <div class="power-ing-card" data-ingredient="ginger" tabindex="0">
+                    <div class="ing-card-icon-wrap">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D6038" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 14 C 3 11, 5 8, 8 7 C 9 4, 12 3, 15 5 C 18 3, 21 5, 21 8 C 21 11, 19 13, 18 15 C 17 18, 14 20, 11 20 C 7 20, 4 17, 4 14 Z" />
+                            <path d="M8 12 C 10 13, 13 13, 15 11" />
+                        </svg>
+                    </div>
+                    <div class="ing-card-content">
+                        <h3 class="ing-card-title">Ginger</h3>
+                        <p class="ing-card-desc">A time-honored ingredient.</p>
+                    </div>
+                </div>
+
+                <!-- Card 5: Lemon -->
+                <div class="power-ing-card" data-ingredient="lemon" tabindex="0">
+                    <div class="ing-card-icon-wrap">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D6038" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="9" />
                             <line x1="12" y1="12" x2="12" y2="4" />
                             <line x1="12" y1="12" x2="18.5" y2="8" />
@@ -440,9 +479,9 @@ $reviewMetaMap = [
                             <line x1="12" y1="12" x2="5.5" y2="8" />
                         </svg>
                     </div>
-                    <div class="card-text">
-                        <h3 class="card-name">Lemon</h3>
-                        <p class="card-desc">Adds a fresh,<br>natural zest.</p>
+                    <div class="ing-card-content">
+                        <h3 class="ing-card-title">Lemon</h3>
+                        <p class="ing-card-desc">Adds a fresh, natural zest.</p>
                     </div>
                 </div>
             </div>

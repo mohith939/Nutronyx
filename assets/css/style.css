@@ -1429,236 +1429,286 @@ button {
     margin: 0 auto;
 }
 
-/* --- Interactive Composition Stage with Unified Coordinates --- */
-.power-stage {
+/* --- Section 2 3D Elliptical Orbit Stage (Matching Image 2 & Section 4) --- */
+.power-orbit-stage {
     position: relative;
     width: 100%;
-    max-width: 1100px;
-    height: 620px;
-    margin: 10px auto 30px auto;
+    max-width: 980px;
+    height: 480px;
+    margin: 20px auto 35px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
 }
 
-/* Connecting Lines SVG Layer: 1100 x 620 */
-.power-lines-svg {
+/* 3D Glowing Elliptical Orbit Track */
+.power-orbit-track-wrap {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
-    z-index: 4;
     pointer-events: none;
-}
-
-.conn-path {
-    stroke: #668C64;
-    stroke-width: 1.5;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0.95;
-}
-
-.line-dot {
-    fill: #668C64;
-    stroke: #FFFFFF;
-    stroke-width: 1.5;
-    transform-origin: center center;
-}
-
-/* Callout Cards: Positioned at Exact Coordinates */
-.power-card {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.96);
-    border: 1.5px solid #D6EAD7;
-    border-radius: 40px;
-    padding: 11px 20px;
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    box-shadow: 0 10px 26px rgba(35, 60, 45, 0.05);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 10;
-    width: 250px;
-    transition: transform 0.3s var(--ease-smooth), box-shadow 0.3s ease, border-color 0.3s ease;
-    will-change: transform, opacity;
-}
-
-.power-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 30px rgba(35, 60, 45, 0.08);
-    border-color: #BCDDBD;
-}
-
-.card-icon-badge {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    border-radius: 50%;
-    background-color: #EBF5EC;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.card-text {
+.power-orbit-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    filter: drop-shadow(0 0 16px rgba(245, 205, 110, 0.45));
+}
+
+.power-orbit-glow-line {
+    animation: powerOrbitPulse 5s ease-in-out infinite alternate;
+}
+
+@keyframes powerOrbitPulse {
+    0% { opacity: 0.75; stroke-width: 2.0; }
+    100% { opacity: 1; stroke-width: 2.8; filter: drop-shadow(0 0 10px rgba(247, 215, 125, 0.85)); }
+}
+
+.power-sparkle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #FFF5D1;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #FFD970, 0 0 16px #FFF;
+    pointer-events: none;
+    animation: sparkleGlow 3.5s ease-in-out infinite alternate;
+}
+
+.p-sparkle-1 { top: 28%; right: 22%; animation-delay: 0.3s; }
+.p-sparkle-2 { bottom: 25%; left: 20%; animation-delay: 1.5s; }
+.p-sparkle-3 { top: 52%; right: 14%; animation-delay: 2.4s; }
+
+/* Center Cup / Ceramic Powder Bowl */
+.power-center-cup-container {
+    position: absolute;
+    width: clamp(230px, 25vw, 310px);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.power-cup-radial-glow {
+    position: absolute;
+    width: 140%;
+    height: 140%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(247, 215, 125, 0.28) 0%, rgba(212, 163, 62, 0.08) 55%, transparent 75%);
+    pointer-events: none;
+    z-index: -1;
+    filter: blur(14px);
+    animation: cupAuraPulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes cupAuraPulse {
+    0% { transform: scale(0.92); opacity: 0.6; }
+    100% { transform: scale(1.08); opacity: 0.95; }
+}
+
+.power-cup-rotator {
+    width: 100%;
+    height: auto;
+    will-change: transform;
+    filter: drop-shadow(0 20px 32px rgba(45, 25, 15, 0.22));
+}
+
+.power-cup-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+/* 5 Orbiting Natural Ingredients */
+.power-orbiting-group {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.power-orbit-item {
+    position: absolute;
+    width: clamp(105px, 12vw, 135px);
+    height: clamp(105px, 12vw, 135px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: auto;
+    will-change: transform, z-index, opacity;
+    user-select: none;
+    transition: filter 0.3s ease;
+}
+
+.orbit-item-visual {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.orbit-ing-img {
+    width: 88%;
+    height: 88%;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 20px rgba(30, 45, 25, 0.22));
+    transition: transform 0.35s var(--ease-smooth), filter 0.35s ease;
+}
+
+.power-orbit-item:hover .orbit-ing-img,
+.power-orbit-item.is-active .orbit-ing-img {
+    transform: scale(1.16);
+    filter: drop-shadow(0 18px 28px rgba(20, 77, 41, 0.36));
+}
+
+.orbit-item-chip {
+    margin-top: -8px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #D6EAD7;
+    border-radius: 9999px;
+    padding: 3px 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #143023;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.chip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #144D29;
+}
+
+.power-orbit-item:hover .orbit-item-chip,
+.power-orbit-item.is-active .orbit-item-chip {
+    background: #144D29;
+    color: #FFFFFF;
+    border-color: #144D29;
+}
+
+.power-orbit-item:hover .chip-dot,
+.power-orbit-item.is-active .chip-dot {
+    background: #FFD970;
+}
+
+/* Unified 5-Ingredient Descriptive Cards Strip (Replacing 3 on left & 2 on right tags) */
+.power-ingredients-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 10px auto 35px auto;
+    position: relative;
+    z-index: 8;
+}
+
+.power-ing-card {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1.5px solid #E2EFE3;
+    border-radius: 16px;
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: 0 6px 20px rgba(35, 60, 45, 0.04);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s var(--ease-smooth);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.power-ing-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #144D29 0%, #2D7A47 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.power-ing-card:hover,
+.power-ing-card.is-active {
+    transform: translateY(-4px);
+    border-color: #A3D4AA;
+    box-shadow: 0 14px 28px rgba(20, 77, 41, 0.1);
+    background: #FFFFFF;
+}
+
+.power-ing-card:hover::before,
+.power-ing-card.is-active::before {
+    opacity: 1;
+}
+
+.ing-card-icon-wrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #EAF5EC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.power-ing-card:hover .ing-card-icon-wrap,
+.power-ing-card.is-active .ing-card-icon-wrap {
+    background: #144D29;
+}
+
+.power-ing-card:hover .ing-card-icon-wrap svg,
+.power-ing-card.is-active .ing-card-icon-wrap svg {
+    stroke: #FFFFFF;
+}
+
+.ing-card-content {
     display: flex;
     flex-direction: column;
 }
 
-.card-name {
+.ing-card-title {
     font-size: 15.5px;
     font-weight: 700;
     color: #143023;
+    margin: 0 0 4px 0;
     line-height: 1.2;
-    margin-bottom: 2px;
 }
 
-.card-desc {
-    font-size: 12px;
-    color: #66766B;
-    line-height: 1.35;
-    font-weight: 400;
-}
-
-/* Left Cards Coordinates (Scoped to Section 2 Power Stage) */
-.power-stage .card-amla,
-.section-power .card-amla {
-    top: 75px;
-    left: 15px;
-    right: auto;
-}
-
-.power-stage .card-beetroot,
-.section-power .card-beetroot {
-    top: 240px;
-    left: 15px;
-    right: auto;
-}
-
-.power-stage .card-ginger,
-.section-power .card-ginger {
-    top: 410px;
-    left: 15px;
-    right: auto;
-}
-
-/* Right Cards Coordinates (Scoped to Section 2 Power Stage) */
-.power-stage .card-carrot,
-.section-power .card-carrot {
-    top: 230px;
-    right: 15px;
-    left: auto;
-}
-
-.power-stage .card-lemon,
-.section-power .card-lemon {
-    top: 400px;
-    right: 15px;
-    left: auto;
-}
-
-/* Central Floating Ingredients Composition */
-.power-center-composition {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-/* Floating Ingredients Anchored to Coordinates */
-.power-ingredient {
-    position: absolute;
-    will-change: transform, opacity;
-    pointer-events: none;
-    user-select: none;
-    transform: translate(-50%, -50%);
-    width: 145px;
-    height: 145px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.ing-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-/* 1. Amla: Top Center (Line reaches cut amla face at x:492, y:148) */
-.ing-amla {
-    top: 150px;
-    left: 545px;
-    width: 145px;
-    height: 145px;
-    z-index: 5;
-    filter: drop-shadow(0 14px 22px rgba(40, 60, 30, 0.22));
-}
-
-/* 2. Beetroot: Mid Left (Line reaches cut slice at x:410, y:270) */
-.ing-beetroot {
-    top: 285px;
-    left: 450px;
-    width: 145px;
-    height: 145px;
-    z-index: 6;
-    filter: drop-shadow(-8px 14px 22px rgba(60, 20, 30, 0.26));
-}
-
-/* 3. Carrot: Mid Right (Line reaches carrot at x:645, y:260) */
-.ing-carrot {
-    top: 260px;
-    left: 635px;
-    width: 145px;
-    height: 145px;
-    z-index: 5;
-    filter: drop-shadow(8px 14px 22px rgba(90, 45, 10, 0.22));
-}
-
-/* 4. Ginger: Lower Left (Line reaches cut slice at x:400, y:440) */
-.ing-ginger {
-    top: 445px;
-    left: 440px;
-    width: 145px;
-    height: 145px;
-    z-index: 7;
-    filter: drop-shadow(0 12px 18px rgba(80, 55, 25, 0.22));
-}
-
-/* 5. Lemon: Lower Right (Fresh angled wedge with juicy pulp and green leaf) */
-.ing-lemon {
-    top: 435px;
-    left: 645px;
-    width: 145px;
-    height: 145px;
-    z-index: 7;
-    filter: drop-shadow(0 14px 24px rgba(100, 80, 20, 0.22));
-}
-
-/* Botanical Leaves Accent - Removed */
-.ing-leaves {
-    display: none !important;
-}
-
-/* 7. Powder Bowl: Bottom Center with Natural Orange-Red Powder */
-.power-powder-bowl {
-    position: absolute;
-    bottom: 5px;
-    left: 550px;
-    transform: translateX(-50%);
-    width: 250px;
-    z-index: 8;
-    filter: drop-shadow(0 16px 26px rgba(50, 30, 20, 0.18));
-    will-change: transform, opacity;
-}
-
-.powder-bowl-img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
+.ing-card-desc {
+    font-size: 12.5px;
+    color: #556459;
+    line-height: 1.45;
+    margin: 0;
 }
 
 /* Bottom CTA Button Row */
@@ -1697,54 +1747,28 @@ button {
 
 /* --- Section 2 Responsive Media Queries --- */
 
-/* Laptops (under 1150px) */
-@media (max-width: 1149px) {
-    .power-stage {
-        transform: scale(0.9);
-        transform-origin: top center;
-        margin-bottom: -40px;
-    }
-}
-
-/* Tablets (under 1024px) */
+/* Laptops & Tablets (under 1024px) */
 @media (max-width: 1023px) {
     .section-power {
         padding: 50px 0 60px 0;
     }
-    .power-stage {
-        transform: none;
-        height: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 25px;
+    .power-orbit-stage {
+        height: 400px;
+        margin: 15px auto 25px auto;
     }
-    .power-lines-svg {
-        display: none; /* Hide SVG lines on tablet/mobile where cards stack */
+    .power-center-cup-container {
+        width: 240px;
     }
-    .power-card {
-        position: static;
-        width: 100%;
-        max-width: 320px;
+    .power-ingredients-strip {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
     }
-    .power-center-composition {
-        position: relative;
-        width: 440px;
-        height: 460px;
-        order: 2;
-        margin: 20px 0;
+    .power-ing-card:nth-child(4) {
+        grid-column: span 1;
     }
-    .orbital-swirl-ring {
-        width: 380px;
-        height: 380px;
+    .power-ing-card:nth-child(5) {
+        grid-column: span 2;
     }
-    .ing-amla { top: 90px; left: 50%; width: 125px; height: 125px; }
-    .ing-beetroot { top: 200px; left: 32%; width: 125px; height: 125px; }
-    .ing-carrot { top: 180px; left: 68%; width: 125px; height: 125px; }
-    .ing-ginger { top: 330px; left: 32%; width: 125px; height: 125px; }
-    .ing-lemon { top: 325px; left: 68%; width: 125px; height: 125px; }
-    .ing-leaves { display: none !important; }
-    .power-powder-bowl { bottom: 0px; left: 50%; width: 210px; }
 }
 
 /* Mobile Devices (under 768px) */
@@ -1759,20 +1783,39 @@ button {
     .power-description {
         font-size: 14.5px;
     }
-    .power-center-composition {
-        width: 300px;
-        height: 340px;
+    .power-orbit-stage {
+        height: 320px;
+        margin: 10px auto 20px auto;
     }
-    .orbital-swirl-ring {
-        width: 280px;
-        height: 280px;
+    .power-center-cup-container {
+        width: 180px;
     }
-    .ing-amla { top: 70px; width: 90px; height: 90px; }
-    .ing-beetroot { top: 150px; left: 30%; width: 90px; height: 90px; }
-    .ing-carrot { top: 140px; left: 70%; width: 90px; height: 90px; }
-    .ing-ginger { top: 245px; left: 30%; width: 90px; height: 90px; }
-    .ing-lemon { top: 240px; left: 70%; width: 90px; height: 90px; }
-    .ing-leaves { display: none !important; }
+    .power-orbit-item {
+        width: 85px;
+        height: 85px;
+    }
+    .orbit-item-chip {
+        font-size: 10px;
+        padding: 2px 7px;
+        margin-top: -4px;
+    }
+    .power-ingredients-strip {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .power-ing-card {
+        padding: 14px 12px;
+        gap: 8px;
+    }
+    .power-ing-card:last-child {
+        grid-column: span 2;
+    }
+    .ing-card-title {
+        font-size: 14px;
+    }
+    .ing-card-desc {
+        font-size: 11.5px;
+    }
     .power-powder-bowl { bottom: 0px; width: 175px; }
     .btn-explore-ingredients {
         width: 100%;

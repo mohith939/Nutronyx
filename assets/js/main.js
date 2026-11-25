@@ -106,106 +106,185 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ==========================================
     // SECTION 2: THE POWER WITHIN ANIMATION
-    // Integrated Scroll-Driven Sequence (Phases A -> G)
+    // 3D Elliptical Ingredient Orbit & Rotating Cup System (like Section 4)
     // ==========================================
     const powerSection = document.querySelector(".section-power");
-    if (powerSection) {
-        // Initialize SVG stroke-dasharray and stroke-dashoffset for connecting lines
-        const connPaths = document.querySelectorAll(".conn-path");
-        connPaths.forEach(path => {
-            const length = path.getTotalLength ? path.getTotalLength() : 300;
-            gsap.set(path, {
-                strokeDasharray: length,
-                strokeDashoffset: length
-            });
-        });
+    if (powerSection && typeof gsap !== "undefined") {
+        const stage = powerSection.querySelector("#powerOrbitStage");
+        const cupRotator = powerSection.querySelector("#powerCupRotator");
+        const orbitItems = [
+            powerSection.querySelector("#orbitAmla"),
+            powerSection.querySelector("#orbitBeetroot"),
+            powerSection.querySelector("#orbitCarrot"),
+            powerSection.querySelector("#orbitGinger"),
+            powerSection.querySelector("#orbitLemon")
+        ].filter(Boolean);
+        const cards = powerSection.querySelectorAll(".power-ing-card");
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        // Anchor dots initial state
-        gsap.set(".line-dot", { scale: 0, opacity: 0, transformOrigin: "center center" });
-
-        // Phase A: Initial states for headers
+        // Initial setup for entrance animation
         gsap.set([".power-eyebrow-wrapper", ".power-headline", ".power-description"], {
             opacity: 0,
-            y: 40
+            y: 35
         });
+        if (stage) gsap.set(stage, { opacity: 0, scale: 0.94 });
+        gsap.set(cards, { opacity: 0, y: 30 });
+        gsap.set(".btn-explore-ingredients", { opacity: 0, y: 20 });
 
-        // Phase B: Ingredients initial offset positions (with xPercent/yPercent: -50 preserved)
-        gsap.set(".ing-amla", { xPercent: -50, yPercent: -50, y: -70, scale: 0.88, opacity: 0, rotation: -10 });
-        gsap.set(".ing-beetroot", { xPercent: -50, yPercent: -50, x: -100, y: -20, scale: 0.88, opacity: 0, rotation: -22 });
-        gsap.set(".ing-carrot", { xPercent: -50, yPercent: -50, x: 100, y: -30, scale: 0.88, opacity: 0, rotation: 28 });
-        gsap.set(".ing-ginger", { xPercent: -50, yPercent: -50, x: -80, y: 60, scale: 0.88, opacity: 0, rotation: 10 });
-        gsap.set(".ing-lemon", { xPercent: -50, yPercent: -50, x: 80, y: 60, scale: 0.88, opacity: 0, rotation: 22 });
-        gsap.set(".ing-leaves", { xPercent: -50, yPercent: -50, y: 40, scale: 0.7, opacity: 0, rotation: -50 });
-
-        // Phase C & D: Cards initial state
-        gsap.set(".power-card", { opacity: 0, y: 30, scale: 0.95 });
-
-        // Phase E: Powder bowl & CTA initial state (with xPercent: -50 preserved)
-        gsap.set(".power-powder-bowl", { xPercent: -50, y: 65, opacity: 0, scale: 0.92 });
-        gsap.set(".btn-explore-ingredients", { opacity: 0, y: 25 });
-
-        // Integrated ScrollTrigger Scrub Timeline
-        const powerTimeline = gsap.timeline({
+        // ScrollTrigger Entrance Timeline
+        const powerEntrance = gsap.timeline({
             scrollTrigger: {
                 trigger: ".section-power",
-                start: "top 80%",
-                end: "center 50%",
-                scrub: 1, // Smooth scroll synchronization
-                invalidateOnRefresh: true,
+                start: "top 75%",
+                toggleActions: "play none none none"
             }
         });
 
-        // A. Section Entrance (0.0 to 0.25)
-        powerTimeline
-            .to(".power-eyebrow-wrapper", { opacity: 1, y: 0, duration: 0.15, ease: "power2.out" }, 0)
-            .to(".power-headline", { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }, 0.05)
-            .to(".power-description", { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }, 0.1);
+        powerEntrance
+            .to(".power-eyebrow-wrapper", { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" })
+            .to(".power-headline", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.35")
+            .to(".power-description", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.4")
+            .to(stage, { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" }, "-=0.3")
+            .to(cards, { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out" }, "-=0.4")
+            .to(".btn-explore-ingredients", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, "-=0.2");
 
-        // B. Ingredient Assembly (0.15 to 0.5)
-        powerTimeline
-            .to(".ing-amla", { x: 0, y: 0, scale: 1, opacity: 1, rotation: 5, duration: 0.35, ease: "power2.out" }, 0.15)
-            .to(".ing-beetroot", { x: 0, y: 0, scale: 1, opacity: 1, rotation: -10, duration: 0.35, ease: "power2.out" }, 0.18)
-            .to(".ing-carrot", { x: 0, y: 0, scale: 1, opacity: 1, rotation: 18, duration: 0.35, ease: "power2.out" }, 0.2)
-            .to(".ing-ginger", { x: 0, y: 0, scale: 1, opacity: 1, rotation: -4, duration: 0.35, ease: "power2.out" }, 0.22)
-            .to(".ing-lemon", { x: 0, y: 0, scale: 1, opacity: 1, rotation: 12, duration: 0.35, ease: "power2.out" }, 0.24)
-            .to(".ing-leaves", { x: 0, y: 0, scale: 1, opacity: 0.85, rotation: -35, duration: 0.3, ease: "power2.out" }, 0.25);
+        // 1. Center Cup Continuous Kinetic Rotation & Levitation (like Section 4 clock)
+        if (cupRotator && !prefersReducedMotion) {
+            // Smooth continuous rotational oscillation & 3D tilt
+            gsap.to(cupRotator, {
+                rotation: 6,
+                rotationY: 8,
+                duration: 4.2,
+                ease: "sine.inOut",
+                yoyo: true,
+                repeat: -1
+            });
+            // Gentle levitation float
+            gsap.to(cupRotator, {
+                y: -12,
+                duration: 3.2,
+                ease: "sine.inOut",
+                yoyo: true,
+                repeat: -1
+            });
+        }
 
-        // C. Connecting Line Animation (0.35 to 0.65)
-        powerTimeline
-            .to(".conn-path-amla", { strokeDashoffset: 0, duration: 0.25, ease: "power1.inOut" }, 0.35)
-            .to(".dot-amla", { scale: 1, opacity: 1, duration: 0.1, ease: "back.out(2)" }, 0.55)
-            
-            .to(".conn-path-beetroot", { strokeDashoffset: 0, duration: 0.25, ease: "power1.inOut" }, 0.38)
-            .to(".dot-beetroot", { scale: 1, opacity: 1, duration: 0.1, ease: "back.out(2)" }, 0.58)
+        // 2. 3D Elliptical Orbit System (Matching Image 2 & Section 4)
+        if (orbitItems.length === 5 && stage) {
+            // Initial angular positions around the ellipse (in degrees, evenly 72 deg apart)
+            const baseAngles = [-90, -18, 54, 126, 198];
+            const orbitProgress = { progress: 0 };
+            const tiltAngle = -10 * (Math.PI / 180); // -10 deg tilt matching SVG transform="rotate(-10)"
 
-            .to(".conn-path-ginger", { strokeDashoffset: 0, duration: 0.25, ease: "power1.inOut" }, 0.42)
-            .to(".dot-ginger", { scale: 1, opacity: 1, duration: 0.1, ease: "back.out(2)" }, 0.62)
+            function updatePowerOrbitPositions() {
+                const stageWidth = stage.offsetWidth || 800;
+                // Base SVG viewBox is -400 -220 800 440, rx=335, ry=135
+                const scale = Math.min(1.05, stageWidth / 800);
+                const rx = 335 * scale;
+                const ry = 135 * scale;
 
-            .to(".conn-path-carrot", { strokeDashoffset: 0, duration: 0.25, ease: "power1.inOut" }, 0.4)
-            .to(".dot-carrot", { scale: 1, opacity: 1, duration: 0.1, ease: "back.out(2)" }, 0.6)
+                orbitItems.forEach((item, idx) => {
+                    const currentDeg = (baseAngles[idx] + orbitProgress.progress * 360) % 360;
+                    const rad = currentDeg * (Math.PI / 180);
 
-            .to(".conn-path-lemon", { strokeDashoffset: 0, duration: 0.25, ease: "power1.inOut" }, 0.44)
-            .to(".dot-lemon", { scale: 1, opacity: 1, duration: 0.1, ease: "back.out(2)" }, 0.64);
+                    // Unrotated ellipse coordinate
+                    const unrotX = rx * Math.cos(rad);
+                    const unrotY = ry * Math.sin(rad);
 
-        // D. Ingredient Card Reveal (0.45 to 0.72)
-        powerTimeline
-            .to(".card-amla", { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: "power2.out" }, 0.46)
-            .to(".card-beetroot", { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: "power2.out" }, 0.5)
-            .to(".card-ginger", { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: "power2.out" }, 0.54)
-            .to(".card-carrot", { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: "power2.out" }, 0.52)
-            .to(".card-lemon", { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: "power2.out" }, 0.56);
+                    // Rotate coordinate by tilt angle (-10 deg)
+                    const posX = unrotX * Math.cos(tiltAngle) - unrotY * Math.sin(tiltAngle);
+                    const posY = unrotX * Math.sin(tiltAngle) + unrotY * Math.cos(tiltAngle);
 
-        // E. Powder Bowl Entrance (0.52 to 0.8)
-        powerTimeline
-            .to(".power-powder-bowl", { y: 0, opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }, 0.52)
-            .to(".btn-explore-ingredients", { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }, 0.65);
+                    // 3D Depth Layering (Bowl is zIndex: 10):
+                    // When unrotY < 0, item is behind the cup (scale down, lower z-index: 4)
+                    // When unrotY >= 0, item is in front of the cup (scale up, higher z-index: 16)
+                    const depthNormalized = (unrotY + ry) / (2 * ry); // 0 (far back) to 1 (front)
+                    const scaleFactor = 0.78 + depthNormalized * 0.40; // 0.78 to 1.18
+                    const zIndex = unrotY < 0 ? 4 : 16;
+                    const opacity = 0.82 + depthNormalized * 0.18; // 0.82 to 1
 
-        // Window load refresh for ScrollTrigger
+                    gsap.set(item, {
+                        x: posX,
+                        y: posY,
+                        scale: scaleFactor,
+                        zIndex: zIndex,
+                        opacity: opacity,
+                        xPercent: -50,
+                        yPercent: -50
+                    });
+                });
+            }
+
+            // Initial positioning
+            updatePowerOrbitPositions();
+
+            // Continuous smooth orbit rotation (28s per complete revolution)
+            if (!prefersReducedMotion) {
+                const orbitTween = gsap.to(orbitProgress, {
+                    progress: 1,
+                    duration: 28,
+                    ease: "none",
+                    repeat: -1,
+                    onUpdate: updatePowerOrbitPositions
+                });
+
+                window.addEventListener("resize", () => {
+                    updatePowerOrbitPositions();
+                }, { passive: true });
+
+                // Pause / slow on hover for enhanced user inspection
+                stage.addEventListener("mouseenter", () => {
+                    gsap.to(orbitTween, { timeScale: 0.18, duration: 0.6 });
+                });
+                stage.addEventListener("mouseleave", () => {
+                    gsap.to(orbitTween, { timeScale: 1, duration: 0.6 });
+                });
+
+                // Two-way interactive sync: Hovering Card highlights Orbit Item
+                cards.forEach(card => {
+                    const ingName = card.getAttribute("data-ingredient");
+                    const matchedOrbit = stage.querySelector(`.power-orbit-item[data-ingredient="${ingName}"]`);
+
+                    card.addEventListener("mouseenter", () => {
+                        cards.forEach(c => c.classList.remove("is-active"));
+                        orbitItems.forEach(i => i.classList.remove("is-active"));
+                        card.classList.add("is-active");
+                        if (matchedOrbit) matchedOrbit.classList.add("is-active");
+                        gsap.to(orbitTween, { timeScale: 0.12, duration: 0.5 });
+                    });
+
+                    card.addEventListener("mouseleave", () => {
+                        card.classList.remove("is-active");
+                        if (matchedOrbit) matchedOrbit.classList.remove("is-active");
+                        gsap.to(orbitTween, { timeScale: 1, duration: 0.5 });
+                    });
+                });
+
+                // Hovering Orbit Item highlights Description Card
+                orbitItems.forEach(item => {
+                    const ingName = item.getAttribute("data-ingredient");
+                    const matchedCard = powerSection.querySelector(`.power-ing-card[data-ingredient="${ingName}"]`);
+
+                    item.addEventListener("mouseenter", () => {
+                        orbitItems.forEach(i => i.classList.remove("is-active"));
+                        cards.forEach(c => c.classList.remove("is-active"));
+                        item.classList.add("is-active");
+                        if (matchedCard) matchedCard.classList.add("is-active");
+                    });
+
+                    item.addEventListener("mouseleave", () => {
+                        item.classList.remove("is-active");
+                        if (matchedCard) matchedCard.classList.remove("is-active");
+                    });
+                });
+            }
+        }
+
         window.addEventListener("load", () => {
-            ScrollTrigger.refresh();
+            if (typeof ScrollTrigger !== "undefined") {
+                ScrollTrigger.refresh();
+            }
         });
-
-        // F & G. Complete Composition settles into place with smooth transition
     }
 
     // ==========================================
