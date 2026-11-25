@@ -304,7 +304,8 @@ HTML;
                 COUNT(*) as total,
                 SUM(CASE WHEN status = 'NEW' THEN 1 ELSE 0 END) as new_count,
                 SUM(CASE WHEN type = 'CONTACT' THEN 1 ELSE 0 END) as contact_count,
-                SUM(CASE WHEN type = 'PARTNERSHIP' THEN 1 ELSE 0 END) as partnership_count
+                SUM(CASE WHEN type = 'PARTNERSHIP' THEN 1 ELSE 0 END) as partnership_count,
+                SUM(CASE WHEN type = 'WELCOME_OFFER' THEN 1 ELSE 0 END) as welcome_count
             FROM customer_inquiries 
             WHERE website_id = :wid
         ");
@@ -322,6 +323,7 @@ HTML;
                 'new'               => (int)($stats['new_count'] ?? 0),
                 'contact'           => (int)($stats['contact_count'] ?? 0),
                 'partnership'       => (int)($stats['partnership_count'] ?? 0),
+                'welcome'           => (int)($stats['welcome_count'] ?? 0),
             ]
         ];
     }

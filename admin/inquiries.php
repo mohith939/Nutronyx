@@ -142,6 +142,7 @@ function getInquiryPageUrl(array $overrides = []): string {
     .kpi-icon-box.new { background: #FEF3C7; color: #D97706; }
     .kpi-icon-box.contact { background: #E8F5E9; color: #166534; }
     .kpi-icon-box.partner { background: #EDE9FE; color: #6D28D9; }
+    .kpi-icon-box.welcome { background: #EAF4EE; color: #143D24; }
 
     .kpi-title {
         font-size: 12px;
@@ -324,6 +325,12 @@ function getInquiryPageUrl(array $overrides = []): string {
         background: #FEF3C7;
         color: #92400E;
         border: 1px solid #FDE68A;
+    }
+
+    .badge-type.welcome {
+        background: #EAF4EE;
+        color: #143D24;
+        border: 1px solid #BBF7D0;
     }
 
     /* Status dot pills */
@@ -662,13 +669,27 @@ function getInquiryPageUrl(array $overrides = []): string {
                             <div class="kpi-val" style="color: #6D28D9;"><?= number_format($stats['partnership']) ?></div>
                         </div>
                     </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon-box welcome">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                        </div>
+                        <div>
+                            <div class="kpi-title">Welcome Leads (FIRST10)</div>
+                            <div class="kpi-val" style="color: #143D24;"><?= number_format($stats['welcome'] ?? 0) ?></div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Tabs: All, Contact, Partnership, New -->
+                <!-- Tabs: All, Contact, Partnership, Welcome, New -->
                 <div class="tabs-row">
                     <a href="<?= getInquiryPageUrl(['type' => 'ALL', 'page' => 1]) ?>" class="tab-pill <?= ($typeFilter === 'ALL' && $statusFilter !== 'NEW') ? 'active' : '' ?>">
                         <span>All Inquiries</span>
                         <span class="pill-counter"><?= $stats['total'] ?></span>
+                    </a>
+                    <a href="<?= getInquiryPageUrl(['type' => 'WELCOME_OFFER', 'status' => 'ALL', 'page' => 1]) ?>" class="tab-pill <?= ($typeFilter === 'WELCOME_OFFER') ? 'active' : '' ?>">
+                        <span>Welcome Leads (FIRST10)</span>
+                        <span class="pill-counter" style="background: #EAF4EE; color: #166534;"><?= $stats['welcome'] ?? 0 ?></span>
                     </a>
                     <a href="<?= getInquiryPageUrl(['type' => 'CONTACT', 'status' => 'ALL', 'page' => 1]) ?>" class="tab-pill <?= ($typeFilter === 'CONTACT') ? 'active' : '' ?>">
                         <span>Contact Messages</span>
@@ -733,6 +754,7 @@ function getInquiryPageUrl(array $overrides = []): string {
                             <?php else: ?>
                                 <?php foreach ($inquiries as $inq): 
                                     $isPartner = ($inq['type'] === 'PARTNERSHIP');
+                                    $isWelcome = ($inq['type'] === 'WELCOME_OFFER');
                                     $datePart = date('d M Y', strtotime($inq['created_at']));
                                     $timePart = date('h:i A', strtotime($inq['created_at']));
                                     $st = strtoupper($inq['status'] ?? 'NEW');
@@ -746,15 +768,22 @@ function getInquiryPageUrl(array $overrides = []): string {
 
                                         <!-- Type -->
                                         <td>
-                                            <span class="badge-type <?= $isPartner ? 'partnership' : 'contact' ?>">
-                                                <?php if ($isPartner): ?>
+                                            <?php if ($isPartner): ?>
+                                                <span class="badge-type partnership">
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
                                                     <span>Partnership</span>
-                                                <?php else: ?>
+                                                </span>
+                                            <?php elseif ($isWelcome): ?>
+                                                <span class="badge-type welcome">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                                                    <span>Welcome Lead</span>
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="badge-type contact">
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                                                     <span>Contact</span>
-                                                <?php endif; ?>
-                                            </span>
+                                                </span>
+                                            <?php endif; ?>
                                         </td>
 
                                         <!-- Submitter Contact -->
