@@ -1195,7 +1195,7 @@ $reviewMetaMap = [
 
                         <!-- Circular Media Frame -->
                         <div class="stage-circle-inner">
-                            <img src="assets/images/ritual-mix.jpg" alt="Mixing ABC+ powder with fresh water" class="stage-base-img mix-base-img" loading="lazy">
+                            <img src="assets/images/ritual-mix.png" alt="Mixing ABC+ powder with fresh water" class="stage-base-img mix-base-img" loading="lazy">
                             <!-- Continuous Pouring Water Stream & Ripples Canvas -->
                             <canvas class="stage-canvas canvas-water" width="340" height="340" aria-hidden="true"></canvas>
                         </div>
