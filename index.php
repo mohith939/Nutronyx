@@ -333,7 +333,7 @@ $reviewMetaMap = [
                 <div class="power-center-cup-container" id="powerCenterCup">
                     <div class="power-cup-radial-glow" aria-hidden="true"></div>
                     <div class="power-cup-rotator" id="powerCupRotator">
-                        <img src="assets/images/five natural ingredients bowl image.png" alt="Natural Orange-Red Wellness Powder in Ceramic Bowl" class="power-cup-img">
+                        <img src="assets/images/five-ingredients-bowl.png?v=<?= file_exists(__DIR__ . '/assets/images/five-ingredients-bowl.png') ? filemtime(__DIR__ . '/assets/images/five-ingredients-bowl.png') : '1' ?>" alt="Natural Orange-Red Wellness Powder in Ceramic Bowl" class="power-cup-img">
                     </div>
                 </div>
 
@@ -390,7 +390,7 @@ $reviewMetaMap = [
                     <!-- 5. Lemon -->
                     <div class="power-orbit-item" id="orbitLemon" data-ingredient="lemon" role="button" tabindex="0" aria-label="Lemon">
                         <div class="orbit-item-visual">
-                            <img src="assets/images/lemon image.png" alt="Lemon" class="orbit-ing-img">
+                            <img src="assets/images/lemon.png?v=<?= file_exists(__DIR__ . '/assets/images/lemon.png') ? filemtime(__DIR__ . '/assets/images/lemon.png') : '1' ?>" alt="Lemon" class="orbit-ing-img">
                             <div class="orbit-item-halo"></div>
                         </div>
                         <div class="orbit-item-chip">

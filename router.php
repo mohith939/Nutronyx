@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
-$file = __DIR__ . $uri;
+$file = __DIR__ . rawurldecode($uri);
 
 // If physical file exists (static asset, image, css, js) and is not a directory, serve it directly
 if ($uri !== '/' && file_exists($file) && !is_dir($file)) {
