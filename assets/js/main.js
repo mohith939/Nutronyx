@@ -129,7 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         if (stage) gsap.set(stage, { opacity: 0, scale: 0.94 });
         gsap.set(cards, { opacity: 0, y: 30 });
-        gsap.set(".btn-explore-ingredients", { opacity: 0, y: 20 });
 
         // ScrollTrigger Entrance Timeline
         const powerEntrance = gsap.timeline({
@@ -145,8 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .to(".power-headline", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.35")
             .to(".power-description", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.4")
             .to(stage, { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" }, "-=0.3")
-            .to(cards, { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out" }, "-=0.4")
-            .to(".btn-explore-ingredients", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, "-=0.2");
+            .to(cards, { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out" }, "-=0.4");
 
         // 1. Center Cup Continuous Kinetic Rotation & Levitation (like Section 4 clock)
         if (cupRotator && !prefersReducedMotion) {

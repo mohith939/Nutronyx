@@ -1718,40 +1718,6 @@ button {
     margin: 0;
 }
 
-/* Bottom CTA Button Row */
-.power-cta-row {
-    position: relative;
-    z-index: 10;
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
-}
-
-.btn-explore-ingredients {
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    background-color: #1F451B;
-    color: #FFFFFF;
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    padding: 16px 38px;
-    border-radius: 9999px;
-    box-shadow: 0 10px 26px rgba(31, 69, 27, 0.25);
-    transition: background-color 0.3s ease, transform 0.3s var(--ease-smooth), box-shadow 0.3s ease;
-}
-
-.btn-explore-ingredients:hover {
-    background-color: #163613;
-    transform: translateY(-2px);
-    box-shadow: 0 14px 32px rgba(31, 69, 27, 0.32);
-}
-
-.btn-explore-ingredients:hover .cta-arrow {
-    transform: translateX(5px);
-}
-
 /* --- Section 2 Responsive Media Queries --- */
 
 /* Laptops & Tablets (under 1024px) */
@@ -1828,12 +1794,6 @@ button {
         font-size: 11.5px;
     }
     .power-powder-bowl { bottom: 0px; width: 175px; }
-    .btn-explore-ingredients {
-        width: 100%;
-        max-width: 320px;
-        justify-content: center;
-        padding: 15px 24px;
-    }
 }
 
 /* ==========================================================================

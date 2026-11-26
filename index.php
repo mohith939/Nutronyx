@@ -485,14 +485,6 @@ $reviewMetaMap = [
                     </div>
                 </div>
             </div>
-
-            <!-- Bottom CTA Button -->
-            <div class="power-cta-row">
-                <a href="shop" class="btn-explore-ingredients">
-                    <span>Explore the Ingredients</span>
-                    <span class="cta-arrow" aria-hidden="true">&rarr;</span>
-                </a>
-            </div>
         </div>
     </section>
 
