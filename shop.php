@@ -166,11 +166,11 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                         <!-- Authentic Specifications Bar -->
                         <div class="dossier-specs-row" aria-label="Product Specifications">
                             <div class="dossier-spec-item">
-                                <strong>100% Natural Foods</strong>
+                                <strong>100% Natural Ingredients</strong>
                             </div>
                             <span class="dossier-spec-sep" aria-hidden="true">|</span>
                             <div class="dossier-spec-item">
-                                <span>Daily Morning Scoop</span>
+                                <span>Daily Wellness Blend</span>
                             </div>
                         </div>
 
@@ -178,11 +178,11 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                         <div class="dossier-ingredients-box">
                             <span class="dossier-ing-label">Five Whole-Food Ingredients:</span>
                             <div class="dossier-ingredients-list">
-                                <span class="dossier-ing-chip"><img src="assets/images/amla.png" alt="Amla" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Amla</strong> Immunity</span>
-                                <span class="dossier-ing-chip"><img src="assets/images/beetroot.png" alt="Beetroot" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Beetroot</strong> Stamina</span>
-                                <span class="dossier-ing-chip"><img src="assets/images/carrot.png" alt="Carrot" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Carrot</strong> Vitality</span>
-                                <span class="dossier-ing-chip"><img src="assets/images/ginger.png" alt="Ginger" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Ginger</strong> Digestion</span>
-                                <span class="dossier-ing-chip"><img src="assets/images/lemon-slice.png" alt="Lemon" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Lemon</strong> Freshness</span>
+                                <span class="dossier-ing-chip"><img src="assets/images/amla.png" alt="Amla" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Amla</strong> &middot; Immunity</span>
+                                <span class="dossier-ing-chip"><img src="assets/images/beetroot.png" alt="Beetroot" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Beetroot</strong> &middot; Circulation</span>
+                                <span class="dossier-ing-chip"><img src="assets/images/carrot.png" alt="Carrot" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Carrot</strong> &middot; Vision</span>
+                                <span class="dossier-ing-chip"><img src="assets/images/ginger.png" alt="Ginger" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Ginger</strong> &middot; Digestion</span>
+                                <span class="dossier-ing-chip"><img src="assets/images/lemon-slice.png" alt="Lemon" style="width: 16px; height: 16px; object-fit: contain;"> <strong>Lemon</strong> &middot; Antioxidants</span>
                             </div>
                         </div>
 
@@ -190,7 +190,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                         <div class="dossier-size-selector-wrap" aria-label="Select Size">
                             <div class="size-selector-header">
                                 <span class="size-selector-title">Select Size</span>
-                                <span class="size-selector-guide" id="sizeServingsGuide"><?= (($_GET['variant'] ?? '') === 'var_abc_500g' && isset($flagshipVariants['var_abc_500g'])) ? '2 Months Ritual (Save 17%)' : '1 Month Ritual' ?></span>
+                                <span class="size-selector-guide" id="sizeServingsGuide"><?= (($_GET['variant'] ?? '') === 'var_abc_500g' && isset($flagshipVariants['var_abc_500g'])) ? 'Save ₹150 (Best Value)' : 'Save ₹99' ?></span>
                             </div>
                             <div class="size-pills-row" role="radiogroup" aria-label="Choose product size">
                                 <?php if (isset($flagshipVariants['var_abc_250g'])): ?>
@@ -199,7 +199,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                             id="pill_var_abc_250g" 
                                             role="radio"
                                             aria-checked="<?= (($_GET['variant'] ?? '') === 'var_abc_500g' && isset($flagshipVariants['var_abc_500g'])) ? 'false' : 'true' ?>"
-                                            onclick="selectDossierSize('var_abc_250g', <?= (int)($flagshipVariants['var_abc_250g']['price_amount']/100) ?>, '1 Month Ritual', this)">
+                                            onclick="selectDossierSize('var_abc_250g', <?= (int)($flagshipVariants['var_abc_250g']['price_amount']/100) ?>, 'Save ₹99', this)">
                                         <span class="pill-weight"><?= htmlspecialchars(str_ireplace('gm', 'g', $flagshipVariants['var_abc_250g']['title'] ?: '200g')) ?></span>
                                         <span class="pill-badge">Most Popular</span>
                                     </button>
@@ -210,7 +210,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                             id="pill_var_abc_500g" 
                                             role="radio"
                                             aria-checked="<?= ((($_GET['variant'] ?? '') === 'var_abc_500g') || !isset($flagshipVariants['var_abc_250g'])) ? 'true' : 'false' ?>"
-                                            onclick="selectDossierSize('var_abc_500g', <?= (int)($flagshipVariants['var_abc_500g']['price_amount']/100) ?>, '2 Months Ritual (Save 17%)', this)">
+                                            onclick="selectDossierSize('var_abc_500g', <?= (int)($flagshipVariants['var_abc_500g']['price_amount']/100) ?>, 'Save ₹150 (Best Value)', this)">
                                         <span class="pill-weight"><?= htmlspecialchars(str_ireplace('gm', 'g', $flagshipVariants['var_abc_500g']['title'] ?: '400g')) ?></span>
                                         <span class="pill-badge pill-badge-value">Best Value</span>
                                     </button>
@@ -255,7 +255,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                         <polyline points="9 12 11 14 15 10"></polyline>
                                     </svg>
                                 </span>
-                                <span>FSSAI Certified</span>
+                                <span>FSSAI Licensed</span>
                             </div>
                             <div class="trust-list-item">
                                 <span class="trust-list-icon" aria-hidden="true">
@@ -265,7 +265,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                         <line x1="12" y1="22.08" x2="12" y2="12"></line>
                                     </svg>
                                 </span>
-                                <span>Premium Packaging</span>
+                                <span>Hygienically Packed</span>
                             </div>
                             <div class="trust-list-item">
                                 <span class="trust-list-icon" aria-hidden="true">
@@ -274,7 +274,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                         <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
                                     </svg>
                                 </span>
-                                <span>No Artificial Preservatives</span>
+                                <span>No Added Preservatives</span>
                             </div>
                             <div class="trust-list-item">
                                 <span class="trust-list-icon" aria-hidden="true">
@@ -308,7 +308,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                         </div>
                         <div class="badge-text-wrap">
                             <span class="badge-title">100% Natural</span>
-                            <span class="badge-sub">Whole-Food Ingredients</span>
+                            <span class="badge-sub">Plant-Based Ingredients</span>
                         </div>
                     </div>
 
@@ -322,7 +322,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                         </div>
                         <div class="badge-text-wrap">
                             <span class="badge-title">No Added Sugar</span>
-                            <span class="badge-sub">No Artificial Preservatives</span>
+                            <span class="badge-sub">No Added Preservatives</span>
                         </div>
                     </div>
 
@@ -334,8 +334,8 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                             </svg>
                         </div>
                         <div class="badge-text-wrap">
-                            <span class="badge-title">Quality Focused</span>
-                            <span class="badge-sub">Thoughtfully Crafted</span>
+                            <span class="badge-title">Quality Tested</span>
+                            <span class="badge-sub">Hygienically Processed</span>
                         </div>
                     </div>
 
@@ -384,7 +384,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                     <img src="assets/images/amla.png" alt="Amla (Indian Gooseberry)" class="botanical-thumb-img" loading="lazy">
                                 </div>
                                 <h4 class="botanical-name">Amla</h4>
-                                <span class="botanical-benefit">Immunity &amp; Antioxidants</span>
+                                <span class="botanical-benefit">Vitamin C &amp; Immune Support</span>
                             </div>
 
                             <!-- Beetroot -->
@@ -393,7 +393,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                     <img src="assets/images/beetroot.png" alt="Fresh Beetroot" class="botanical-thumb-img" loading="lazy">
                                 </div>
                                 <h4 class="botanical-name">Beetroot</h4>
-                                <span class="botanical-benefit">Stamina &amp; Blood Health</span>
+                                <span class="botanical-benefit">Nitrates &amp; Healthy Circulation</span>
                             </div>
 
                             <!-- Carrot -->
@@ -402,7 +402,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                     <img src="assets/images/carrot.png" alt="Crisp Carrot" class="botanical-thumb-img" loading="lazy">
                                 </div>
                                 <h4 class="botanical-name">Carrot</h4>
-                                <span class="botanical-benefit">Vitality &amp; Eye Health</span>
+                                <span class="botanical-benefit">Beta-Carotene &amp; Eye Health</span>
                             </div>
 
                             <!-- Ginger -->
@@ -411,7 +411,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                     <img src="assets/images/ginger.png" alt="Fresh Ginger" class="botanical-thumb-img" loading="lazy">
                                 </div>
                                 <h4 class="botanical-name">Ginger</h4>
-                                <span class="botanical-benefit">Digestion &amp; Metabolism</span>
+                                <span class="botanical-benefit">Gingerols &amp; Digestive Wellness</span>
                             </div>
 
                             <!-- Lemon -->
@@ -420,7 +420,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                     <img src="assets/images/lemon.png" alt="Fresh Lemon" class="botanical-thumb-img" loading="lazy">
                                 </div>
                                 <h4 class="botanical-name">Lemon</h4>
-                                <span class="botanical-benefit">Freshness &amp; Nutrient Absorption</span>
+                                <span class="botanical-benefit">Vitamin C &amp; Antioxidant Support</span>
                             </div>
                         </div>
                     </div>
@@ -450,7 +450,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                 <div class="shop-product-card" id="card-<?= $cProdId ?>" data-product-id="<?= $cProdId ?>" data-active-variant="<?= $cFirstVid ?>">
                                     <!-- Product Visual Stage -->
                                     <div class="product-card-visual">
-                                        <div class="product-badge-organic">100% Whole Food</div>
+                                        <div class="product-badge-organic"><?= htmlspecialchars(!empty($cProduct['badge']) ? $cProduct['badge'] : '100% Natural Ingredients') ?></div>
                                         <img src="<?= htmlspecialchars($pImg) ?>" alt="<?= htmlspecialchars($cProduct['title']) ?>" class="product-card-img" id="img-<?= $cProdId ?>" loading="lazy">
                                     </div>
 
@@ -487,7 +487,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                                                 data-compare="<?= $vrCompare > 0 ? '₹' . number_format($vrCompare) : '' ?>"
                                                                 data-img="<?= htmlspecialchars($vrImg) ?>"
                                                                 onclick="switchCatalogVariant(this)">
-                                                            <span class="sku-btn-title"><?= htmlspecialchars($vr['title']) ?></span>
+                                                            <span class="sku-btn-title"><?= htmlspecialchars(str_ireplace('gm', 'g', $vr['title'])) ?></span>
                                                             <span class="sku-btn-price">₹<?= number_format($vrPrice) ?></span>
                                                         </button>
                                                     <?php endforeach; ?>

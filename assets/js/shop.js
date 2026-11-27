@@ -415,10 +415,10 @@ function selectDossierSize(variantId, price, guideText, btnEl) {
 function onDossierVariantChange(variantId) {
     if (variantId === 'var_abc_500g') {
         const btn500 = document.getElementById('pill_var_abc_500g');
-        selectDossierSize('var_abc_500g', 499, '2 Months Ritual (Save 17%)', btn500);
+        selectDossierSize('var_abc_500g', 499, 'Save ₹150 (Best Value)', btn500);
     } else {
         const btn250 = document.getElementById('pill_var_abc_250g');
-        selectDossierSize('var_abc_250g', 299, '1 Month Ritual', btn250);
+        selectDossierSize('var_abc_250g', 299, 'Save ₹99', btn250);
     }
 }
 

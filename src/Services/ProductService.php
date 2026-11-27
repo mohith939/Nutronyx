@@ -328,14 +328,14 @@ class ProductService
                 track_inventory, allow_backorders, stock_status, subcategory, tags, collections,
                 options_json, video_url, shipping_class, dimensions_cm,
                 is_visible_storefront, is_visible_catalog, is_visible_search, is_featured, position,
-                created_at, updated_at
+                badge, created_at, updated_at
             ) VALUES (
                 :id, :wid, :cid, :title, :slug, :desc, :short_desc, :status, :img,
                 :sale_price, :cost_price, :tax_rate, :currency, :barcode, :brand,
                 :track_inv, :backorders, :stock_status, :subcat, :tags, :collections,
                 :options_json, :video_url, :shipping_class, :dimensions_cm,
                 :vis_store, :vis_cat, :vis_search, :featured, :pos,
-                CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+                :badge, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
             )
         ");
         $stmt->execute([
@@ -369,6 +369,7 @@ class ProductService
             ':vis_search' => isset($data['is_visible_search']) ? (int)$data['is_visible_search'] : 1,
             ':featured' => isset($data['is_featured']) ? (int)$data['is_featured'] : 0,
             ':pos' => isset($data['position']) ? (int)$data['position'] : 0,
+            ':badge' => !empty($data['badge']) ? trim($data['badge']) : '100% Natural Ingredients',
         ]);
 
         // Create initial or custom variants
@@ -454,6 +455,7 @@ class ProductService
                 is_visible_search = :vis_search,
                 is_featured = :featured,
                 position = CASE WHEN :has_pos = 1 THEN :pos ELSE position END,
+                badge = :badge,
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = :id AND website_id = :wid
         ");
@@ -489,6 +491,7 @@ class ProductService
             ':featured' => isset($data['is_featured']) ? (int)$data['is_featured'] : 0,
             ':has_pos' => isset($data['position']) ? 1 : 0,
             ':pos' => isset($data['position']) ? (int)$data['position'] : 0,
+            ':badge' => !empty($data['badge']) ? trim($data['badge']) : '100% Natural Ingredients',
         ]);
 
         // Synchronize product variants if matrix provided

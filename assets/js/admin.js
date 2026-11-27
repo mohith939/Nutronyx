@@ -314,6 +314,7 @@
             setVal('productCostPrice', '');
             setVal('productSku', '');
             setVal('productStatus', 'ACTIVE');
+            setVal('productBadge', '100% Natural Ingredients');
             setVal('productStockQty', '100');
             setChecked('productVisStore', true);
             setChecked('productVisCat', true);
@@ -376,6 +377,7 @@
             setVal('productFullDesc', p.description);
             setVal('productCategory', p.category_id);
             setVal('productStatus', (p.status || 'ACTIVE').toUpperCase());
+            setVal('productBadge', p.badge || '100% Natural Ingredients');
 
             // Pricing
             const price = p.primary_price_amount ? (p.primary_price_amount / 100) : (p.min_price ? (p.min_price / 100) : '');

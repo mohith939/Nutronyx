@@ -858,6 +858,13 @@ $page = $pageNum;
                         </div>
                     </div>
 
+                    <!-- 4.1 PRODUCT BADGE -->
+                    <div class="form-group">
+                        <label class="form-label">Product Badge</label>
+                        <input type="text" name="badge" id="productBadge" class="form-control" placeholder="e.g. 100% Natural Ingredients" value="100% Natural Ingredients">
+                        <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Displays in pill on the product card (e.g. 100% Natural Ingredients)</span>
+                    </div>
+
                     <!-- 5. PRICING & SKU -->
                     <div class="form-grid-2">
                         <div class="form-group">
