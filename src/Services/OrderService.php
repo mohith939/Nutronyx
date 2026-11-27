@@ -853,6 +853,8 @@ class OrderService
                 'order_number' => $order['order_number'],
                 'consignee_name' => $order['shipping_name'] ?? $order['customer_name'] ?? 'Customer',
                 'payment_mode' => (strtoupper($order['payment_method'] ?? '') === 'COD') ? 'COD' : 'Prepaid',
+                'service' => 'SURFACE',
+                'weight' => 500,
                 'total_amount' => (float)(($order['grand_total_amount'] ?? 0) / 100),
                 'tax_value' => (float)(($order['tax_amount'] ?? 0) / 100),
                 'taxable_amount' => (float)((($order['grand_total_amount'] ?? 0) - ($order['tax_amount'] ?? 0)) / 100),

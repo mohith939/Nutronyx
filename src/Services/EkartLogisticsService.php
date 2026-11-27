@@ -835,14 +835,14 @@ class EkartLogisticsService
             'commodity_value' => (string)($shipment['commodity_value'] ?? ($shipment['taxable_amount'] ?? '1059')),
             'cod_amount' => (($shipment['payment_mode'] ?? '') === 'COD') ? (float)($shipment['total_amount'] ?? 1250) : 0,
             'quantity' => (int)($shipment['quantity'] ?? 1),
-            'weight' => (int)($shipment['weight'] ?? 1000),
-            'length' => (int)($shipment['length'] ?? 15),
-            'height' => (int)($shipment['height'] ?? 10),
-            'width' => (int)($shipment['width'] ?? 12),
+            'weight' => (int)($shipment['weight'] ?? 500),
+            'length' => (int)($shipment['length'] ?? 12),
+            'height' => (int)($shipment['height'] ?? 8),
+            'width' => (int)($shipment['width'] ?? 10),
             'drop_location' => $cleanDrop,
             'pickup_location' => $cleanPickup,
             'return_location' => $cleanPickup,
-            'service' => $shipment['service'] ?? 'EXPRESS',
+            'service' => $shipment['service'] ?? 'SURFACE',
             'delayed_dispatch' => false,
             'obd_shipment' => false,
             'mps' => false
@@ -885,14 +885,16 @@ class EkartLogisticsService
             return $data;
         }
 
-        // Retry sequence for VALIDATOR_SCHEMA or SWIFT_RESOURCE_NOT_FOUND_EXCEPTION
+        // Intelligent Auto-Recovery Matrix: Retries rate card slabs, service modes (SURFACE/EXPRESS), and warehouse mapping
         $errData = $response['data'] ?? [];
         $rawErr = is_array($errData) 
             ? ($errData['description'] ?? $errData['message'] ?? $response['error'] ?? '') 
             : ($response['error'] ?? '');
 
         if (!$response['success']) {
-            // Retry 1: Try with full pickup location address if alias alone failed
+            $primaryService = $payload['service'];
+            $altService = ($primaryService === 'SURFACE') ? 'EXPRESS' : 'SURFACE';
+
             $fullPickup = [
                 'name' => $pickupAlias,
                 'address' => $pickupLoc['address_line1'] ?? ($pickupLoc['address'] ?? 'Registered Warehouse Facility'),
@@ -902,38 +904,64 @@ class EkartLogisticsService
                 'pin' => (int)($pickupLoc['pincode'] ?? ($pickupLoc['pin'] ?? 533429)),
                 'phone' => (int)preg_replace('/\D/', '', (string)($pickupLoc['phone'] ?? '9876543210'))
             ];
-            $retryPayload1 = $payload;
-            $retryPayload1['pickup_location'] = $fullPickup;
-            $retryPayload1['return_location'] = $fullPickup;
-            $retryRes1 = self::executeHttpRequest('PUT', $endpoint, json_encode($retryPayload1), ["Authorization: Bearer {$token}"]);
-            if ($retryRes1['success'] && !empty($retryRes1['data']['tracking_id'])) {
-                $data = $retryRes1['data'];
-                $data['is_live_shipment'] = true;
-                return $data;
-            }
 
-            // Retry 2: Omit pickup_location and return_location so Ekart SWIFT maps directly to account's default registered warehouse
-            $retryPayload2 = $payload;
-            unset($retryPayload2['pickup_location'], $retryPayload2['return_location']);
-            $retryRes2 = self::executeHttpRequest('PUT', $endpoint, json_encode($retryPayload2), ["Authorization: Bearer {$token}"]);
-            if ($retryRes2['success'] && !empty($retryRes2['data']['tracking_id'])) {
-                $data = $retryRes2['data'];
-                $data['is_live_shipment'] = true;
-                return $data;
-            }
+            // Build sequence of automated variations:
+            // 1) Alternate service (SURFACE vs EXPRESS) across standard weight slabs (500g, 250g, 1000g)
+            // 2) Default registered warehouse alias omission (maps automatically in Ekart portal)
+            // 3) Full address pickup location object
+            $variations = [
+                // Variation A: Try alternate service tier with standard 500g base slab
+                ['service' => $altService, 'weight' => 500, 'pickup' => $cleanPickup, 'method' => 'PUT'],
+                ['service' => $altService, 'weight' => 500, 'pickup' => $cleanPickup, 'method' => 'POST'],
 
-            // Retry 3: Try POST with fallback payload
-            $postRes = self::executeHttpRequest('POST', $endpoint, json_encode($retryPayload2), ["Authorization: Bearer {$token}"]);
-            if ($postRes['success'] && !empty($postRes['data']['tracking_id'])) {
-                $data = $postRes['data'];
-                $data['is_live_shipment'] = true;
-                return $data;
-            }
+                // Variation B: Default warehouse omission with alternate service & 500g
+                ['service' => $altService, 'weight' => 500, 'pickup' => null, 'method' => 'PUT'],
+                ['service' => $altService, 'weight' => 500, 'pickup' => null, 'method' => 'POST'],
 
-            if (!empty($retryRes2['data']['description']) || !empty($retryRes2['data']['message'])) {
-                $response = $retryRes2;
-            } elseif (!empty($retryRes1['data']['description']) || !empty($retryRes1['data']['message'])) {
-                $response = $retryRes1;
+                // Variation C: Default warehouse omission with primary service & 500g
+                ['service' => $primaryService, 'weight' => 500, 'pickup' => null, 'method' => 'PUT'],
+                ['service' => $primaryService, 'weight' => 500, 'pickup' => null, 'method' => 'POST'],
+
+                // Variation D: Try 250g lighter slab with both services
+                ['service' => $primaryService, 'weight' => 250, 'pickup' => $cleanPickup, 'method' => 'PUT'],
+                ['service' => $altService, 'weight' => 250, 'pickup' => $cleanPickup, 'method' => 'PUT'],
+                ['service' => $altService, 'weight' => 250, 'pickup' => null, 'method' => 'PUT'],
+
+                // Variation E: Try 1000g slab with alternate service
+                ['service' => $altService, 'weight' => 1000, 'pickup' => $cleanPickup, 'method' => 'PUT'],
+                ['service' => $altService, 'weight' => 1000, 'pickup' => null, 'method' => 'PUT'],
+
+                // Variation F: Full warehouse address object
+                ['service' => $primaryService, 'weight' => 500, 'pickup' => $fullPickup, 'method' => 'PUT'],
+                ['service' => $altService, 'weight' => 500, 'pickup' => $fullPickup, 'method' => 'PUT'],
+            ];
+
+            foreach ($variations as $var) {
+                $tryPayload = $payload;
+                $tryPayload['service'] = $var['service'];
+                $tryPayload['weight'] = $var['weight'];
+                if ($var['weight'] <= 500) {
+                    $tryPayload['length'] = 12;
+                    $tryPayload['width'] = 10;
+                    $tryPayload['height'] = 8;
+                }
+                if ($var['pickup'] === null) {
+                    unset($tryPayload['pickup_location'], $tryPayload['return_location']);
+                } else {
+                    $tryPayload['pickup_location'] = $var['pickup'];
+                    $tryPayload['return_location'] = $var['pickup'];
+                }
+
+                $retryRes = self::executeHttpRequest($var['method'], $endpoint, json_encode($tryPayload), ["Authorization: Bearer {$token}"]);
+                if ($retryRes['success'] && !empty($retryRes['data']['tracking_id'])) {
+                    $data = $retryRes['data'];
+                    $data['is_live_shipment'] = true;
+                    return $data;
+                }
+
+                if (!empty($retryRes['data']['description']) || !empty($retryRes['data']['message'])) {
+                    $response = $retryRes;
+                }
             }
         }
 
@@ -953,6 +981,11 @@ class EkartLogisticsService
         }
         if (empty($errMsg)) {
             $errMsg = $response['error'] ?? 'Ekart Logistics API request failed.';
+        }
+
+        // Add actionable guidance if rate card is unmapped in the merchant portal
+        if (str_contains($errMsg, 'rate card') || str_contains($errMsg, 'weight bracket')) {
+            $errMsg .= " (Action Required: We tested multiple weight slabs [500g, 250g, 1000g] and modes [SURFACE, EXPRESS]. Your Ekart Elite account requires an active rate card or prepaid wallet recharge on https://app.elite.ekartlogistics.in/).";
         }
 
         return [
