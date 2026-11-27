@@ -266,7 +266,16 @@ $currentPage = 'cart';
                                     <?php foreach ($activeCoupons as $ac): 
                                         $acCode = htmlspecialchars($ac['code']);
                                         $isApplied = (!empty($cart['applied_coupon']) && strtoupper($cart['applied_coupon']['code']) === strtoupper($ac['code']));
-                                        $desc = !empty($ac['description']) ? htmlspecialchars($ac['description']) : "Enjoy {$ac['discount_value']}% off your order with code {$acCode}.";
+                                        if (!empty($ac['description'])) {
+                                            $desc = htmlspecialchars($ac['description']);
+                                        } elseif (($ac['discount_type'] ?? '') === 'FIXED_AMOUNT' || ($ac['discount_type'] ?? '') === 'FIXED') {
+                                            $rupeesVal = (int)(($ac['discount_value'] ?? 0) / 100);
+                                            $desc = "Enjoy ₹{$rupeesVal} off your order with code {$acCode}.";
+                                        } elseif (($ac['discount_type'] ?? '') === 'FREE_SHIPPING') {
+                                            $desc = "Free delivery on your order with code {$acCode}.";
+                                        } else {
+                                            $desc = "Enjoy {$ac['discount_value']}% off your order with code {$acCode}.";
+                                        }
                                     ?>
                                         <div style="background: #FFFFFF; border: 1px solid <?= $isApplied ? '#A7F3D0' : '#E5E7EB' ?>; border-radius: 8px; padding: 9px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
                                             <div style="flex: 1;">

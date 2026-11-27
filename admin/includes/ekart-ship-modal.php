@@ -74,17 +74,40 @@
                     </div>
                 </div>
 
-                <!-- Step 2: Enter Official Ekart AWB -->
+                <!-- Option A: 1-Click Auto-Ship via Ekart API -->
+                <div style="background: #F0FDF4; border: 1.5px solid #10B981; border-radius: 10px; padding: 16px 18px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 14px; color: #065F46; display: flex; align-items: center; gap: 6px;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span>Automatic 1-Click Booking via Ekart API</span>
+                            </div>
+                            <div style="font-size: 12px; color: #047857; margin-top: 4px; line-height: 1.4;">
+                                Directly creates package on Ekart Logistics using registered warehouse origin and fetches official AWB.
+                            </div>
+                        </div>
+                        <button type="submit" name="action" value="ship_ekart_auto" onclick="document.getElementById('ekartAwbInput').removeAttribute('required');" class="btn-emerald-brand" style="padding: 9px 18px; background: #047857; color: #FFF; border: none; border-radius: 6px; font-weight: 700; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(4, 120, 87, 0.3);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
+                            <span>Auto-Book on Ekart API</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 12px 0 16px; position: relative;">
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #E5E7EB;"></div>
+                    <span style="position: relative; background: #FFF; padding: 0 12px; font-size: 11.5px; color: #9CA3AF; font-weight: 600; text-transform: uppercase;">Or manual booking via portal</span>
+                </div>
+
+                <!-- Option B: Enter Official Ekart AWB manually -->
                 <div>
                     <label class="form-label" style="display: block; font-size: 13px; font-weight: 700; color: #111827; margin-bottom: 6px;">
-                        <span style="background: #047857; color: #FFF; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; margin-right: 4px;">2</span>
-                        Enter Authentic Ekart AWB / Tracking # <span style="color: #DC2626;">*</span>
+                        Enter Authentic Ekart AWB / Tracking #
                     </label>
-                    <input type="text" name="tracking_number" id="ekartAwbInput" class="form-control" placeholder="e.g. 500999A1084920 or official Ekart AWB" required style="width: 100%; padding: 11px 14px; border: 1.5px solid #10B981; border-radius: 8px; font-size: 14px; font-weight: 600; font-family: monospace; letter-spacing: 0.5px;" oninput="window.NutronyxOrder.previewEkartTrackingUrl(this.value)">
+                    <input type="text" name="tracking_number" id="ekartAwbInput" class="form-control" placeholder="e.g. 500999A1084920 or official Ekart AWB" style="width: 100%; padding: 11px 14px; border: 1.5px solid #D1D5DB; border-radius: 8px; font-size: 14px; font-weight: 600; font-family: monospace; letter-spacing: 0.5px;" oninput="window.NutronyxOrder.previewEkartTrackingUrl(this.value)">
                     
                     <div style="font-size: 11.5px; color: #4B5563; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                        <span>Authentic AWB prevents simulated tracking. Verified link is dispatched to customer.</span>
+                        <span>If booked on portal, paste AWB here to dispatch and send tracking link to customer.</span>
                     </div>
 
                     <!-- Live URL preview -->
@@ -98,9 +121,9 @@
 
             <div class="modal-footer" style="padding: 16px 24px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 10px; background: #FAFAFA; border-radius: 0 0 14px 14px;">
                 <button type="button" class="btn-action btn-action-outline" onclick="window.NutronyxModal.close('ekartShipModal')">Cancel</button>
-                <button type="submit" class="btn-emerald-brand" style="padding: 9px 22px; border: none; background: #047857; color: #FFF; border-radius: 6px; font-weight: 600; font-size: 13.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(4, 120, 87, 0.25);">
+                <button type="submit" name="action" value="ship_ekart" class="btn-emerald-brand" style="padding: 9px 22px; border: none; background: #111827; color: #FFF; border-radius: 6px; font-weight: 600; font-size: 13.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span>Confirm &amp; Dispatch Order</span>
+                    <span>Save Manual AWB &amp; Dispatch</span>
                 </button>
             </div>
         </form>

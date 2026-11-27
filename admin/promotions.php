@@ -2515,7 +2515,11 @@ if (!empty($_GET['selected_id'])) {
         const dType = coupon.discount_type || 'PERCENTAGE';
         window.selectDiscountType(dType);
         if (document.getElementById('modalDiscountValInput')) {
-            document.getElementById('modalDiscountValInput').value = coupon.discount_value || 0;
+            if (dType === 'FIXED_AMOUNT' || dType === 'FIXED') {
+                document.getElementById('modalDiscountValInput').value = coupon.discount_value ? (coupon.discount_value / 100) : 0;
+            } else {
+                document.getElementById('modalDiscountValInput').value = coupon.discount_value || 0;
+            }
         }
 
         if (document.getElementById('couponMinCartInp')) {

@@ -156,6 +156,10 @@ if ($method === 'POST') {
                     $zoneName = $estimate['zone'] ?? 'Standard Surface';
                 }
 
+                $serviceability = \Nutronyx\Services\EkartLogisticsService::checkServiceability($pincode);
+                $resolvedCity = $serviceability['details']['city'] ?? '';
+                $resolvedState = $serviceability['details']['state'] ?? '';
+
                 $_SESSION['checkout_shipping_pincode'] = $pincode;
                 $_SESSION['checkout_shipping_paise'] = $shippingPaise;
                 $_SESSION['checkout_shipping_zone'] = $zoneName ?? '';
@@ -171,6 +175,9 @@ if ($method === 'POST') {
                     'is_free' => $isFreeShipping,
                     'courier' => $courierName,
                     'zone' => $zoneName ?? '',
+                    'city' => $resolvedCity,
+                    'state' => $resolvedState,
+                    'location' => trim($resolvedCity . ($resolvedState ? ', ' . $resolvedState : '')),
                     'cart' => $updatedCart
                 ]);
                 break;

@@ -69,11 +69,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Manual admin order creation
             $order = OrderService::createOrder($_POST);
             $notice = "Order " . htmlspecialchars($order['order_number']) . " created successfully.";
+        } elseif ($action === 'ship_ekart_auto') {
+            $orderId = trim($_POST['order_id'] ?? '');
+            $res = OrderService::fulfillWithEkart($orderId, null);
+            $notice = "Order booked directly via Ekart Logistics API! Official AWB: " . htmlspecialchars($res['tracking_number']);
         } elseif ($action === 'ship_ekart') {
             $orderId = trim($_POST['order_id'] ?? '');
             $trackingNumber = trim($_POST['tracking_number'] ?? '');
             if (empty($trackingNumber)) {
-                throw new \InvalidArgumentException("Tracking AWB is required. Please enter the authentic AWB from your Ekart Merchant Portal.");
+                throw new \InvalidArgumentException("Tracking AWB is required. Please enter the authentic AWB from your Ekart Merchant Portal or use Auto-Book.");
             }
             $res = OrderService::fulfillWithEkart($orderId, $trackingNumber);
             $notice = "Order dispatched with Ekart Logistics! Real AWB: " . htmlspecialchars($res['tracking_number']);

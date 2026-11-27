@@ -113,6 +113,15 @@ if (isset($_GET['cf_action']) && $_GET['cf_action'] === 'return') {
 
         CartService::clear();
 
+        // Auto-register order with Ekart Logistics so orders reflect on Ekart portal
+        try {
+            if (class_exists('\\Nutronyx\\Services\\OrderService')) {
+                \Nutronyx\Services\OrderService::fulfillWithEkart($order['id']);
+            }
+        } catch (\Throwable $ekErr) {
+            error_log("Ekart auto-fulfillment on payment: " . $ekErr->getMessage());
+        }
+
         $stmt->execute([':onum' => $orderNumber, ':wid' => $websiteId]);
         $updatedOrder = $stmt->fetch(PDO::FETCH_ASSOC);
         $iStmt = $db->prepare("SELECT * FROM order_items WHERE order_id = :oid");

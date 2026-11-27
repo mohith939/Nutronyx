@@ -90,6 +90,21 @@ if (isset($_GET['ajax'])) {
         echo json_encode($res);
         exit;
     }
+
+    if ($ajaxAction === 'ekart_get_addresses') {
+        $addresses = EkartLogisticsService::getAddresses();
+        $active = EkartLogisticsService::getPickupLocation();
+        echo json_encode(['success' => true, 'addresses' => $addresses, 'active' => $active]);
+        exit;
+    }
+
+    if ($ajaxAction === 'ekart_save_pickup') {
+        $body = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $pickup = $body['pickup'] ?? $body;
+        $res = EkartLogisticsService::savePickupLocation($pickup);
+        echo json_encode(['success' => $res, 'active' => EkartLogisticsService::getPickupLocation()]);
+        exit;
+    }
 }
 
 // -------------------------------------------------------------------------
@@ -215,11 +230,32 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action']) && 
     $notice = "Ekart Logistics Enterprise gateway refreshed and reconnected.";
 }
 
+// Handle Pickup Address Save (Direct POST)
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action']) && $_POST['action'] === 'save_ekart_pickup') {
+    $pickupData = [
+        'alias' => trim($_POST['pickup_name'] ?? 'Nutronyx Fulfillment Warehouse'),
+        'name' => trim($_POST['pickup_name'] ?? 'Nutronyx Fulfillment Warehouse'),
+        'address_line1' => trim($_POST['pickup_address'] ?? ''),
+        'address' => trim($_POST['pickup_address'] ?? ''),
+        'city' => trim($_POST['pickup_city'] ?? ''),
+        'state' => trim($_POST['pickup_state'] ?? ''),
+        'pincode' => (int)preg_replace('/\D/', '', $_POST['pickup_pin'] ?? '533429'),
+        'pin' => (int)preg_replace('/\D/', '', $_POST['pickup_pin'] ?? '533429'),
+        'phone' => trim($_POST['pickup_phone'] ?? '9876543210'),
+    ];
+    if (EkartLogisticsService::savePickupLocation($pickupData)) {
+        $notice = "Ekart Pickup Location & Warehouse successfully updated!";
+    } else {
+        $error = "Failed to update pickup location.";
+    }
+}
+
 $ekartConfig = EkartLogisticsService::getConfig();
 $ekartToken = EkartLogisticsService::getAccessToken();
 $isEkartConnected = ($ekartConfig['status'] ?? '') === 'CONNECTED';
 $liveStatus = EkartLogisticsService::isLiveConnected();
 $isLiveEkart = !empty($liveStatus['is_live']);
+$pickupLocation = EkartLogisticsService::getPickupLocation();
 
 // Pre-calculate initial serviceability and rate for local hub PIN 533101
 $initPin = '533101';
@@ -673,75 +709,154 @@ $initRate = EkartLogisticsService::getRateEstimate([
             <!-- 2-Column Layout Grid Matching Mockup -->
             <div class="ekart-layout-grid">
                 
-                <!-- LEFT COLUMN: API Credentials Card -->
-                <div class="white-card">
-                    <div class="card-header-row">
-                        <span style="font-size: 26px; line-height: 1;">🔑</span>
-                        <div>
-                            <h3 style="font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 2px 0;">
-                                API Credentials
-                            </h3>
-                            <p style="font-size: 12.5px; color: #6B7280; margin: 0;">
-                                Enter your Ekart merchant account details.
-                            </p>
+                <!-- LEFT COLUMN: Credentials & Pickup Location Stack -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    
+                    <!-- Card 1: API Credentials -->
+                    <div class="white-card">
+                        <div class="card-header-row">
+                            <span style="font-size: 26px; line-height: 1;">🔑</span>
+                            <div>
+                                <h3 style="font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 2px 0;">
+                                    API Credentials
+                                </h3>
+                                <p style="font-size: 12.5px; color: #6B7280; margin: 0;">
+                                    Enter your Ekart merchant account details.
+                                </p>
+                            </div>
                         </div>
+
+                        <form method="POST" action="" id="ekartCredentialsForm">
+                            <input type="hidden" name="action" value="save_ekart_credentials">
+                            <input type="hidden" name="environment" value="<?= htmlspecialchars($ekartConfig['environment'] ?? 'PRODUCTION') ?>">
+                            <input type="hidden" name="webhook_url" value="<?= htmlspecialchars($ekartConfig['webhook_url'] ?? 'https://nutronyx.com/api/v2/webhooks/ekart') ?>">
+
+                            <!-- Client ID Field with Copy Button -->
+                            <div style="margin-bottom: 18px;">
+                                <label class="form-standard-label">Client ID *</label>
+                                <div class="input-with-icon">
+                                    <input type="text" id="cfgClientId" name="account_number" value="<?= htmlspecialchars($ekartConfig['account_number'] ?? '') ?>" placeholder="Enter Ekart Client ID" required>
+                                    <button type="button" class="input-icon-btn" onclick="window.copyClientId()" title="Copy Client ID">
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Username / Email Field -->
+                            <div style="margin-bottom: 18px;">
+                                <label class="form-standard-label">Username / Email *</label>
+                                <input type="text" id="cfgUsername" name="api_key" value="<?= htmlspecialchars($ekartConfig['api_key'] ?? '') ?>" placeholder="Enter Ekart Username / Email" required class="form-standard-input">
+                            </div>
+
+                            <!-- Password / Partner Secret Field with Eye Toggle -->
+                            <div style="margin-bottom: 22px;">
+                                <label class="form-standard-label">Password / Partner Secret *</label>
+                                <div class="input-with-icon">
+                                    <input type="password" id="cfgPassword" name="api_secret" value="<?= htmlspecialchars($ekartConfig['api_secret'] ?? '') ?>" placeholder="Enter Ekart Partner Secret / Password" required>
+                                    <button type="button" class="input-icon-btn" id="btnTogglePassword" onclick="window.togglePasswordVisibility()" title="Toggle password visibility" aria-label="Toggle password visibility">
+                                        <!-- Eye Slash (Hidden state - matches user mockup) -->
+                                        <svg id="eyeIconHidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block; pointer-events: none;">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                                        </svg>
+                                        <!-- Eye Open (Visible state) -->
+                                        <svg id="eyeIconVisible" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none; pointer-events: none;">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Full Width Save Changes Button -->
+                            <button type="submit" class="btn-save-changes">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                <span>Save Changes</span>
+                            </button>
+                        </form>
                     </div>
 
-                    <form method="POST" action="" id="ekartCredentialsForm">
-                        <input type="hidden" name="action" value="save_ekart_credentials">
-                        <input type="hidden" name="environment" value="<?= htmlspecialchars($ekartConfig['environment'] ?? 'PRODUCTION') ?>">
-                        <input type="hidden" name="webhook_url" value="<?= htmlspecialchars($ekartConfig['webhook_url'] ?? 'https://nutronyx.com/api/v2/webhooks/ekart') ?>">
-
-                        <!-- Client ID Field with Copy Button -->
-                        <div style="margin-bottom: 18px;">
-                            <label class="form-standard-label">Client ID *</label>
-                            <div class="input-with-icon">
-                                <input type="text" id="cfgClientId" name="account_number" value="<?= htmlspecialchars($ekartConfig['account_number'] ?? '') ?>" placeholder="Enter Ekart Client ID" required>
-                                <button type="button" class="input-icon-btn" onclick="window.copyClientId()" title="Copy Client ID">
-                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                </button>
+                    <!-- Card 2: Pickup Point & Warehouse (Ekart Portal Registered Address) -->
+                    <div class="white-card">
+                        <div class="card-header-row" style="margin-bottom: 14px; align-items: flex-start;">
+                            <span style="font-size: 26px; line-height: 1;">🏬</span>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 2px 0;">
+                                    Pickup Point &amp; Warehouse
+                                </h3>
+                                <p style="font-size: 12.5px; color: #6B7280; margin: 0;">
+                                    Registered origin warehouse for Ekart courier pickups.
+                                </p>
                             </div>
+                            <button type="button" class="btn-action btn-action-sm btn-action-outline" onclick="window.fetchEkartAddresses(this)" style="font-size: 11.5px; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; cursor: pointer; border: 1.5px solid #144D29; color: #144D29; font-weight: 700; white-space: nowrap;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                                <span>Fetch from Ekart Portal</span>
+                            </button>
                         </div>
 
-                        <!-- Username / Email Field -->
-                        <div style="margin-bottom: 18px;">
-                            <label class="form-standard-label">Username / Email *</label>
-                            <input type="text" id="cfgUsername" name="api_key" value="<?= htmlspecialchars($ekartConfig['api_key'] ?? '') ?>" placeholder="Enter Ekart Username / Email" required class="form-standard-input">
+                        <!-- Active pickup notice -->
+                        <div id="ekartActivePickupNotice" style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: #065F46;">
+                            <strong style="display:block; margin-bottom:2px;">Active Pickup Origin:</strong>
+                            <span id="ekartActivePickupText">
+                                <?= htmlspecialchars(($pickupLocation['alias'] ?? $pickupLocation['name'] ?? 'Nutronyx Warehouse') . ' — ' . ($pickupLocation['address'] ?? '') . ', ' . ($pickupLocation['city'] ?? '') . ', ' . ($pickupLocation['state'] ?? '') . ' (' . ($pickupLocation['pin'] ?? $pickupLocation['pincode'] ?? '533429') . ')') ?>
+                            </span>
                         </div>
 
-                        <!-- Password / Partner Secret Field with Eye Toggle -->
-                        <div style="margin-bottom: 22px;">
-                            <label class="form-standard-label">Password / Partner Secret *</label>
-                            <div class="input-with-icon">
-                                <input type="password" id="cfgPassword" name="api_secret" value="<?= htmlspecialchars($ekartConfig['api_secret'] ?? '') ?>" placeholder="Enter Ekart Partner Secret / Password" required>
-                                <button type="button" class="input-icon-btn" id="btnTogglePassword" onclick="window.togglePasswordVisibility()" title="Toggle password visibility" aria-label="Toggle password visibility">
-                                    <!-- Eye Slash (Hidden state - matches user mockup) -->
-                                    <svg id="eyeIconHidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block; pointer-events: none;">
-                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                                    </svg>
-                                    <!-- Eye Open (Visible state) -->
-                                    <svg id="eyeIconVisible" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none; pointer-events: none;">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                    </svg>
-                                </button>
+                        <!-- Registered addresses selector (populated when fetched) -->
+                        <div id="ekartAddressesDropdownWrap" style="display: none; margin-bottom: 14px;">
+                            <label class="form-standard-label" style="color: #047857; font-weight: 700;">Select Registered Ekart Address</label>
+                            <select id="ekartAddressSelect" class="form-standard-input" onchange="window.selectEkartAddress(this.value)" style="border-color: #10B981; font-weight: 600;">
+                                <option value="">-- Choose registered warehouse --</option>
+                            </select>
+                        </div>
+
+                        <form method="POST" action="" id="ekartPickupForm">
+                            <input type="hidden" name="action" value="save_ekart_pickup">
+
+                            <div style="margin-bottom: 14px;">
+                                <label class="form-standard-label">Warehouse Name / Alias *</label>
+                                <input type="text" id="pickup_name" name="pickup_name" value="<?= htmlspecialchars($pickupLocation['alias'] ?? $pickupLocation['name'] ?? 'Nutronyx Fulfillment Warehouse') ?>" required class="form-standard-input">
                             </div>
-                        </div>
 
-                        <!-- Full Width Save Changes Button -->
-                        <button type="submit" class="btn-save-changes">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                                <polyline points="7 3 7 8 15 8"></polyline>
-                            </svg>
-                            <span>Save Changes</span>
-                        </button>
-                    </form>
+                            <div style="margin-bottom: 14px;">
+                                <label class="form-standard-label">Pickup Street Address *</label>
+                                <input type="text" id="pickup_address" name="pickup_address" value="<?= htmlspecialchars($pickupLocation['address'] ?? $pickupLocation['address_line1'] ?? '') ?>" placeholder="Building, Street, Area" required class="form-standard-input">
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                                <div>
+                                    <label class="form-standard-label">City *</label>
+                                    <input type="text" id="pickup_city" name="pickup_city" value="<?= htmlspecialchars($pickupLocation['city'] ?? 'Yeleswaram') ?>" required class="form-standard-input">
+                                </div>
+                                <div>
+                                    <label class="form-standard-label">State *</label>
+                                    <input type="text" id="pickup_state" name="pickup_state" value="<?= htmlspecialchars($pickupLocation['state'] ?? 'Andhra Pradesh') ?>" required class="form-standard-input">
+                                </div>
+                                <div>
+                                    <label class="form-standard-label">PIN Code *</label>
+                                    <input type="text" id="pickup_pin" name="pickup_pin" value="<?= htmlspecialchars((string)($pickupLocation['pin'] ?? $pickupLocation['pincode'] ?? '533429')) ?>" maxlength="6" pattern="[0-9]{6}" required class="form-standard-input">
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 18px;">
+                                <label class="form-standard-label">Contact Phone *</label>
+                                <input type="text" id="pickup_phone" name="pickup_phone" value="<?= htmlspecialchars((string)($pickupLocation['phone'] ?? '9876543210')) ?>" required class="form-standard-input">
+                            </div>
+
+                            <button type="submit" class="btn-save-changes" style="background: #144D29;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                                <span>Save Active Pickup Location</span>
+                            </button>
+                        </form>
+                    </div>
+
                 </div>
 
                 <!-- RIGHT COLUMN: Check Serviceability & Estimate Stack -->
@@ -1119,6 +1234,62 @@ $initRate = EkartLogisticsService::getRateEstimate([
             .catch(e => {
                 resBox.textContent = 'Error: ' + e.message;
             });
+    };
+
+    // Ekart Registered Pickup Addresses Fetcher & Auto-Filler
+    window.fetchedEkartAddresses = [];
+    window.fetchEkartAddresses = function(btn) {
+        const origHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span>Fetching...</span>';
+        fetch('shipping.php?ajax=ekart_get_addresses')
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+                if (data.success && data.addresses && data.addresses.length > 0) {
+                    window.fetchedEkartAddresses = data.addresses;
+                    const wrap = document.getElementById('ekartAddressesDropdownWrap');
+                    const sel = document.getElementById('ekartAddressSelect');
+                    if (wrap && sel) {
+                        sel.innerHTML = '<option value="">-- Choose from ' + data.addresses.length + ' registered Ekart addresses --</option>';
+                        data.addresses.forEach((addr, idx) => {
+                            const opt = document.createElement('option');
+                            opt.value = idx;
+                            opt.textContent = (addr.alias || addr.name || ('Address ' + (idx+1))) + ' (' + (addr.pincode || addr.pin || '') + ' - ' + (addr.city || '') + ')';
+                            sel.appendChild(opt);
+                        });
+                        wrap.style.display = 'block';
+                    }
+                    alert('Found ' + data.addresses.length + ' registered warehouse address(es) from Ekart portal. Please select or review.');
+                } else {
+                    alert('No registered addresses returned from Ekart API or portal disconnected. You can edit the pickup details below manually.');
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+                console.error(err);
+                alert('Error fetching addresses from Ekart API.');
+            });
+    };
+
+    window.selectEkartAddress = function(idx) {
+        if (idx === '' || !window.fetchedEkartAddresses[idx]) return;
+        const a = window.fetchedEkartAddresses[idx];
+        const nameEl = document.getElementById('pickup_name');
+        const addrEl = document.getElementById('pickup_address');
+        const cityEl = document.getElementById('pickup_city');
+        const stateEl = document.getElementById('pickup_state');
+        const pinEl = document.getElementById('pickup_pin');
+        const phoneEl = document.getElementById('pickup_phone');
+
+        if (nameEl) nameEl.value = a.alias || a.name || 'Nutronyx Warehouse';
+        if (addrEl) addrEl.value = a.address_line1 || a.address || '';
+        if (cityEl) cityEl.value = a.city || '';
+        if (stateEl) stateEl.value = a.state || '';
+        if (pinEl) pinEl.value = a.pincode || a.pin || '';
+        if (phoneEl) phoneEl.value = a.phone || '';
     };
     </script>
 </body>

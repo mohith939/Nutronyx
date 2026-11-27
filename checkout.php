@@ -537,8 +537,8 @@ $currentPage = 'checkout';
                                         <div class="input-icon-wrap">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
                                             <input type="text" id="city" name="city" class="form-input-control" 
-                                                   placeholder="Bengaluru" required 
-                                                   value="<?= htmlspecialchars($_POST['city'] ?? 'Bengaluru') ?>">
+                                                   placeholder="City / District" required 
+                                                   value="<?= htmlspecialchars($_POST['city'] ?? '') ?>">
                                         </div>
                                     </div>
 
@@ -558,7 +558,7 @@ $currentPage = 'checkout';
                                                     <option value="Haryana" <?= ($_POST['state'] ?? '') === 'Haryana' ? 'selected' : '' ?>>Haryana</option>
                                                     <option value="Himachal Pradesh" <?= ($_POST['state'] ?? '') === 'Himachal Pradesh' ? 'selected' : '' ?>>Himachal Pradesh</option>
                                                     <option value="Jharkhand" <?= ($_POST['state'] ?? '') === 'Jharkhand' ? 'selected' : '' ?>>Jharkhand</option>
-                                                    <option value="Karnataka" <?= ($_POST['state'] ?? 'Karnataka') === 'Karnataka' ? 'selected' : '' ?>>Karnataka</option>
+                                                    <option value="Karnataka" <?= ($_POST['state'] ?? '') === 'Karnataka' ? 'selected' : '' ?>>Karnataka</option>
                                                     <option value="Kerala" <?= ($_POST['state'] ?? '') === 'Kerala' ? 'selected' : '' ?>>Kerala</option>
                                                     <option value="Madhya Pradesh" <?= ($_POST['state'] ?? '') === 'Madhya Pradesh' ? 'selected' : '' ?>>Madhya Pradesh</option>
                                                     <option value="Maharashtra" <?= ($_POST['state'] ?? '') === 'Maharashtra' ? 'selected' : '' ?>>Maharashtra</option>
@@ -604,6 +604,9 @@ $currentPage = 'checkout';
                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                             <span id="pincodeEkartText"><?= htmlspecialchars($_SESSION['checkout_courier_name'] ?? 'Ekart Express Logistics') ?> • <?= ($cart['is_free_shipping']) ? 'FREE Delivery' : ('₹' . number_format($cart['shipping_rupees'], 2)) ?></span>
                                         </div>
+                                        <div id="pincodeLocationText" style="font-size: 12px; color: #374151; font-weight: 600; margin-top: 4px; display: none;">
+                                            Delivering to: <span id="pincodeResolvedArea" style="color: #111827;"></span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -648,60 +651,37 @@ $currentPage = 'checkout';
                                 <?php endforeach; ?>
                             </div>
 
-                            <!-- Promo Coupon Box (Checkout) -->
+                            <!-- Promo Coupon Box (Checkout — Exact Reference Match) -->
                             <div class="checkout-coupon-section" style="padding-top:16px; border-top:1px solid #EBE6DC; margin-bottom:16px;">
-                                <div class="coupon-input-group" style="display:flex; gap:8px;">
-                                    <div class="coupon-field-wrap" style="flex:1; position:relative; display:flex; align-items:center;">
-                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="position:absolute; left:12px; color:#7A766F;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-                                        <input type="text" id="checkoutCouponCode" class="coupon-input" placeholder="Enter coupon code" 
-                                               value="<?= htmlspecialchars($cart['applied_coupon']['code'] ?? '') ?>"
-                                               onkeydown="if(event.key === 'Enter'){ event.preventDefault(); applyCheckoutCoupon(); }"
-                                               style="width:100%; padding:10px 12px 10px 36px; border:1px solid #D9D2C5; border-radius:8px; font-size:13px; font-weight:500; background:#fff;">
+                                <div id="checkoutCouponInputWrap" style="<?= !empty($cart['applied_coupon']) ? 'display:none;' : '' ?>">
+                                    <div class="coupon-input-group" style="display:flex; gap:8px;">
+                                        <div class="coupon-field-wrap" style="flex:1; position:relative; display:flex; align-items:center;">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="position:absolute; left:12px; color:#7A766F;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                                            <input type="text" id="checkoutCouponCode" class="coupon-input" placeholder="Enter coupon code" 
+                                                   value=""
+                                                   onkeydown="if(event.key === 'Enter'){ event.preventDefault(); applyCheckoutCoupon(); }"
+                                                   style="width:100%; padding:10px 12px 10px 36px; border:1px solid #D9D2C5; border-radius:8px; font-size:13px; font-weight:500; background:#fff;">
+                                        </div>
+                                        <button type="button" class="coupon-apply-btn" id="checkoutCouponBtn" onclick="applyCheckoutCoupon()" 
+                                                style="padding:10px 18px; background:#143D24; color:#fff; border:none; border-radius:8px; font-weight:700; font-size:12px; cursor:pointer; letter-spacing:0.8px;">
+                                            APPLY
+                                        </button>
                                     </div>
-                                    <button type="button" class="coupon-apply-btn" id="checkoutCouponBtn" onclick="applyCheckoutCoupon()" 
-                                            style="padding:10px 18px; background:#143D24; color:#fff; border:none; border-radius:8px; font-weight:700; font-size:12px; cursor:pointer; letter-spacing:0.8px;">
-                                        APPLY
-                                    </button>
+                                    <p class="coupon-hints" style="font-size:11.5px; color:#6B7280; margin-top:8px; margin-bottom:0;">
+                                        Get 10% off your first order with code <strong onclick="quickApplyCheckout('FIRST10')" style="color:#143D24; cursor:pointer; text-decoration:underline;">FIRST10</strong>.
+                                    </p>
                                 </div>
 
-                                <div id="checkoutAppliedCouponContainer" style="<?= empty($cart['applied_coupon']) ? 'display:none;' : '' ?> margin-top:8px;">
-                                    <div class="cart-applied-coupon-chip" style="display:flex; align-items:center; justify-content:space-between; background:#EEF6F0; border:1px solid #C8DEC9; padding:6px 12px; border-radius:6px; font-size:12px;">
-                                        <div class="coupon-chip-left" style="display:flex; align-items:center; gap:6px; color:#175C31; font-weight:600;">
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                                <div id="checkoutAppliedCouponContainer" style="<?= empty($cart['applied_coupon']) ? 'display:none;' : '' ?>">
+                                    <div class="cart-applied-coupon-chip" style="display:flex; align-items:center; justify-content:space-between; background:#EEF6F0; border:1px solid #C8DEC9; padding:8px 14px; border-radius:8px; font-size:12.5px;">
+                                        <div class="coupon-chip-left" style="display:flex; align-items:center; gap:8px; color:#175C31; font-weight:700;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
                                             <span id="checkoutAppliedCouponName"><?= htmlspecialchars($cart['applied_coupon']['code'] ?? '') ?></span>
+                                            <span style="font-size:10.5px; font-weight:700; color:#059669; background:#D1FAE5; padding:2px 7px; border-radius:4px;">Applied</span>
                                         </div>
-                                        <span class="coupon-remove-btn" onclick="removeCheckoutCoupon()" style="color:#C33; font-weight:600; cursor:pointer; font-size:11px;">Remove</span>
+                                        <span class="coupon-remove-btn" onclick="removeCheckoutCoupon()" style="color:#C33; font-weight:700; cursor:pointer; font-size:11.5px;">Remove</span>
                                     </div>
                                 </div>
-
-                                <?php if (!empty($activeCoupons)): ?>
-                                    <div class="cart-available-offers-box" style="margin-top: 14px; background: #FAF9F6; border: 1px solid #ECE7DE; border-radius: 10px; padding: 12px 14px;">
-                                        <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #143D24; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                                            <span>Available Offers</span>
-                                        </div>
-                                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                                            <?php foreach ($activeCoupons as $ac): 
-                                                $acCode = htmlspecialchars($ac['code']);
-                                                $isApplied = (!empty($cart['applied_coupon']) && strtoupper($cart['applied_coupon']['code']) === strtoupper($ac['code']));
-                                                $desc = !empty($ac['description']) ? htmlspecialchars($ac['description']) : "Enjoy {$ac['discount_value']}% off your order with code {$acCode}.";
-                                            ?>
-                                                <div style="background: #FFFFFF; border: 1px solid <?= $isApplied ? '#A7F3D0' : '#E5E7EB' ?>; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-                                                    <div style="flex: 1;">
-                                                        <div style="display: flex; align-items: center; gap: 6px;">
-                                                            <span style="font-family: monospace; font-size: 11.5px; font-weight: 700; background: #F3F4F6; color: #143D24; padding: 2px 6px; border-radius: 4px; border: 1px dashed #CBD5E1;"><?= $acCode ?></span>
-                                                        </div>
-                                                        <div style="font-size: 11px; color: #4B5563; margin-top: 3px; line-height: 1.35;"><?= $desc ?></div>
-                                                    </div>
-                                                    <div>
-                                                        <span id="checkout-badge-<?= $acCode ?>" style="font-size: 10.5px; font-weight: 700; color: #059669; background: #ECFDF5; padding: 3px 6px; border-radius: 5px; <?= $isApplied ? 'display:inline-block;' : 'display:none;' ?>">Applied</span>
-                                                        <button type="button" class="checkout-offer-apply-btn" data-code="<?= $acCode ?>" onclick="quickApplyCheckout('<?= $acCode ?>')" style="font-size: 11px; font-weight: 700; color: #143D24; background: transparent; border: 1px solid #143D24; padding: 3px 8px; border-radius: 5px; cursor: pointer; transition: all 0.2s; <?= $isApplied ? 'display:none;' : 'display:inline-block;' ?>" onmouseover="this.style.background='#143D24';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#143D24'">APPLY</button>
-                                                    </div>
-                                                </div>
-                                            <?php endforeach; ?>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
                             </div>
 
                             <!-- Price Breakdown -->
@@ -841,6 +821,7 @@ $currentPage = 'checkout';
         clearTimeout(pincodeTimer);
         const noticeEl = document.getElementById('pincodeEkartNotice');
         const noticeTxt = document.getElementById('pincodeEkartText');
+        const locEl = document.getElementById('pincodeLocationText');
         const shipEl = document.getElementById('checkoutShippingText');
 
         if (pin.length === 6) {
@@ -849,6 +830,7 @@ $currentPage = 'checkout';
             }, 250);
         } else {
             if (noticeEl) noticeEl.style.display = 'none';
+            if (locEl) locEl.style.display = 'none';
             if (shipEl && !<?= $cart['is_free_shipping'] ? 'true' : 'false' ?>) {
                 shipEl.innerHTML = '<span style="color:#6B7280; font-size:12.5px;">Enter PIN code</span>';
             }
@@ -870,6 +852,8 @@ $currentPage = 'checkout';
     function calculateEkartShipping(pincode) {
         const noticeEl = document.getElementById('pincodeEkartNotice');
         const noticeTxt = document.getElementById('pincodeEkartText');
+        const locEl = document.getElementById('pincodeLocationText');
+        const locArea = document.getElementById('pincodeResolvedArea');
         const shipEl = document.getElementById('checkoutShippingText');
 
         if (shipEl) shipEl.innerHTML = '<span style="color:#6B7280; font-size:12px;">Calculating...</span>';
@@ -889,8 +873,30 @@ $currentPage = 'checkout';
                     const shipLabel = data.is_free ? 'FREE Delivery' : ('₹' + parseFloat(data.shipping_rupees).toFixed(2));
                     noticeTxt.textContent = data.courier + ' (' + (data.zone || 'Express') + ') • ' + shipLabel;
                 }
+                if (locEl && locArea && (data.location || data.city || data.state)) {
+                    locEl.style.display = 'block';
+                    locArea.textContent = data.location || [data.city, data.state].filter(Boolean).join(', ');
+                }
+                // Auto-fill City & State if not manually modified
+                const cityInput = document.getElementById('city');
+                const stateSelect = document.getElementById('state');
+                if (data.city && cityInput && (!cityInput.value.trim() || cityInput.value === 'Bengaluru')) {
+                    cityInput.value = data.city.split('/')[0].trim();
+                }
+                if (data.state && stateSelect) {
+                    for (let i = 0; i < stateSelect.options.length; i++) {
+                        const optVal = stateSelect.options[i].value.toLowerCase();
+                        const optTxt = stateSelect.options[i].text.toLowerCase();
+                        const targetState = data.state.toLowerCase();
+                        if (optVal === targetState || optTxt.includes(targetState) || targetState.includes(optVal)) {
+                            stateSelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
             } else if (data.error) {
                 if (shipEl) shipEl.innerHTML = '<span style="color:#DC2626; font-size:12px;">Check PIN</span>';
+                if (locEl) locEl.style.display = 'none';
                 if (noticeEl && noticeTxt) {
                     noticeEl.style.display = 'flex';
                     noticeTxt.style.color = '#DC2626';
@@ -931,6 +937,7 @@ $currentPage = 'checkout';
         if (finalEl) finalEl.textContent = '₹' + parseFloat(cart.total_rupees).toFixed(2);
 
         // Coupon container & label
+        const couponWrap = document.getElementById('checkoutCouponInputWrap');
         const couponCont = document.getElementById('checkoutAppliedCouponContainer');
         const couponName = document.getElementById('checkoutAppliedCouponName');
         const discountRow = document.getElementById('checkoutDiscountRow');
@@ -939,14 +946,16 @@ $currentPage = 'checkout';
         const couponInput = document.getElementById('checkoutCouponCode');
 
         if (cart.applied_coupon) {
+            if (couponWrap) couponWrap.style.display = 'none';
             if (couponCont) couponCont.style.display = 'block';
             if (couponName) couponName.textContent = cart.applied_coupon.code;
-            if (couponInput) couponInput.value = cart.applied_coupon.code;
+            if (couponInput) couponInput.value = '';
 
             if (discountRow) discountRow.style.display = 'flex';
             if (discountLabel) discountLabel.textContent = 'Discount (' + cart.applied_coupon.code + ')';
             if (discountVal) discountVal.textContent = '-₹' + parseFloat(cart.discount_rupees).toFixed(2);
         } else {
+            if (couponWrap) couponWrap.style.display = 'block';
             if (couponCont) couponCont.style.display = 'none';
             if (couponInput) couponInput.value = '';
             if (discountRow) discountRow.style.display = 'none';

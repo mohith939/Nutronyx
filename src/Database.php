@@ -514,6 +514,16 @@ class Database
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
         ");
+
+        // 8. Shipping Integrations extended columns (pickup_location)
+        $shipIntStmt = $db->query("PRAGMA table_info(shipping_integrations)");
+        $shipIntExisting = [];
+        while ($row = $shipIntStmt->fetch()) {
+            $shipIntExisting[$row['name']] = true;
+        }
+        if (!isset($shipIntExisting['pickup_location'])) {
+            $db->exec("ALTER TABLE shipping_integrations ADD COLUMN pickup_location TEXT");
+        }
     }
 
     public static function seedInitialData(): void

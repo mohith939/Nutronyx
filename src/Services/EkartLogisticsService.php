@@ -103,6 +103,10 @@ class EkartLogisticsService
         $wh = !empty($data['webhook_url']) ? trim($data['webhook_url']) : ($existing['webhook_url'] ?? 'https://nutronyx.com/api/v2/webhooks/ekart');
         $status = (!empty($apiKey) || !empty($acct)) ? 'CONNECTED' : 'DISCONNECTED';
 
+        $pickupLocJson = isset($data['pickup_location']) 
+            ? (is_array($data['pickup_location']) ? json_encode($data['pickup_location']) : (string)$data['pickup_location']) 
+            : ($existing['pickup_location'] ?? null);
+
         // Check if row exists for active website
         $stmt = $db->prepare("SELECT id FROM shipping_integrations WHERE carrier_code = 'ekart' AND website_id = :wid LIMIT 1");
         $stmt->execute([':wid' => $wid]);
@@ -112,7 +116,8 @@ class EkartLogisticsService
             $stmt = $db->prepare("
                 UPDATE shipping_integrations 
                 SET api_key = :key, api_secret = :secret, account_number = :acct, 
-                    environment = :env, status = :status, webhook_url = :wh, updated_at = CURRENT_TIMESTAMP
+                    environment = :env, status = :status, webhook_url = :wh, 
+                    pickup_location = :pickup, updated_at = CURRENT_TIMESTAMP
                 WHERE id = :id
             ");
             $res = $stmt->execute([
@@ -122,13 +127,14 @@ class EkartLogisticsService
                 ':env' => $env,
                 ':status' => $status,
                 ':wh' => $wh,
+                ':pickup' => $pickupLocJson,
                 ':id' => $rowId
             ]);
         } else {
             $newId = 'ship_int_' . md5($wid . '_ekart');
             $stmt = $db->prepare("
-                INSERT INTO shipping_integrations (id, website_id, carrier_code, carrier_name, api_key, api_secret, account_number, environment, status, webhook_url, updated_at)
-                VALUES (:id, :wid, 'ekart', 'Ekart Logistics Enterprise', :key, :secret, :acct, :env, :status, :wh, CURRENT_TIMESTAMP)
+                INSERT INTO shipping_integrations (id, website_id, carrier_code, carrier_name, api_key, api_secret, account_number, environment, status, webhook_url, pickup_location, updated_at)
+                VALUES (:id, :wid, 'ekart', 'Ekart Logistics Enterprise', :key, :secret, :acct, :env, :status, :wh, :pickup, CURRENT_TIMESTAMP)
             ");
             $res = $stmt->execute([
                 ':id' => $newId,
@@ -138,7 +144,8 @@ class EkartLogisticsService
                 ':acct' => $acct,
                 ':env' => $env,
                 ':status' => $status,
-                ':wh' => $wh
+                ':wh' => $wh,
+                ':pickup' => $pickupLocJson
             ]);
         }
 
@@ -146,7 +153,8 @@ class EkartLogisticsService
         $stmtSync = $db->prepare("
             UPDATE shipping_integrations 
             SET api_key = :key, api_secret = :secret, account_number = :acct, 
-                environment = :env, status = :status, webhook_url = :wh, updated_at = CURRENT_TIMESTAMP
+                environment = :env, status = :status, webhook_url = :wh,
+                pickup_location = COALESCE(:pickup, pickup_location), updated_at = CURRENT_TIMESTAMP
             WHERE carrier_code = 'ekart'
         ");
         $stmtSync->execute([
@@ -155,7 +163,8 @@ class EkartLogisticsService
             ':acct' => $acct,
             ':env' => $env,
             ':status' => $status,
-            ':wh' => $wh
+            ':wh' => $wh,
+            ':pickup' => $pickupLocJson
         ]);
 
         // Invalidate cached token when credentials change
@@ -165,6 +174,99 @@ class EkartLogisticsService
 
         AuditService::log('shipping.ekart_config', 'shipping_integrations', 'ekart', "Updated Ekart API configuration (Status: {$status})");
         return $res;
+    }
+
+    /**
+     * Save authentic Pickup Location fetched from Ekart Portal or configured by admin.
+     */
+    public static function savePickupLocation(array $data): bool
+    {
+        $db = Database::getConnection();
+        $formatted = [
+            'location_type' => 'Warehouse',
+            'name' => $data['name'] ?? ($data['alias'] ?? 'Nutronyx Fulfillment Warehouse'),
+            'alias' => $data['alias'] ?? ($data['name'] ?? 'Nutronyx Fulfillment Warehouse'),
+            'address' => $data['address_line1'] ?? ($data['address'] ?? ''),
+            'address_line1' => $data['address_line1'] ?? ($data['address'] ?? ''),
+            'address_line2' => $data['address_line2'] ?? '',
+            'city' => $data['city'] ?? '',
+            'state' => $data['state'] ?? '',
+            'country' => $data['country'] ?? 'India',
+            'phone' => (string)($data['phone'] ?? '9876543210'),
+            'pin' => (int)($data['pincode'] ?? ($data['pin'] ?? 533429)),
+            'pincode' => (int)($data['pincode'] ?? ($data['pin'] ?? 533429))
+        ];
+
+        $json = json_encode($formatted);
+        $stmt = $db->prepare("UPDATE shipping_integrations SET pickup_location = :loc WHERE carrier_code = 'ekart'");
+        return $stmt->execute([':loc' => $json]);
+    }
+
+    /**
+     * Retrieve active pickup location for Ekart shipments.
+     */
+    public static function getPickupLocation(): array
+    {
+        $cfg = self::getConfig();
+        if (!empty($cfg['pickup_location'])) {
+            $saved = json_decode($cfg['pickup_location'], true);
+            if (is_array($saved)) {
+                $addr = isset($saved[0]) ? $saved[0] : $saved;
+                if (!empty($addr['address']) || !empty($addr['address_line1'])) {
+                    return [
+                        'location_type' => 'Warehouse',
+                        'name' => $addr['name'] ?? ($addr['alias'] ?? 'Nutronyx Fulfillment Warehouse'),
+                        'alias' => $addr['alias'] ?? ($addr['name'] ?? 'Nutronyx Fulfillment Warehouse'),
+                        'address' => $addr['address_line1'] ?? ($addr['address'] ?? ''),
+                        'address_line1' => $addr['address_line1'] ?? ($addr['address'] ?? ''),
+                        'address_line2' => $addr['address_line2'] ?? '',
+                        'city' => $addr['city'] ?? 'Yeleswaram',
+                        'state' => $addr['state'] ?? 'Andhra Pradesh',
+                        'country' => $addr['country'] ?? 'India',
+                        'phone' => (int)preg_replace('/\D/', '', (string)($addr['phone'] ?? '9876543210')),
+                        'pin' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 533429)),
+                        'pincode' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 533429))
+                    ];
+                }
+            }
+        }
+
+        // Attempt live fetch from Ekart Portal addresses
+        try {
+            $addresses = self::getAddresses();
+            if (!empty($addresses) && is_array($addresses) && isset($addresses[0])) {
+                $addr = $addresses[0];
+                return [
+                    'location_type' => 'Warehouse',
+                    'name' => $addr['alias'] ?? ($addr['name'] ?? 'Nutronyx Fulfillment Warehouse'),
+                    'alias' => $addr['alias'] ?? ($addr['name'] ?? 'Nutronyx Fulfillment Warehouse'),
+                    'address' => $addr['address_line1'] ?? ($addr['address'] ?? ''),
+                    'address_line1' => $addr['address_line1'] ?? ($addr['address'] ?? ''),
+                    'address_line2' => $addr['address_line2'] ?? '',
+                    'city' => $addr['city'] ?? 'Yeleswaram',
+                    'state' => $addr['state'] ?? 'Andhra Pradesh',
+                    'country' => $addr['country'] ?? 'India',
+                    'phone' => (int)preg_replace('/\D/', '', (string)($addr['phone'] ?? '9876543210')),
+                    'pin' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 533429)),
+                    'pincode' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 533429))
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        return [
+            'location_type' => 'Warehouse',
+            'name' => 'Nutronyx Warehouse',
+            'alias' => 'Nutronyx Warehouse',
+            'address' => 'Registered Warehouse Facility',
+            'address_line1' => 'Registered Warehouse Facility',
+            'address_line2' => '',
+            'city' => 'Yeleswaram',
+            'state' => 'Andhra Pradesh',
+            'country' => 'India',
+            'phone' => 9876543210,
+            'pin' => 533429,
+            'pincode' => 533429
+        ];
     }
 
     /**
@@ -684,10 +786,15 @@ class EkartLogisticsService
 
         $orderNumber = $shipment['order_number'] ?? ('NX-' . rand(2000, 2999));
 
+        $pickupLoc = $shipment['pickup_location'] ?? self::getPickupLocation();
+        $defaultSellerAddress = !empty($pickupLoc['address']) 
+            ? ($pickupLoc['address'] . ', ' . ($pickupLoc['city'] ?? '') . ', ' . ($pickupLoc['state'] ?? '') . ' - ' . ($pickupLoc['pin'] ?? $pickupLoc['pincode'] ?? ''))
+            : 'Nutronyx Healthcare Pvt Ltd';
+
         // Format OpenAPI 3.1.0 Compliant Shipment Payload
         $payload = [
-            'seller_name' => $shipment['seller_name'] ?? 'Nutronyx Healthcare Pvt Ltd',
-            'seller_address' => $shipment['seller_address'] ?? 'Plot 42, APIIC Industrial Park, Morampudi, Rajahmundry, Andhra Pradesh - 533101',
+            'seller_name' => $shipment['seller_name'] ?? ($pickupLoc['name'] ?? 'Nutronyx Healthcare Pvt Ltd'),
+            'seller_address' => $shipment['seller_address'] ?? $defaultSellerAddress,
             'seller_gst_tin' => $shipment['seller_gst_tin'] ?? '37AAAAA0000A1Z5',
             'seller_gst_amount' => (float)($shipment['seller_gst_amount'] ?? 0),
             'consignee_gst_amount' => (float)($shipment['consignee_gst_amount'] ?? 0),
@@ -727,26 +834,8 @@ class EkartLogisticsService
                 'phone' => 9876543210,
                 'pin' => 500081
             ],
-            'pickup_location' => $shipment['pickup_location'] ?? [
-                'location_type' => 'Warehouse',
-                'address' => 'Plot 42, APIIC Industrial Park, Morampudi',
-                'city' => 'Rajahmundry',
-                'state' => 'Andhra Pradesh',
-                'country' => 'India',
-                'name' => 'Nutronyx Central Warehouse',
-                'phone' => 9876543210,
-                'pin' => 533101
-            ],
-            'return_location' => $shipment['return_location'] ?? [
-                'location_type' => 'Warehouse',
-                'address' => 'Plot 42, APIIC Industrial Park, Morampudi',
-                'city' => 'Rajahmundry',
-                'state' => 'Andhra Pradesh',
-                'country' => 'India',
-                'name' => 'Nutronyx Central Warehouse',
-                'phone' => 9876543210,
-                'pin' => 533101
-            ],
+            'pickup_location' => $pickupLoc,
+            'return_location' => $shipment['return_location'] ?? $pickupLoc,
             'service' => $shipment['service'] ?? 'EXPRESS',
             'delayed_dispatch' => false,
             'obd_shipment' => false,
@@ -1016,31 +1105,34 @@ class EkartLogisticsService
         $response = self::executeHttpRequest('GET', $endpoint, null, ["Authorization: Bearer {$token}"]);
 
         if ($response['success'] && is_array($response['data']) && !empty($response['data'])) {
-            return $response['data'];
+            $addresses = $response['data'];
+            // If active pickup location is not yet set in database, save the first one
+            $cfg = self::getConfig();
+            if (empty($cfg['pickup_location']) && !empty($addresses[0])) {
+                self::savePickupLocation($addresses[0]);
+            }
+            return $addresses;
+        }
+
+        // Return configured pickup location if available
+        $cfg = self::getConfig();
+        if (!empty($cfg['pickup_location'])) {
+            $saved = json_decode($cfg['pickup_location'], true);
+            if (is_array($saved) && !empty($saved)) {
+                return isset($saved[0]) ? $saved : [$saved];
+            }
         }
 
         return [
             [
-                'alias' => 'Nutronyx Central Warehouse Rajahmundry',
+                'alias' => 'Nutronyx Fulfillment Warehouse',
                 'phone' => 9876543210,
-                'address_line1' => 'Plot 42, APIIC Industrial Park, Morampudi',
-                'address_line2' => 'Near NH-16 Highway Junction',
-                'pincode' => 533101,
-                'city' => 'Rajahmundry',
+                'address_line1' => 'Registered Warehouse Facility',
+                'address_line2' => '',
+                'pincode' => 533429,
+                'city' => 'Yeleswaram',
                 'state' => 'Andhra Pradesh',
-                'country' => 'India',
-                'geo' => ['lat' => 17.0005, 'lon' => 81.8040]
-            ],
-            [
-                'alias' => 'Nutronyx Bengaluru Fulfillment Center',
-                'phone' => 9123456789,
-                'address_line1' => 'Hub 7, Whitefield Logistics Boulevard',
-                'address_line2' => 'Adjacent to Hoodi Tech Zone',
-                'pincode' => 560066,
-                'city' => 'Bengaluru',
-                'state' => 'Karnataka',
-                'country' => 'India',
-                'geo' => ['lat' => 12.9840, 'lon' => 77.7289]
+                'country' => 'India'
             ]
         ];
     }
