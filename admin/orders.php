@@ -79,6 +79,39 @@ if (isset($_GET['action']) && $_GET['action'] === 'sync_ekart' && !empty($_GET['
     exit;
 }
 
+// Handle Bulk Sync All Ekart shipments via GET
+if (isset($_GET['action']) && $_GET['action'] === 'sync_all_ekart') {
+    try {
+        $syncedCount = 0;
+        $failedCount = 0;
+        $activeOrders = $db->query("
+            SELECT DISTINCT o.id 
+            FROM orders o
+            JOIN shipments s ON s.order_id = o.id
+            WHERE s.tracking_number IS NOT NULL AND s.tracking_number != ''
+              AND o.fulfillment_status != 'DELIVERED'
+              AND o.order_status NOT IN ('DELIVERED', 'CANCELLED', 'RETURNED')
+            ORDER BY o.created_at DESC
+            LIMIT 50
+        ")->fetchAll(\PDO::FETCH_COLUMN);
+
+        foreach ($activeOrders as $oid) {
+            try {
+                OrderService::syncEkartStatus($oid);
+                $syncedCount++;
+            } catch (\Throwable $e) {
+                $failedCount++;
+            }
+        }
+        $_SESSION['admin_notice'] = "Ekart tracking synced for {$syncedCount} active shipments." . ($failedCount > 0 ? " ({$failedCount} skipped or failed)" : "");
+    } catch (\Throwable $e) {
+        $_SESSION['admin_error'] = "Bulk sync failed: " . $e->getMessage();
+    }
+    $redirectTab = !empty($_GET['tab']) ? '?tab=' . urlencode($_GET['tab']) : '';
+    header("Location: orders.php{$redirectTab}");
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
@@ -412,7 +445,11 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                 <h1 class="orders-title">Orders &amp; Fulfillments</h1>
                                 <p class="orders-subtitle">Manage orders, payments, shipments, returns and customer fulfillments.</p>
                             </div>
-                            <div style="display: flex; gap: 10px; align-items: center;">
+                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <a href="orders.php?action=sync_all_ekart<?= !empty($statusTab) ? '&tab=' . urlencode($statusTab) : '' ?>" class="btn-action btn-action-outline" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 13px; font-weight: 600; border-radius: 8px; text-decoration: none; color: #065F46; border-color: #A7F3D0; background: #ECFDF5;" title="Sync live shipment statuses from Ekart Logistics">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                                    <span>Sync with Ekart</span>
+                                </a>
                                 <button type="button" class="btn-action btn-action-outline" onclick="window.NutronyxOrder.openExportModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 13px; font-weight: 600; border-radius: 8px;">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                     <span>Export</span>
@@ -658,6 +695,28 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                                 $timePart = $dt->format('h:i A');
                                                 $amountFormatted = '₹' . number_format(($order['grand_total_amount'] ?? 0) / 100);
                                                 $rowIndex++;
+
+                                                // Determine real fulfillment status and visual class
+                                                $rawFulfillment = strtoupper(trim((string)($order['shipment_status'] ?? $order['fulfillment_status'] ?? 'PENDING')));
+                                                if (!empty($order['tracking_number']) && in_array($rawFulfillment, ['PENDING', 'UNFULFILLED', ''])) {
+                                                    $rawFulfillment = 'MANIFESTED';
+                                                }
+                                                if (in_array($rawFulfillment, ['DELIVERED', 'COMPLETED'])) {
+                                                    $fulfillmentLabel = 'Delivered';
+                                                    $fulfillmentPillClass = 'delivered';
+                                                } elseif (in_array($rawFulfillment, ['IN_TRANSIT', 'SHIPPED', 'DISPATCHED', 'OUT_FOR_DELIVERY', 'REACHED_DESTINATION'])) {
+                                                    $fulfillmentLabel = 'In Transit';
+                                                    $fulfillmentPillClass = 'shipped';
+                                                } elseif (in_array($rawFulfillment, ['MANIFESTED', 'BOOKED', 'PROCESSING', 'PREPARING'])) {
+                                                    $fulfillmentLabel = 'Manifested';
+                                                    $fulfillmentPillClass = 'preparing';
+                                                } elseif (in_array($rawFulfillment, ['CANCELLED', 'RETURNED', 'RTO', 'UNDELIVERED'])) {
+                                                    $fulfillmentLabel = 'Cancelled';
+                                                    $fulfillmentPillClass = 'returned';
+                                                } else {
+                                                    $fulfillmentLabel = 'Pending';
+                                                    $fulfillmentPillClass = 'pending';
+                                                }
                                             ?>
                                             <tr id="row-<?= htmlspecialchars($order['id']) ?>" 
                                                 class="order-row-item order-table-row <?= $isSelected ? 'selected-order-row' : '' ?>"
@@ -700,12 +759,38 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                                     </span>
                                                 </td>
 
-                                                <!-- Fulfillment Status Pill with Dot -->
+                                                <!-- Fulfillment Status Pill with Dot & Real Tracking Info -->
                                                 <td>
-                                                    <span class="status-pill-dot <?= $fulfillmentPillClass ?>">
-                                                        <span class="dot"></span>
-                                                        <span><?= htmlspecialchars(ucfirst(strtolower($order['fulfillment_status'] ?? 'Pending'))) ?></span>
-                                                    </span>
+                                                    <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                                                        <span class="status-pill-dot <?= $fulfillmentPillClass ?>">
+                                                            <span class="dot"></span>
+                                                            <span><?= htmlspecialchars($fulfillmentLabel) ?></span>
+                                                        </span>
+                                                        <?php if (!empty($order['tracking_number'])): ?>
+                                                            <a href="https://app.elite.ekartlogistics.in/track/<?= urlencode($order['tracking_number']) ?>" 
+                                                               target="_blank" 
+                                                               onclick="event.stopPropagation();"
+                                                               title="Track on Ekart Elite"
+                                                               style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #1E40AF; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 4px; padding: 1px 6px; text-decoration: none;">
+                                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                                                <span><?= htmlspecialchars($order['tracking_number']) ?></span>
+                                                            </a>
+                                                        <?php elseif ($fulfillmentLabel === 'Pending'): ?>
+                                                            <?php
+                                                                $rowShippingAddr = trim(($order['shipping_address_line1'] ?? '') . ' ' . ($order['shipping_address_line2'] ?? '') . ', ' . ($order['shipping_city'] ?? '') . ', ' . ($order['shipping_state'] ?? '') . ' - ' . ($order['shipping_postal_code'] ?? ''));
+                                                                $rowShippingName = $order['shipping_name'] ?: ($order['customer_name'] ?: 'Customer');
+                                                                $rowShippingPhone = $order['shipping_phone'] ?: ($order['customer_phone'] ?: '');
+                                                                $rowTotalRupees = (float)(($order['grand_total_amount'] ?? 0) / 100);
+                                                                $rowPayMode = strtoupper($order['payment_method'] ?? '') === 'COD' ? 'COD' : 'Prepaid';
+                                                            ?>
+                                                            <button type="button" 
+                                                                    onclick="event.stopPropagation(); window.NutronyxOrder.openEkartShipModal('<?= htmlspecialchars($order['id'], ENT_QUOTES) ?>', '<?= htmlspecialchars($order['order_number'], ENT_QUOTES) ?>', '<?= htmlspecialchars($rowShippingName, ENT_QUOTES) ?>', '<?= htmlspecialchars($rowShippingPhone, ENT_QUOTES) ?>', '<?= htmlspecialchars($rowShippingAddr, ENT_QUOTES) ?>', '<?= $rowTotalRupees ?>', '<?= $rowPayMode ?>')"
+                                                                    style="display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 600; color: #065F46; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 4px; padding: 2px 6px; cursor: pointer;">
+                                                                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                                                <span>Ship on Ekart</span>
+                                                            </button>
+                                                        <?php endif; ?>
+                                                    </div>
                                                 </td>
 
                                                 <!-- Date Column (2 lines: date and time) -->

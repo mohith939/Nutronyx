@@ -14,8 +14,9 @@ AuthService::requireAuth();
 $activePage = 'promotions';
 $activeWebsite = Context::getWebsite();
 $currentTab = $_GET['tab'] ?? 'coupons';
-$notice = '';
-$error = '';
+$notice = $_SESSION['admin_notice'] ?? '';
+$error = $_SESSION['admin_error'] ?? '';
+unset($_SESSION['admin_notice'], $_SESSION['admin_error']);
 
 PromotionService::ensureTables();
 AnnouncementService::ensureTable();
@@ -39,36 +40,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'per_customer_limit' => (int)($_POST['per_customer_limit'] ?? 1),
                 'status' => $_POST['status'] ?? 'ACTIVE',
                 'show_in_cart' => (int)($_POST['show_in_cart'] ?? 1),
-                'expires_at' => !empty($_POST['expires_at']) ? $_POST['expires_at'] . ' 23:59:59' : null
+                'expires_at' => !empty($_POST['expires_at']) ? $_POST['expires_at'] : null
             ]);
-            $notice = "Coupon '" . strtoupper(trim($_POST['code'])) . "' created successfully.";
-            $currentTab = 'coupons';
+            $_SESSION['admin_notice'] = "Coupon '" . strtoupper(trim($_POST['code'])) . "' created successfully.";
         } catch (\Throwable $e) {
-            $error = 'Error creating coupon: ' . $e->getMessage();
+            $_SESSION['admin_error'] = 'Error creating coupon: ' . $e->getMessage();
         }
+        header('Location: promotions.php?tab=coupons');
+        exit;
     }
 
     // 2. Edit Coupon
     if ($action === 'update_coupon') {
         $id = $_POST['id'] ?? '';
         if ($id) {
-            PromotionService::updatePromotion($id, [
-                'code' => trim($_POST['code']),
-                'name' => trim($_POST['name'] ?? ''),
-                'campaign_name' => trim($_POST['campaign_name'] ?? 'General Promotion'),
-                'description' => trim($_POST['description'] ?? ''),
-                'discount_type' => $_POST['discount_type'] ?? 'PERCENTAGE',
-                'discount_value' => (int)($_POST['discount_value'] ?? 0),
-                'minimum_order_rupees' => (int)($_POST['minimum_order_rupees'] ?? 0),
-                'usage_limit' => (int)($_POST['usage_limit'] ?? 500),
-                'per_customer_limit' => (int)($_POST['per_customer_limit'] ?? 1),
-                'status' => $_POST['status'] ?? 'ACTIVE',
-                'show_in_cart' => (int)($_POST['show_in_cart'] ?? 1),
-                'expires_at' => !empty($_POST['expires_at']) ? $_POST['expires_at'] : null
-            ]);
-            $notice = "Coupon updated successfully.";
-            $currentTab = 'coupons';
+            try {
+                PromotionService::updatePromotion($id, [
+                    'code' => trim($_POST['code']),
+                    'name' => trim($_POST['name'] ?? ''),
+                    'campaign_name' => trim($_POST['campaign_name'] ?? 'General Promotion'),
+                    'description' => trim($_POST['description'] ?? ''),
+                    'discount_type' => $_POST['discount_type'] ?? 'PERCENTAGE',
+                    'discount_value' => (int)($_POST['discount_value'] ?? 0),
+                    'minimum_order_rupees' => (int)($_POST['minimum_order_rupees'] ?? 0),
+                    'usage_limit' => (int)($_POST['usage_limit'] ?? 500),
+                    'per_customer_limit' => (int)($_POST['per_customer_limit'] ?? 1),
+                    'status' => $_POST['status'] ?? 'ACTIVE',
+                    'show_in_cart' => (int)($_POST['show_in_cart'] ?? 1),
+                    'expires_at' => !empty($_POST['expires_at']) ? $_POST['expires_at'] : null
+                ]);
+                $_SESSION['admin_notice'] = "Coupon updated successfully.";
+            } catch (\Throwable $e) {
+                $_SESSION['admin_error'] = 'Error updating coupon: ' . $e->getMessage();
+            }
         }
+        header('Location: promotions.php?tab=coupons');
+        exit;
     }
 
     // 3. Duplicate Coupon
@@ -77,10 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($id) {
             $newId = PromotionService::duplicatePromotion($id);
             if ($newId) {
-                $notice = "Coupon duplicated successfully as a new draft/active code.";
+                $_SESSION['admin_notice'] = "Coupon duplicated successfully as a new draft/active code.";
             }
-            $currentTab = 'coupons';
         }
+        header('Location: promotions.php?tab=coupons');
+        exit;
     }
 
     // 4. Delete Coupon
@@ -88,9 +96,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $_POST['id'] ?? '';
         if ($id) {
             PromotionService::deletePromotion($id);
-            $notice = "Coupon deleted successfully.";
-            $currentTab = 'coupons';
+            $_SESSION['admin_notice'] = "Coupon deleted successfully.";
         }
+        header('Location: promotions.php?tab=coupons');
+        exit;
     }
 
     // 5. Toggle Active
@@ -99,12 +108,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $active = (int)($_POST['active'] ?? 0);
         if ($id) {
             PromotionService::toggleActive($id, $active);
-            $notice = "Coupon status updated to " . ($active ? 'Active' : 'Inactive') . ".";
-            $currentTab = 'coupons';
+            $_SESSION['admin_notice'] = "Coupon status updated to " . ($active ? 'Active' : 'Inactive') . ".";
         }
+        header('Location: promotions.php?tab=coupons');
+        exit;
     }
 
-    // 6. Create Campaign
+    // 6. Renew / Extend Coupon Expiry
+    if ($action === 'renew_coupon') {
+        $id = $_POST['id'] ?? '';
+        if ($id) {
+            PromotionService::renewPromotion($id, 30);
+            $_SESSION['admin_notice'] = "Coupon renewed successfully (+30 days active).";
+        }
+        header('Location: promotions.php?tab=coupons');
+        exit;
+    }
+
+    // 7. Create Campaign
     if ($action === 'create_campaign') {
         $db = Database::getConnection();
         $cid = 'camp_' . bin2hex(random_bytes(6));
@@ -121,11 +142,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':end' => $_POST['end_date'] ?? date('Y-m-d', strtotime('+30 days')),
             ':bgt' => (int)($_POST['budget_rupees'] ?? 50000) * 100
         ]);
-        $notice = "Promotional campaign '" . htmlspecialchars($_POST['campaign_name']) . "' launched successfully.";
-        $currentTab = 'campaigns';
+        $_SESSION['admin_notice'] = "Promotional campaign '" . htmlspecialchars($_POST['campaign_name']) . "' launched successfully.";
+        header('Location: promotions.php?tab=campaigns');
+        exit;
     }
 
-    // 7. Create Automatic Discount
+    // 8. Create Automatic Discount
     if ($action === 'create_auto_discount') {
         $db = Database::getConnection();
         $aid = 'auto_' . bin2hex(random_bytes(6));
@@ -142,11 +164,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':val' => (int)($_POST['discount_value'] ?? 0),
             ':min' => (int)($_POST['min_cart_rupees'] ?? 0) * 100
         ]);
-        $notice = "Automatic discount rule created and active at checkout.";
-        $currentTab = 'auto';
+        $_SESSION['admin_notice'] = "Automatic discount rule created and active at checkout.";
+        header('Location: promotions.php?tab=auto');
+        exit;
     }
 
-    // 8. Save Top Announcement Ticker Bar
+    // 9. Save Top Announcement Ticker Bar
     if ($action === 'save_announcement') {
         try {
             $websiteId = Context::getWebsiteId() ?: 'store_nutronyx_in';
@@ -164,12 +187,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'text_color' => trim($_POST['text_color'] ?? '#FAF6ED'),
                 'speed_seconds' => max(10, min(120, (int)($_POST['speed_seconds'] ?? 30)))
             ]);
-            $notice = "Announcement ticker settings saved successfully and updated live!";
-            $currentTab = 'announcement';
+            $_SESSION['admin_notice'] = "Announcement ticker settings saved successfully and updated live!";
         } catch (\Throwable $e) {
-            $error = 'Error saving announcement settings: ' . $e->getMessage();
-            $currentTab = 'announcement';
+            $_SESSION['admin_error'] = 'Error saving announcement settings: ' . $e->getMessage();
         }
+        header('Location: promotions.php?tab=announcement');
+        exit;
     }
 }
 
@@ -714,6 +737,18 @@ if (!empty($_GET['selected_id'])) {
             align-items: center;
             gap: 5px;
         }
+        .badge-status-expired {
+            background: #FEF3C7;
+            color: #92400E;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid #FCD34D;
+        }
 
         /* Progress Bar */
         .progress-bar-container {
@@ -1253,7 +1288,8 @@ if (!empty($_GET['selected_id'])) {
                                         $limit = (int)($p['usage_limit'] ?? 0);
                                         $used = (int)($p['usage_count'] ?? 0);
                                         $pctUsed = $limit > 0 ? min(100, round(($used / $limit) * 100)) : 0;
-                                        $status = strtoupper($p['status'] ?? ($p['is_active'] ? 'ACTIVE' : 'INACTIVE'));
+                                        $isExpired = !empty($p['is_expired']) || (!empty($p['expires_at']) && strtotime($p['expires_at']) < time());
+                                        $status = $isExpired ? 'EXPIRED' : strtoupper($p['effective_status'] ?? $p['status'] ?? ($p['is_active'] ? 'ACTIVE' : 'INACTIVE'));
                                         $discountGiven = (int)($p['discount_given_amount'] ?? 0) / 100;
                                         $expiryStr = !empty($p['expires_at']) ? date('d M, Y', strtotime($p['expires_at'])) : 'No Expiry';
                                     ?>
@@ -1327,6 +1363,8 @@ if (!empty($_GET['selected_id'])) {
                                         <td>
                                             <?php if ($status === 'ACTIVE'): ?>
                                                 <span class="badge-status-active"><span style="width: 5px; height: 5px; border-radius: 50%; background: #10B981;"></span> Active</span>
+                                            <?php elseif ($status === 'EXPIRED'): ?>
+                                                <span class="badge-status-expired"><span style="width: 5px; height: 5px; border-radius: 50%; background: #D97706;"></span> Expired</span>
                                             <?php elseif ($status === 'SCHEDULED'): ?>
                                                 <span class="badge-status-scheduled"><span style="width: 5px; height: 5px; border-radius: 50%; background: #F59E0B;"></span> Scheduled</span>
                                             <?php elseif ($status === 'EXHAUSTED'): ?>
@@ -1362,6 +1400,12 @@ if (!empty($_GET['selected_id'])) {
                                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
                                                         <span>Share Link</span>
                                                     </button>
+                                                    <?php if ($isExpired || $status === 'INACTIVE'): ?>
+                                                    <button type="button" class="action-menu-item" onclick="window.renewCouponAction('<?= $p['id'] ?>')">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                                                        <span style="color: #065F46; font-weight: 600;">Renew (+30 Days)</span>
+                                                    </button>
+                                                    <?php endif; ?>
                                                     <div style="height: 1px; background: #F3F4F6; margin: 4px 0;"></div>
                                                     <button type="button" class="action-menu-item" onclick="window.toggleCouponStatus('<?= $p['id'] ?>', <?= $p['is_active'] ? 0 : 1 ?>)">
                                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -2189,9 +2233,15 @@ if (!empty($_GET['selected_id'])) {
                         </div>
                         
                         <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Expiry Date</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin: 0;">Expiry Date</label>
+                                <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: #4B5563; cursor: pointer; margin: 0;">
+                                    <input type="checkbox" id="couponNoExpiryCb" onchange="window.toggleNoExpiry(this.checked)" style="accent-color: #144D29; cursor: pointer;">
+                                    <span>Never Expires</span>
+                                </label>
+                            </div>
                             <input type="date" name="expires_at" id="couponExpiryInp" value="<?= date('Y-m-d', strtotime('+60 days')) ?>" class="form-control" style="border-radius: 8px; font-size: 13px; border: 1px solid #D1D5DB; width: 100%;">
-                            <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Expires at midnight</span>
+                            <span id="couponExpiryNote" style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Expires at end of day (23:59:59)</span>
                             <input type="hidden" name="status" id="couponStatusSelect" value="ACTIVE">
                         </div>
                     </div>
@@ -2434,6 +2484,7 @@ if (!empty($_GET['selected_id'])) {
         const val = document.getElementById('modalDiscountValInput')?.value || '15';
         const minCart = parseInt(document.getElementById('couponMinCartInp')?.value || '0', 10);
         const expDate = document.getElementById('couponExpiryInp')?.value;
+        const noExpiry = document.getElementById('couponNoExpiryCb')?.checked;
         const summaryEl = document.getElementById('couponLiveSummaryText');
         if (!summaryEl) return;
 
@@ -2441,9 +2492,32 @@ if (!empty($_GET['selected_id'])) {
                           (type === 'FIXED_AMOUNT') ? `<strong>₹${val} OFF</strong>` :
                           (type === 'FREE_SHIPPING') ? `<strong>FREE Delivery</strong>` : `<strong>Discount</strong>`;
         let minTxt = minCart > 0 ? ` on orders over <strong>₹${minCart.toLocaleString('en-IN')}</strong>` : ' with no minimum order';
-        let expTxt = expDate ? ` • Expires ${expDate}` : '';
+        let expTxt = noExpiry ? ' • Never Expires' : (expDate ? ` • Expires ${expDate}` : '');
 
         summaryEl.innerHTML = `Customers get ${discountTxt}${minTxt} using code <strong style="font-family: monospace; color: #144D29; background: #E5E7EB; padding: 2px 6px; border-radius: 4px;">${code}</strong>${expTxt}.`;
+    };
+
+    // Toggle No Expiry Checkbox
+    window.toggleNoExpiry = function(isNever) {
+        const inp = document.getElementById('couponExpiryInp');
+        const note = document.getElementById('couponExpiryNote');
+        if (inp) {
+            inp.disabled = isNever;
+            if (isNever) {
+                inp.dataset.prevVal = inp.value;
+                inp.value = '';
+            } else if (inp.dataset.prevVal) {
+                inp.value = inp.dataset.prevVal;
+            } else {
+                const d = new Date();
+                d.setDate(d.getDate() + 60);
+                inp.value = d.toISOString().split('T')[0];
+            }
+        }
+        if (note) {
+            note.textContent = isNever ? 'Coupon will never expire' : 'Expires at end of day (23:59:59)';
+        }
+        window.updateCouponLiveSummary();
     };
 
     // 7. Open Create Coupon Modal
@@ -2471,6 +2545,12 @@ if (!empty($_GET['selected_id'])) {
         if (document.getElementById('couponPerCustomerLimit')) document.getElementById('couponPerCustomerLimit').checked = true;
         if (document.getElementById('couponPerCustomerLimitVal')) document.getElementById('couponPerCustomerLimitVal').value = '1';
         if (document.getElementById('couponStatusSelect')) document.getElementById('couponStatusSelect').value = 'ACTIVE';
+
+        const noExpCb = document.getElementById('couponNoExpiryCb');
+        if (noExpCb) {
+            noExpCb.checked = false;
+            window.toggleNoExpiry(false);
+        }
 
         window.updateCouponLiveSummary();
         document.getElementById('createCouponModal').style.display = 'flex';
@@ -2536,7 +2616,14 @@ if (!empty($_GET['selected_id'])) {
             document.getElementById('couponPerCustomerLimitVal').value = perCust > 0 ? '1' : '0';
         }
 
-        if (coupon.expires_at) {
+        const noExpCb = document.getElementById('couponNoExpiryCb');
+        const isNever = !coupon.expires_at || coupon.expires_at === '' || coupon.expires_at.startsWith('0000');
+        if (noExpCb) {
+            noExpCb.checked = isNever;
+            window.toggleNoExpiry(isNever);
+        }
+
+        if (!isNever && coupon.expires_at) {
             const expDate = coupon.expires_at.split(' ')[0];
             if (document.getElementById('couponExpiryInp')) {
                 document.getElementById('couponExpiryInp').value = expDate;
@@ -2561,6 +2648,84 @@ if (!empty($_GET['selected_id'])) {
 
     window.openCreateAutoDiscountModal = function() {
         document.getElementById('createAutoModal').style.display = 'flex';
+    };
+
+    // 8.5 Select Coupon Row (Overview Card update)
+    window.selectCouponRow = function(id) {
+        document.querySelectorAll('#couponsTable tbody tr.coupon-row').forEach(row => {
+            row.classList.toggle('selected-row', row.getAttribute('data-id') === id);
+        });
+        const c = window.COUPONS_DATA ? window.COUPONS_DATA[id] : null;
+        if (!c) return;
+
+        const ovCode = document.getElementById('ovCode');
+        if (ovCode) ovCode.textContent = c.code || '';
+
+        const ovCampaign = document.getElementById('ovCampaign');
+        if (ovCampaign) ovCampaign.textContent = (c.campaign_name || 'General').split('•')[0];
+
+        const ovStatusBadge = document.getElementById('ovStatusBadge');
+        if (ovStatusBadge) {
+            const isExp = c.is_expired || (c.expires_at && new Date(c.expires_at) < new Date());
+            const st = isExp ? 'Expired' : (c.effective_status || c.status || (parseInt(c.is_active, 10) ? 'Active' : 'Inactive'));
+            const cls = (st === 'Active') ? 'badge-status-active' : (st === 'Expired') ? 'badge-status-expired' : 'badge-status-inactive';
+            const dotColor = (st === 'Active') ? '#10B981' : (st === 'Expired') ? '#D97706' : '#9CA3AF';
+            ovStatusBadge.className = cls;
+            ovStatusBadge.innerHTML = `<span style="width: 5px; height: 5px; border-radius: 50%; background: ${dotColor};"></span> ${st}`;
+        }
+
+        const ovType = document.getElementById('ovType');
+        if (ovType) {
+            const type = c.discount_type || 'PERCENTAGE';
+            const val = parseInt(c.discount_value || 0, 10);
+            if (type === 'PERCENTAGE') ovType.textContent = `Percentage (${val}% OFF)`;
+            else if (type === 'FIXED_AMOUNT' || type === 'FIXED') ovType.textContent = `Fixed Amount (₹${(val / 100).toLocaleString('en-IN')} OFF)`;
+            else if (type === 'FREE_SHIPPING') ovType.textContent = 'Free Standard Shipping';
+            else if (type === 'BUY_X_GET_Y') ovType.textContent = 'Buy 2 Get 1 Free';
+            else ovType.textContent = type;
+        }
+
+        const ovMin = document.getElementById('ovMin');
+        if (ovMin) {
+            const minRupees = Math.round((c.minimum_order_amount || 0) / 100);
+            ovMin.textContent = '₹' + minRupees.toLocaleString('en-IN');
+        }
+
+        const ovUsageCount = document.getElementById('ovUsageCount');
+        const ovProgressFill = document.getElementById('ovProgressFill');
+        const used = parseInt(c.usage_count || 0, 10);
+        const limit = parseInt(c.usage_limit || 0, 10);
+        if (ovUsageCount) {
+            ovUsageCount.textContent = `${used} / ${limit > 0 ? limit : '∞'}`;
+        }
+        if (ovProgressFill) {
+            const pct = limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0;
+            ovProgressFill.style.width = (limit > 0 ? pct : 35) + '%';
+        }
+
+        const ovGiven = document.getElementById('ovGiven');
+        if (ovGiven) {
+            const given = Math.round((c.discount_given_amount || 0) / 100);
+            ovGiven.textContent = '₹' + given.toLocaleString('en-IN');
+        }
+
+        const ovExpiry = document.getElementById('ovExpiry');
+        if (ovExpiry) {
+            ovExpiry.textContent = c.expires_at ? new Date(c.expires_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never';
+        }
+
+        const ovToggleInput = document.getElementById('ovToggleInput');
+        if (ovToggleInput) {
+            ovToggleInput.checked = !!parseInt(c.is_active, 10);
+            ovToggleInput.onchange = function() { window.toggleCouponStatus(c.id, this.checked ? 1 : 0); };
+        }
+    };
+
+    // 8.6 Renew Coupon Action
+    window.renewCouponAction = function(id) {
+        document.getElementById('formActionVal').value = 'renew_coupon';
+        document.getElementById('formIdVal').value = id;
+        document.getElementById('actionForm').submit();
     };
 
     // 9. Row Actions Dropdown Toggle

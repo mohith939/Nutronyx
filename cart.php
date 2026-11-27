@@ -277,18 +277,18 @@ $currentPage = 'cart';
                                             $desc = "Enjoy {$ac['discount_value']}% off your order with code {$acCode}.";
                                         }
                                     ?>
-                                        <div style="background: #FFFFFF; border: 1px solid <?= $isApplied ? '#A7F3D0' : '#E5E7EB' ?>; border-radius: 8px; padding: 9px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                                        <div class="cart-offer-item" data-coupon-code="<?= $acCode ?>" style="background: #FFFFFF; border: 1px solid <?= $isApplied ? '#A7F3D0' : '#E5E7EB' ?>; border-radius: 8px; padding: 9px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
                                             <div style="flex: 1;">
                                                 <div style="display: flex; align-items: center; gap: 6px;">
                                                     <span style="font-family: monospace; font-size: 12px; font-weight: 700; background: #F3F4F6; color: #1E5736; padding: 2px 7px; border-radius: 4px; border: 1px dashed #CBD5E1;"><?= $acCode ?></span>
                                                 </div>
                                                 <div style="font-size: 11.5px; color: #4B5563; margin-top: 4px; line-height: 1.35;"><?= $desc ?></div>
                                             </div>
-                                            <div>
+                                            <div class="cart-offer-btn-wrap">
                                                 <?php if ($isApplied): ?>
-                                                    <span style="font-size: 11px; font-weight: 700; color: #059669; background: #ECFDF5; padding: 4px 8px; border-radius: 6px;">Applied</span>
+                                                    <span class="cart-offer-applied-badge" style="font-size: 11px; font-weight: 700; color: #059669; background: #ECFDF5; padding: 4px 8px; border-radius: 6px;">Applied</span>
                                                 <?php else: ?>
-                                                    <button type="button" onclick="quickApplyCoupon('<?= $acCode ?>')" style="font-size: 11.5px; font-weight: 700; color: #1E5736; background: transparent; border: 1px solid #1E5736; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#1E5736';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#1E5736'">APPLY</button>
+                                                    <button type="button" onclick="quickApplyCoupon('<?= $acCode ?>')" class="cart-offer-apply-btn" style="font-size: 11.5px; font-weight: 700; color: #1E5736; background: transparent; border: 1px solid #1E5736; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">APPLY</button>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
@@ -454,6 +454,22 @@ $currentPage = 'cart';
         } else {
             if (appliedCont) appliedCont.style.display = 'none';
         }
+
+        // Update Available Offers apply / applied buttons
+        const appliedCode = cart.applied_coupon ? cart.applied_coupon.code.toUpperCase() : null;
+        document.querySelectorAll('.cart-offer-item').forEach(card => {
+            const cardCode = (card.getAttribute('data-coupon-code') || '').toUpperCase();
+            const btnWrap = card.querySelector('.cart-offer-btn-wrap');
+            if (!btnWrap) return;
+
+            if (appliedCode && cardCode === appliedCode) {
+                card.style.borderColor = '#A7F3D0';
+                btnWrap.innerHTML = '<span class="cart-offer-applied-badge" style="font-size: 11px; font-weight: 700; color: #059669; background: #ECFDF5; padding: 4px 8px; border-radius: 6px;">Applied</span>';
+            } else {
+                card.style.borderColor = '#E5E7EB';
+                btnWrap.innerHTML = `<button type="button" onclick="quickApplyCoupon('${cardCode}')" class="cart-offer-apply-btn" style="font-size: 11.5px; font-weight: 700; color: #1E5736; background: transparent; border: 1px solid #1E5736; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">APPLY</button>`;
+            }
+        });
     }
 
     function stepCartQty(variantId, delta) {
