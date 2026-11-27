@@ -489,11 +489,7 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
                     <div class="form-group">
                         <label class="form-label">Logistics Carrier *</label>
                         <select name="carrier" class="form-control">
-                            <option value="Ekart Logistics" selected>Ekart Logistics (Direct Integration)</option>
-                            <option value="BlueDart Express">BlueDart Express</option>
-                            <option value="Delhivery Surface">Delhivery Surface</option>
-                            <option value="DTDC Air">DTDC Air</option>
-                            <option value="Shiprocket">Shiprocket</option>
+                            <option value="Ekart Logistics" selected>Ekart Logistics Enterprise</option>
                         </select>
                     </div>
                     <div class="form-group">

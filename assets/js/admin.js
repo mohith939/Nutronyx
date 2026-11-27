@@ -1626,8 +1626,8 @@
                             <span class="dot"></span>
                             <span>${(o.fulfillment_status || 'DELIVERED').toUpperCase()}</span>
                         </div>
-                        <div class="tile-subtext" title="${(o.shipments && o.shipments[0] && (o.shipments[0].carrier_name || o.shipments[0].carrier)) || 'Delhivery Logistics'}">
-                            ${(o.shipments && o.shipments[0] && (o.shipments[0].carrier_name || o.shipments[0].carrier)) || 'Delhivery Logistics'}
+                        <div class="tile-subtext" title="${(o.shipments && o.shipments[0] && (o.shipments[0].carrier_name || o.shipments[0].carrier)) || 'Ekart Logistics Enterprise'}">
+                            ${(o.shipments && o.shipments[0] && (o.shipments[0].carrier_name || o.shipments[0].carrier)) || 'Ekart Logistics Enterprise'}
                         </div>
                     </div>
 

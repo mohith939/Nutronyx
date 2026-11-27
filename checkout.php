@@ -128,14 +128,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 'shipping_amount_paise' => $cart['shipping_paise'],
                 'discount_amount_paise' => $cart['discount_paise'],
                 'coupon_code' => !empty($cart['applied_coupon']['code']) ? strtoupper(trim($cart['applied_coupon']['code'])) : null,
-                'payment_method' => 'CASHFREE',
+                'payment_method' => $paymentMethod ?: 'CASHFREE',
                 'payment_status' => 'PENDING',
-                'order_status' => 'PENDING'
+                'order_status' => ($paymentMethod === 'COD') ? 'PROCESSING' : 'PENDING'
             ];
 
             $placedOrder = OrderService::createOrder($orderData);
 
             if ($placedOrder) {
+                if ($paymentMethod === 'COD') {
+                    CartService::clear();
+                    CartService::clearShippingEstimate();
+                    $_SESSION['nutronyx_last_order'] = $placedOrder;
+                    $_SESSION['nutronyx_last_cart_summary'] = $cart;
+
+                    if (!empty($cart['applied_coupon']['code'])) {
+                        try {
+                            \Nutronyx\Services\PromotionService::recordRedemption(
+                                $cart['applied_coupon']['code'],
+                                $placedOrder['order_number'],
+                                $cart['discount_paise'],
+                                $cart['total_paise'],
+                                $placedOrder['customer_id'] ?? null,
+                                $fullName,
+                                $phone
+                            );
+                        } catch (\Throwable $e) {}
+                    }
+
+                    // Auto-register COD order with Ekart Logistics immediately
+                    try {
+                        OrderService::fulfillWithEkart($placedOrder['id']);
+                    } catch (\Throwable $ekErr) {
+                        error_log("Ekart auto-fulfillment on COD order: " . $ekErr->getMessage());
+                    }
+
+                    header('Location: checkout?confirmed=' . urlencode($placedOrder['order_number']));
+                    exit;
+                }
                 if (!empty($cart['applied_coupon']['code'])) {
                     try {
                         \Nutronyx\Services\PromotionService::recordRedemption(

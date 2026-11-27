@@ -9,34 +9,32 @@
                 </div>
                 <div>
                     <h3 class="modal-title" style="color: #FFF; margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -0.01em;">Ship on Ekart Logistics</h3>
-                    <div style="font-size: 12.5px; color: #A7F3D0; margin-top: 2px;" id="ekartModalOrderSubtitle">Book on Ekart Portal &bull; Enter Official AWB</div>
+                    <div style="font-size: 12.5px; color: #A7F3D0; margin-top: 2px;" id="ekartModalOrderSubtitle">Automated Dispatch &bull; Direct Ekart API Integration</div>
                 </div>
             </div>
             <button type="button" class="modal-close-btn" style="color: #FFF; opacity: 0.85; font-size: 24px;" onclick="window.NutronyxModal.close('ekartShipModal')">&times;</button>
         </div>
 
         <form method="POST" action="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? 'orders.php') ?>">
-            <input type="hidden" name="action" value="ship_ekart">
+            <input type="hidden" name="action" value="ship_ekart_auto">
             <input type="hidden" name="order_id" id="ekartShipOrderId" value="">
 
             <div class="modal-body" style="padding: 22px 24px; max-height: calc(85vh - 130px); overflow-y: auto;">
                 
-                <!-- Step 1: Divert to Ekart Portal -->
-                <div style="background: #F0FDF4; border: 1.5px solid #BBF7D0; border-radius: 10px; padding: 14px 16px; margin-bottom: 18px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                <!-- Ekart API Automated Fulfillment Info -->
+                <div style="background: #ECFDF5; border: 1.5px solid #6EE7B7; border-radius: 10px; padding: 14px 16px; margin-bottom: 18px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: #059669; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #FFF;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
                         <div>
-                            <div style="font-weight: 700; font-size: 13.5px; color: #065F46; display: flex; align-items: center; gap: 6px;">
-                                <span style="background: #047857; color: #FFF; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;">1</span>
-                                <span>Ekart Logistics Merchant Portal</span>
+                            <div style="font-weight: 700; font-size: 13.5px; color: #065F46;">
+                                Direct Ekart Logistics API Automation
                             </div>
-                            <div style="font-size: 12px; color: #047857; margin-top: 4px; line-height: 1.4;">
-                                Open Ekart to book this parcel and receive the official tracking AWB number.
+                            <div style="font-size: 12px; color: #047857; margin-top: 2px; line-height: 1.4;">
+                                Clicking dispatch registers the shipment directly on your Ekart merchant account, assigns the official AWB, and updates order tracking instantly.
                             </div>
                         </div>
-                        <a href="https://app.elite.ekartlogistics.in/" target="_blank" rel="noopener noreferrer" class="btn-emerald-brand" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 12.5px; background: #047857; color: #FFF; border-radius: 6px; font-weight: 600; white-space: nowrap; box-shadow: 0 1px 3px rgba(4, 120, 87, 0.3);">
-                            <span>Open Ekart Portal</span>
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                        </a>
                     </div>
                 </div>
 
@@ -119,11 +117,14 @@
 
             </div>
 
-            <div class="modal-footer" style="padding: 16px 24px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 10px; background: #FAFAFA; border-radius: 0 0 14px 14px;">
+            <div class="modal-footer" style="padding: 16px 24px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; align-items: center; gap: 10px; background: #FAFAFA; border-radius: 0 0 14px 14px;">
                 <button type="button" class="btn-action btn-action-outline" onclick="window.NutronyxModal.close('ekartShipModal')">Cancel</button>
-                <button type="submit" name="action" value="ship_ekart" class="btn-emerald-brand" style="padding: 9px 22px; border: none; background: #111827; color: #FFF; border-radius: 6px; font-weight: 600; font-size: 13.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span>Save Manual AWB &amp; Dispatch</span>
+                <button type="submit" name="action" value="ship_ekart" class="btn-action btn-action-outline" style="font-size: 12.5px; padding: 8px 14px;">
+                    Save Manual AWB
+                </button>
+                <button type="submit" name="action" value="ship_ekart_auto" onclick="document.getElementById('ekartAwbInput').removeAttribute('required');" class="btn-emerald-brand" style="padding: 9px 20px; border: none; background: #047857; color: #FFF; border-radius: 6px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(4, 120, 87, 0.3);">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
+                    <span>Auto-Dispatch on Ekart API</span>
                 </button>
             </div>
         </form>

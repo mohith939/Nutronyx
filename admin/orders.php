@@ -509,11 +509,7 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                 <div>
                                     <label style="display: block; font-size: 12px; font-weight: 600; color: #4B5563; margin-bottom: 4px;">Logistics Carrier</label>
                                     <select name="carrier" class="filter-select" style="min-width: 160px;">
-                                        <option value="">Any Carrier</option>
-                                        <option value="BlueDart Express" <?= ($carrierFilter === 'BlueDart Express') ? 'selected' : '' ?>>BlueDart Express</option>
-                                        <option value="Delhivery Logistics" <?= ($carrierFilter === 'Delhivery Logistics') ? 'selected' : '' ?>>Delhivery Logistics</option>
-                                        <option value="DTDC Courier" <?= ($carrierFilter === 'DTDC Courier') ? 'selected' : '' ?>>DTDC Courier</option>
-                                        <option value="Shiprocket" <?= ($carrierFilter === 'Shiprocket') ? 'selected' : '' ?>>Shiprocket</option>
+                                        <option value="">Ekart Logistics (Sole Carrier)</option>
                                         <option value="Ekart Logistics" <?= ($carrierFilter === 'Ekart Logistics') ? 'selected' : '' ?>>Ekart Logistics</option>
                                     </select>
                                 </div>
@@ -883,8 +879,8 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                     <span class="dot"></span>
                                     <span><?= htmlspecialchars(strtoupper($o['fulfillment_status'] ?? 'DELIVERED')) ?></span>
                                 </div>
-                                <div class="tile-subtext" title="<?= htmlspecialchars($shipment['carrier_name'] ?? $shipment['carrier'] ?? 'Delhivery Logistics') ?>">
-                                    <?= htmlspecialchars($shipment['carrier_name'] ?? $shipment['carrier'] ?? 'Delhivery Logistics') ?>
+                                <div class="tile-subtext" title="<?= htmlspecialchars($shipment['carrier_name'] ?? $shipment['carrier'] ?? 'Ekart Logistics Enterprise') ?>">
+                                    <?= htmlspecialchars($shipment['carrier_name'] ?? $shipment['carrier'] ?? 'Ekart Logistics Enterprise') ?>
                                 </div>
                             </div>
 
@@ -1243,11 +1239,7 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                     <div style="margin-bottom: 14px;">
                         <label class="form-label" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 4px;">Carrier Name *</label>
                         <select name="carrier" id="shipCarrierInput" class="filter-select" style="width: 100%;" required>
-                            <option value="Ekart Logistics" selected>Ekart Logistics (Direct Integration)</option>
-                            <option value="BlueDart Express">BlueDart Express</option>
-                            <option value="Delhivery Logistics">Delhivery Logistics</option>
-                            <option value="DTDC Courier">DTDC Courier</option>
-                            <option value="Shiprocket">Shiprocket</option>
+                            <option value="Ekart Logistics" selected>Ekart Logistics Enterprise</option>
                         </select>
                     </div>
                     <div style="margin-bottom: 14px;">

@@ -30,18 +30,13 @@ class ShippingService
 
         $wid = Context::getWebsiteId();
 
+        // Nutronyx exclusively operates on Ekart Logistics Enterprise API
         $defaultPartners = [
-            ['shiprocket', 'Shiprocket Fulfillment API', 'sr_test_88f9a21b44c', 'sec_99a8b7c6d5e', 'SR-NUTR-8820', 'SANDBOX', 'CONNECTED'],
-            ['delhivery', 'Delhivery Surface & Express', '', '', '', 'SANDBOX', 'DISCONNECTED'],
-            ['bluedart', 'Blue Dart Express API', 'bd_live_key_904123b', 'bd_sec_auth_4412', 'BD-ACCT-0912', 'PRODUCTION', 'CONNECTED'],
-            ['dtdc', 'DTDC DotZot Air API', '', '', '', 'SANDBOX', 'DISCONNECTED'],
-            ['ecomexpress', 'Ecom Express Logistics', '', '', '', 'SANDBOX', 'DISCONNECTED'],
-            ['xpressbees', 'XpressBees Courier API', '', '', '', 'SANDBOX', 'DISCONNECTED'],
-            ['nimbuspost', 'NimbusPost Shipping Automation', '', '', '', 'SANDBOX', 'DISCONNECTED'],
-            ['shadowfax', 'Shadowfax Hyperlocal & Air', '', '', '', 'SANDBOX', 'DISCONNECTED'],
-            ['indiapost', 'India Post Speed Post', '', '', '', 'PRODUCTION', 'DISCONNECTED'],
-            ['ekart', 'Ekart Logistics Enterprise', 'nutronyx_ops@ekart.in', 'EkartNutronyx#2026', 'EKART_ELITE_NUTR_2026', 'SANDBOX', 'CONNECTED']
+            ['ekart', 'Ekart Logistics Enterprise', '', '', '', 'PRODUCTION', 'DISCONNECTED']
         ];
+
+        // Purge any legacy carriers so only Ekart remains
+        $db->exec("DELETE FROM shipping_integrations WHERE carrier_code != 'ekart'");
 
         $insert = $db->prepare("
             INSERT OR IGNORE INTO shipping_integrations (id, website_id, carrier_code, carrier_name, api_key, api_secret, account_number, environment, status)

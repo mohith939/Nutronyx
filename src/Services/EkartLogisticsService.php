@@ -791,7 +791,7 @@ class EkartLogisticsService
             ? ($pickupLoc['address'] . ', ' . ($pickupLoc['city'] ?? '') . ', ' . ($pickupLoc['state'] ?? '') . ' - ' . ($pickupLoc['pin'] ?? $pickupLoc['pincode'] ?? ''))
             : 'Nutronyx Healthcare Pvt Ltd';
 
-        // Format OpenAPI 3.1.0 Compliant Shipment Payload
+        // Format OpenAPI 3.1.0 Compliant Shipment Payload (NO templateName to prevent SWIFT_RESOURCE_NOT_FOUND_EXCEPTION)
         $payload = [
             'seller_name' => $shipment['seller_name'] ?? ($pickupLoc['name'] ?? 'Nutronyx Healthcare Pvt Ltd'),
             'seller_address' => $shipment['seller_address'] ?? $defaultSellerAddress,
@@ -818,7 +818,6 @@ class EkartLogisticsService
             'commodity_value' => (string)($shipment['commodity_value'] ?? ($shipment['taxable_amount'] ?? '1059')),
             'cod_amount' => (($shipment['payment_mode'] ?? '') === 'COD') ? (float)($shipment['total_amount'] ?? 1250) : 0,
             'quantity' => (int)($shipment['quantity'] ?? 1),
-            'templateName' => $shipment['templateName'] ?? 'Standard_Box_Small',
             'weight' => (int)($shipment['weight'] ?? 1000),
             'length' => (int)($shipment['length'] ?? 15),
             'height' => (int)($shipment['height'] ?? 10),
@@ -857,6 +856,37 @@ class EkartLogisticsService
             $data = $response['data'];
             $data['is_live_shipment'] = true;
             return $data;
+        }
+
+        // Check if SWIFT_RESOURCE_NOT_FOUND_EXCEPTION occurred (due to unmapped warehouse alias)
+        $errData = $response['data'] ?? [];
+        $errMsg = is_array($errData) 
+            ? ($errData['message'] ?? $errData['description'] ?? $response['error'] ?? '') 
+            : ($response['error'] ?? '');
+
+        if (!$response['success'] && (str_contains($errMsg, 'RESOURCE_NOT_FOUND') || str_contains($errMsg, 'SWIFT'))) {
+            // Retry 1: Omit pickup_location and return_location so Ekart SWIFT maps directly to account's default registered warehouse
+            $fallbackPayload = $payload;
+            unset($fallbackPayload['pickup_location'], $fallbackPayload['return_location']);
+
+            $retryRes = self::executeHttpRequest('PUT', $endpoint, json_encode($fallbackPayload), ["Authorization: Bearer {$token}"]);
+            if ($retryRes['success'] && !empty($retryRes['data']['tracking_id'])) {
+                $data = $retryRes['data'];
+                $data['is_live_shipment'] = true;
+                return $data;
+            }
+
+            // Retry 2: Try POST with fallback payload
+            $postRes = self::executeHttpRequest('POST', $endpoint, json_encode($fallbackPayload), ["Authorization: Bearer {$token}"]);
+            if ($postRes['success'] && !empty($postRes['data']['tracking_id'])) {
+                $data = $postRes['data'];
+                $data['is_live_shipment'] = true;
+                return $data;
+            }
+
+            if (!empty($retryRes['data']['message']) || !empty($retryRes['data']['description'])) {
+                $response = $retryRes;
+            }
         }
 
         $errData = $response['data'] ?? [];

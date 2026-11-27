@@ -790,7 +790,11 @@ class OrderService
         if (empty($trackingId)) {
             $liveStatus = EkartLogisticsService::isLiveConnected();
             if (empty($liveStatus['is_live'])) {
-                throw new \RuntimeException("Ekart Logistics live API is not connected. Please open the Ekart Logistics Portal (https://app.elite.ekartlogistics.in/) to book the shipment and enter the authentic AWB tracking number.");
+                $auth = EkartLogisticsService::getAccessToken(true);
+                if (empty($auth['is_live'])) {
+                    $authErr = $auth['last_error'] ?: 'Authentication check failed with Ekart server';
+                    throw new \RuntimeException("Ekart Logistics API is not connected ({$authErr}). Please verify your Ekart Client ID and API credentials under Admin > Shipping Settings.");
+                }
             }
 
             // Format items for Ekart payload
@@ -862,7 +866,7 @@ class OrderService
             $trackingId = $ekartRes['tracking_id'] ?? $ekartRes['barcodes']['wbn'] ?? null;
             if (empty($trackingId)) {
                 $err = $ekartRes['error'] ?? 'Ekart API could not generate a live shipment.';
-                throw new \RuntimeException("Ekart Logistics API Error: {$err}. Please book manually on the Ekart Portal (https://app.elite.ekartlogistics.in/) and enter the real AWB.");
+                throw new \RuntimeException("Ekart Logistics API Error: {$err}");
             }
         }
 
