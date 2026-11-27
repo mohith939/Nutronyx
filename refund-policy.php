@@ -675,15 +675,15 @@ $pageTitle = 'Return & Refund Policy — Guarantees & Care | NUTRONYX';
              ========================================================================== -->
         <section class="policy-bottom-cta">
             <div class="policy-bottom-cta-inner">
-                <h3>Ready to Begin Your Daily Ritual?</h3>
-                <p>Discover clean, sustained plant vitality with NUTRONYX ABC+. Pure 100% whole foods designed for lifelong health.</p>
+                <h3>Ready to Make Wellness Part of Your Day?</h3>
+                <p>Discover thoughtfully crafted natural nutrition designed to complement your everyday wellness routine.</p>
                 <div class="policy-cta-btn-group">
                     <a href="shop" class="btn-policy-shop">
-                        <span>Shop ABC+ Ritual</span>
+                        <span>Explore Our Products</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </a>
                     <a href="contact" class="btn-policy-contact">
-                        <span>Talk to Concierge</span>
+                        <span>Contact Our Team</span>
                     </a>
                 </div>
             </div>

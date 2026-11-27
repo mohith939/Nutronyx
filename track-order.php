@@ -95,8 +95,8 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
     .step-dot.completed { background: #EAF6ED; border-color: #1E6B39; color: #1E6B39; }
     .step-title { font-size: 12px; font-weight: 600; color: #586B5F; }
     .step-title.active { color: #14221A; font-weight: 700; }
-    .btn-track { padding: 12px 28px; border-radius: 9999px; background: #143D24; color: #FFFFFF; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; }
-    .btn-track:hover { background: #0D2817; }
+    .btn-track { padding: 13px 32px; border-radius: 9999px; background: #1E5736; color: #FAF6ED; font-size: 14.5px; font-weight: 600; border: none; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(30, 87, 54, 0.2); letter-spacing: 0.01em; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-track:hover { background: #123321; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(18, 51, 33, 0.28); color: #FFFFFF; }
     </style>
 </head>
 <body class="track-body">
