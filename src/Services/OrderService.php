@@ -840,10 +840,18 @@ class OrderService
                 $addressLine = 'Customer Delivery Address';
             }
 
+            $altPhone = null;
+            $rawAlt = preg_replace('/[^0-9]/', '', $order['billing_phone'] ?? '');
+            if (strlen($rawAlt) > 10) {
+                $rawAlt = substr($rawAlt, -10);
+            }
+            if (strlen($rawAlt) === 10 && (int)$rawAlt !== (int)$custPhone) {
+                $altPhone = $rawAlt;
+            }
+
             $ekartPayload = [
                 'order_number' => $order['order_number'],
                 'consignee_name' => $order['shipping_name'] ?? $order['customer_name'] ?? 'Customer',
-                'consignee_alternate_phone' => $custPhone,
                 'payment_mode' => (strtoupper($order['payment_method'] ?? '') === 'COD') ? 'COD' : 'Prepaid',
                 'total_amount' => (float)(($order['grand_total_amount'] ?? 0) / 100),
                 'tax_value' => (float)(($order['tax_amount'] ?? 0) / 100),
@@ -860,6 +868,10 @@ class OrderService
                 ],
                 'items' => $orderItems
             ];
+
+            if (!empty($altPhone)) {
+                $ekartPayload['consignee_alternate_phone'] = $altPhone;
+            }
 
             $ekartRes = EkartLogisticsService::createShipment($ekartPayload);
             $trackingId = $ekartRes['tracking_id'] ?? $ekartRes['barcodes']['wbn'] ?? null;

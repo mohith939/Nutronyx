@@ -825,7 +825,6 @@ class EkartLogisticsService
             'invoice_number' => $shipment['invoice_number'] ?? ('INV-' . date('Ymd') . '-' . substr($orderNumber, -4)),
             'invoice_date' => $shipment['invoice_date'] ?? date('Y-m-d'),
             'consignee_name' => $dropName,
-            'consignee_alternate_phone' => (string)$dropPhone,
             'products_desc' => $shipment['products_desc'] ?? 'Nutronyx Botanical Wellness Nutrition Blend',
             'payment_mode' => $shipment['payment_mode'] ?? 'Prepaid',
             'category_of_goods' => $shipment['category_of_goods'] ?? 'Dietary Health Supplements',
@@ -848,6 +847,15 @@ class EkartLogisticsService
             'obd_shipment' => false,
             'mps' => false
         ];
+
+        // Only include alternate phone if provided and strictly different from drop_location.phone (SWIFT rule)
+        $rawAltPhone = preg_replace('/\D/', '', (string)($shipment['consignee_alternate_phone'] ?? ''));
+        if (strlen($rawAltPhone) > 10) {
+            $rawAltPhone = substr($rawAltPhone, -10);
+        }
+        if (strlen($rawAltPhone) === 10 && (int)$rawAltPhone !== $dropPhone) {
+            $payload['consignee_alternate_phone'] = (string)$rawAltPhone;
+        }
 
         // Only include e-Way bill if valid 12-digit number (omitted for shipments under ₹50,000)
         if (!empty($shipment['ewbn']) && preg_match('/^\d{12}$/', (string)$shipment['ewbn'])) {
