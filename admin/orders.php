@@ -66,9 +66,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($action === 'create_order') {
-            // Manual admin order creation
             $order = OrderService::createOrder($_POST);
-            $notice = "Order " . htmlspecialchars($order['order_number']) . " created successfully.";
+            try {
+                $fulfillRes = OrderService::fulfillWithEkart($order['id']);
+                $notice = "Order " . htmlspecialchars($order['order_number']) . " created & booked on Ekart! AWB: " . htmlspecialchars($fulfillRes['tracking_number'] ?? '');
+            } catch (\Throwable $ekErr) {
+                $notice = "Order " . htmlspecialchars($order['order_number']) . " created successfully.";
+            }
         } elseif ($action === 'ship_ekart_auto') {
             $orderId = trim($_POST['order_id'] ?? '');
             $res = OrderService::fulfillWithEkart($orderId, null);
@@ -713,10 +717,6 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                                                     <span>Ship on Ekart</span>
                                                                 </button>
                                                             <?php endif; ?>
-                                                            <button type="button" class="action-menu-item" onclick="window.NutronyxOrder.openShipModal('<?= htmlspecialchars($order['id']) ?>')">
-                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                                                                <span>Ship / Carrier Options</span>
-                                                            </button>
                                                             <button type="button" class="action-menu-item" onclick="window.NutronyxOrder.markDelivered('<?= htmlspecialchars($order['id']) ?>')">
                                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                                                                 <span>Mark Delivered</span>
@@ -1016,10 +1016,12 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                     <span>Download Receipt</span>
                                 </a>
-                                <button type="button" class="btn-order-action-card" onclick="window.NutronyxOrder.openShipModal('<?= htmlspecialchars($o['id']) ?>', '<?= htmlspecialchars($shipment['carrier_name'] ?? '') ?>', '<?= htmlspecialchars($shipment['tracking_number'] ?? '') ?>')">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                                    <span>Track Shipment</span>
-                                </button>
+                                <?php if (!empty($shipment['tracking_number'])): ?>
+                                <a href="<?= htmlspecialchars($shipUrl ?: 'https://app.elite.ekartlogistics.in/track/' . urlencode($shipment['tracking_number'])) ?>" target="_blank" class="btn-order-action-card" style="text-decoration: none;">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                    <span>Track on Ekart</span>
+                                </a>
+                                <?php endif; ?>
                                 <button type="button" class="btn-order-action-card" onclick="window.NutronyxOrder.openRefundModal('<?= htmlspecialchars($o['id']) ?>', <?= (float)(($o['refundable_balance'] ?? $o['grand_total_amount'])/100) ?>)">
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
                                     <span>Process Refund</span>
@@ -1103,8 +1105,8 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                 <?php else: ?>
                                     <div style="background: #F9FAFB; border: 1px dashed #D1D5DB; border-radius: 8px; padding: 20px; text-align: center;">
                                         <div style="font-size: 13px; color: #6B7280; margin-bottom: 10px;">No shipment dispatched yet.</div>
-                                        <button type="button" class="btn-create-order-forest" style="font-size: 12px; padding: 6px 12px;" onclick="window.NutronyxOrder.openShipModal('<?= htmlspecialchars($o['id']) ?>')">
-                                            Create Shipment
+                                        <button type="button" class="btn-create-order-forest" style="font-size: 12px; padding: 6px 12px;" onclick="window.NutronyxOrder.openEkartShipModal('<?= htmlspecialchars($o['id'], ENT_QUOTES) ?>', '<?= htmlspecialchars($o['order_number'], ENT_QUOTES) ?>', '<?= htmlspecialchars($o['shipping_name'] ?: ($o['customer_name'] ?: 'Customer'), ENT_QUOTES) ?>', '<?= htmlspecialchars($o['shipping_phone'] ?: ($o['customer_phone'] ?: ''), ENT_QUOTES) ?>', '<?= htmlspecialchars(trim(($o['shipping_address_line1'] ?? '') . ' ' . ($o['shipping_address_line2'] ?? '') . ', ' . ($o['shipping_city'] ?? '') . ', ' . ($o['shipping_state'] ?? '') . ' - ' . ($o['shipping_postal_code'] ?? '')), ENT_QUOTES) ?>', '<?= (float)(($o['grand_total_amount'] ?? 0)/100) ?>', '<?= (strtoupper($o['payment_method'] ?? '') === 'COD') ? 'COD' : 'Prepaid' ?>')">
+                                            Ship on Ekart
                                         </button>
                                     </div>
                                 <?php endif; ?>

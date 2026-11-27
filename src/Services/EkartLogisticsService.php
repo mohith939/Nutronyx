@@ -787,13 +787,33 @@ class EkartLogisticsService
         $orderNumber = $shipment['order_number'] ?? ('NX-' . rand(2000, 2999));
 
         $pickupLoc = $shipment['pickup_location'] ?? self::getPickupLocation();
+        $pickupAlias = $pickupLoc['alias'] ?? ($pickupLoc['name'] ?? 'Nutronyx Fulfillment Warehouse');
         $defaultSellerAddress = !empty($pickupLoc['address']) 
             ? ($pickupLoc['address'] . ', ' . ($pickupLoc['city'] ?? '') . ', ' . ($pickupLoc['state'] ?? '') . ' - ' . ($pickupLoc['pin'] ?? $pickupLoc['pincode'] ?? ''))
             : 'Nutronyx Healthcare Pvt Ltd';
 
-        // Format OpenAPI 3.1.0 Compliant Shipment Payload (NO templateName to prevent SWIFT_RESOURCE_NOT_FOUND_EXCEPTION)
+        // Format clean drop location (strictly name, address, city, state, pin, phone - NO location_type or country)
+        $rawDrop = $shipment['drop_location'] ?? [];
+        $dropName = $rawDrop['name'] ?? ($shipment['consignee_name'] ?? 'Customer');
+        $dropPhone = (int)preg_replace('/\D/', '', (string)($rawDrop['phone'] ?? ($shipment['consignee_alternate_phone'] ?? '9876543210')));
+        $dropPin = (int)($rawDrop['pin'] ?? ($rawDrop['pincode'] ?? 500081));
+        $cleanDrop = [
+            'name' => $dropName,
+            'address' => $rawDrop['address'] ?? 'Customer Delivery Address',
+            'city' => $rawDrop['city'] ?? 'Hyderabad',
+            'state' => $rawDrop['state'] ?? 'Telangana',
+            'phone' => $dropPhone,
+            'pin' => $dropPin
+        ];
+
+        // Format clean pickup & return locations (either alias reference or clean fields)
+        $cleanPickup = [
+            'name' => $pickupAlias
+        ];
+
+        // Format OpenAPI 3.1.0 Compliant Shipment Payload
         $payload = [
-            'seller_name' => $shipment['seller_name'] ?? ($pickupLoc['name'] ?? 'Nutronyx Healthcare Pvt Ltd'),
+            'seller_name' => $shipment['seller_name'] ?? $pickupAlias,
             'seller_address' => $shipment['seller_address'] ?? $defaultSellerAddress,
             'seller_gst_tin' => $shipment['seller_gst_tin'] ?? '37AAAAA0000A1Z5',
             'seller_gst_amount' => (float)($shipment['seller_gst_amount'] ?? 0),
@@ -806,8 +826,8 @@ class EkartLogisticsService
             'document_number' => $shipment['document_number'] ?? '',
             'document_date' => $shipment['document_date'] ?? '',
             'consignee_gst_tin' => $shipment['consignee_gst_tin'] ?? '',
-            'consignee_name' => $shipment['consignee_name'] ?? 'Ravi Kumar',
-            'consignee_alternate_phone' => (string)($shipment['consignee_alternate_phone'] ?? '9876543210'),
+            'consignee_name' => $dropName,
+            'consignee_alternate_phone' => (string)$dropPhone,
             'products_desc' => $shipment['products_desc'] ?? 'Nutronyx Botanical Wellness Nutrition Blend',
             'payment_mode' => $shipment['payment_mode'] ?? 'Prepaid',
             'category_of_goods' => $shipment['category_of_goods'] ?? 'Dietary Health Supplements',
@@ -823,30 +843,13 @@ class EkartLogisticsService
             'height' => (int)($shipment['height'] ?? 10),
             'width' => (int)($shipment['width'] ?? 12),
             'return_reason' => $shipment['return_reason'] ?? '',
-            'drop_location' => $shipment['drop_location'] ?? [
-                'location_type' => 'Home',
-                'address' => 'D.No. 12-4-56, Lakshmi Nagar',
-                'city' => 'Hyderabad',
-                'state' => 'Telangana',
-                'country' => 'India',
-                'name' => 'Ravi Kumar',
-                'phone' => 9876543210,
-                'pin' => 500081
-            ],
-            'pickup_location' => $pickupLoc,
-            'return_location' => $shipment['return_location'] ?? $pickupLoc,
+            'drop_location' => $cleanDrop,
+            'pickup_location' => $cleanPickup,
+            'return_location' => $cleanPickup,
             'service' => $shipment['service'] ?? 'EXPRESS',
             'delayed_dispatch' => false,
             'obd_shipment' => false,
-            'mps' => false,
-            'items' => $shipment['items'] ?? [
-                [
-                    'item_name' => 'Nutronyx ABC+ Health Blend',
-                    'sku' => 'NX-ABC-500',
-                    'quantity' => 1,
-                    'price' => 1250
-                ]
-            ]
+            'mps' => false
         ];
 
         $endpoint = self::BASE_URL . "/api/v1/package/create";
@@ -858,41 +861,74 @@ class EkartLogisticsService
             return $data;
         }
 
-        // Check if SWIFT_RESOURCE_NOT_FOUND_EXCEPTION occurred (due to unmapped warehouse alias)
+        // Retry sequence for VALIDATOR_SCHEMA or SWIFT_RESOURCE_NOT_FOUND_EXCEPTION
         $errData = $response['data'] ?? [];
-        $errMsg = is_array($errData) 
-            ? ($errData['message'] ?? $errData['description'] ?? $response['error'] ?? '') 
+        $rawErr = is_array($errData) 
+            ? ($errData['description'] ?? $errData['message'] ?? $response['error'] ?? '') 
             : ($response['error'] ?? '');
 
-        if (!$response['success'] && (str_contains($errMsg, 'RESOURCE_NOT_FOUND') || str_contains($errMsg, 'SWIFT'))) {
-            // Retry 1: Omit pickup_location and return_location so Ekart SWIFT maps directly to account's default registered warehouse
-            $fallbackPayload = $payload;
-            unset($fallbackPayload['pickup_location'], $fallbackPayload['return_location']);
-
-            $retryRes = self::executeHttpRequest('PUT', $endpoint, json_encode($fallbackPayload), ["Authorization: Bearer {$token}"]);
-            if ($retryRes['success'] && !empty($retryRes['data']['tracking_id'])) {
-                $data = $retryRes['data'];
+        if (!$response['success']) {
+            // Retry 1: Try with full pickup location address if alias alone failed
+            $fullPickup = [
+                'name' => $pickupAlias,
+                'address' => $pickupLoc['address_line1'] ?? ($pickupLoc['address'] ?? 'Registered Warehouse Facility'),
+                'city' => $pickupLoc['city'] ?? 'Yeleswaram',
+                'state' => $pickupLoc['state'] ?? 'Andhra Pradesh',
+                'pin' => (int)($pickupLoc['pincode'] ?? ($pickupLoc['pin'] ?? 533429)),
+                'phone' => (int)preg_replace('/\D/', '', (string)($pickupLoc['phone'] ?? '9876543210'))
+            ];
+            $retryPayload1 = $payload;
+            $retryPayload1['pickup_location'] = $fullPickup;
+            $retryPayload1['return_location'] = $fullPickup;
+            $retryRes1 = self::executeHttpRequest('PUT', $endpoint, json_encode($retryPayload1), ["Authorization: Bearer {$token}"]);
+            if ($retryRes1['success'] && !empty($retryRes1['data']['tracking_id'])) {
+                $data = $retryRes1['data'];
                 $data['is_live_shipment'] = true;
                 return $data;
             }
 
-            // Retry 2: Try POST with fallback payload
-            $postRes = self::executeHttpRequest('POST', $endpoint, json_encode($fallbackPayload), ["Authorization: Bearer {$token}"]);
+            // Retry 2: Omit pickup_location and return_location so Ekart SWIFT maps directly to account's default registered warehouse
+            $retryPayload2 = $payload;
+            unset($retryPayload2['pickup_location'], $retryPayload2['return_location']);
+            $retryRes2 = self::executeHttpRequest('PUT', $endpoint, json_encode($retryPayload2), ["Authorization: Bearer {$token}"]);
+            if ($retryRes2['success'] && !empty($retryRes2['data']['tracking_id'])) {
+                $data = $retryRes2['data'];
+                $data['is_live_shipment'] = true;
+                return $data;
+            }
+
+            // Retry 3: Try POST with fallback payload
+            $postRes = self::executeHttpRequest('POST', $endpoint, json_encode($retryPayload2), ["Authorization: Bearer {$token}"]);
             if ($postRes['success'] && !empty($postRes['data']['tracking_id'])) {
                 $data = $postRes['data'];
                 $data['is_live_shipment'] = true;
                 return $data;
             }
 
-            if (!empty($retryRes['data']['message']) || !empty($retryRes['data']['description'])) {
-                $response = $retryRes;
+            if (!empty($retryRes2['data']['description']) || !empty($retryRes2['data']['message'])) {
+                $response = $retryRes2;
+            } elseif (!empty($retryRes1['data']['description']) || !empty($retryRes1['data']['message'])) {
+                $response = $retryRes1;
             }
         }
 
         $errData = $response['data'] ?? [];
-        $errMsg = is_array($errData) 
-            ? ($errData['message'] ?? $errData['description'] ?? $response['error'] ?? 'Ekart Logistics API request failed.') 
-            : ($response['error'] ?? 'Ekart Logistics API request failed.');
+        $errMsg = '';
+        if (is_array($errData)) {
+            if (!empty($errData['description'])) {
+                $errMsg = $errData['description'];
+                if (!empty($errData['message']) && $errData['message'] !== $errMsg && $errData['message'] !== 'VALIDATOR_SCHEMA') {
+                    $errMsg = $errData['message'] . ': ' . $errMsg;
+                }
+            } elseif (!empty($errData['message'])) {
+                $errMsg = $errData['message'];
+            } elseif (!empty($errData['error'])) {
+                $errMsg = is_array($errData['error']) ? json_encode($errData['error']) : (string)$errData['error'];
+            }
+        }
+        if (empty($errMsg)) {
+            $errMsg = $response['error'] ?? 'Ekart Logistics API request failed.';
+        }
 
         return [
             'status' => false,

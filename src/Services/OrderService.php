@@ -850,12 +850,10 @@ class OrderService
                 'taxable_amount' => (float)((($order['grand_total_amount'] ?? 0) - ($order['tax_amount'] ?? 0)) / 100),
                 'quantity' => $totalQty,
                 'drop_location' => [
-                    'location_type' => 'Home',
+                    'name' => $order['shipping_name'] ?? $order['customer_name'] ?? 'Customer',
                     'address' => $addressLine,
                     'city' => $order['shipping_city'] ?? 'Hyderabad',
                     'state' => $order['shipping_state'] ?? 'Telangana',
-                    'country' => 'India',
-                    'name' => $order['shipping_name'] ?? $order['customer_name'] ?? 'Customer',
                     'phone' => (int)$custPhone,
                     'pin' => $custPincode
                 ],

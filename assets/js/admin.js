@@ -1574,7 +1574,6 @@
                         <div style="font-size: 12.5px; color: #6B7280; margin-bottom: 10px;">No active shipments created for this order.</div>
                         <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
                             <button type="button" class="btn-emerald-brand" style="font-size: 12px; padding: 7px 14px; background: #047857;" onclick="window.NutronyxOrder.openEkartShipModal('${o.id}', '${o.order_number}', '${(o.shipping_name || o.customer_name || '').replace(/'/g, "\\'")}', '${(o.shipping_phone || o.customer_phone || '').replace(/'/g, "\\'")}', '${fullAddress.replace(/'/g, "\\'")}', ${(o.grand_total_amount || 0)/100}, '${o.payment_method || 'Prepaid'}')">Ship on Ekart</button>
-                            <button type="button" class="btn-action btn-action-outline" style="font-size: 12px; padding: 7px 14px;" onclick="window.NutronyxOrder.openShipModal('${o.id}')">Other Carrier</button>
                         </div>
                     </div>
                 `;
@@ -1733,11 +1732,6 @@
                         <button type="button" class="btn-order-action-card" onclick="window.NutronyxOrder.openEkartShipModal('${o.id}', '${o.order_number}', '${(o.shipping_name || o.customer_name || '').replace(/'/g, "\\'")}', '${(o.shipping_phone || o.customer_phone || '').replace(/'/g, "\\'")}', '${fullAddress.replace(/'/g, "\\'")}', ${(o.grand_total_amount || 0)/100}, '${o.payment_method || 'Prepaid'}')">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
                             <span>Ship on Ekart</span>
-                        </button>
-
-                        <button type="button" class="btn-order-action-card" onclick="window.NutronyxOrder.openShipModal('${o.id}')">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                            <span>Other Carrier</span>
                         </button>
 
                         <button type="button" class="btn-order-action-card" onclick="window.NutronyxOrder.openRefundModal('${o.id}', ${(o.refundable_balance || o.grand_total_amount || 0)/100})">
