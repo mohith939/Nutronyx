@@ -854,6 +854,7 @@ class OrderService
                     'address' => $addressLine,
                     'city' => $order['shipping_city'] ?? 'Hyderabad',
                     'state' => $order['shipping_state'] ?? 'Telangana',
+                    'country' => $order['shipping_country'] ?? 'India',
                     'phone' => (int)$custPhone,
                     'pin' => $custPincode
                 ],

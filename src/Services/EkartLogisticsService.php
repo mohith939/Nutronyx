@@ -792,16 +792,18 @@ class EkartLogisticsService
             ? ($pickupLoc['address'] . ', ' . ($pickupLoc['city'] ?? '') . ', ' . ($pickupLoc['state'] ?? '') . ' - ' . ($pickupLoc['pin'] ?? $pickupLoc['pincode'] ?? ''))
             : 'Nutronyx Healthcare Pvt Ltd';
 
-        // Format clean drop location (strictly name, address, city, state, pin, phone - NO location_type or country)
+        // Format clean drop location compliant with Ekart OpenAPI schema (name, address, city, state, country, phone, pin)
         $rawDrop = $shipment['drop_location'] ?? [];
         $dropName = $rawDrop['name'] ?? ($shipment['consignee_name'] ?? 'Customer');
         $dropPhone = (int)preg_replace('/\D/', '', (string)($rawDrop['phone'] ?? ($shipment['consignee_alternate_phone'] ?? '9876543210')));
         $dropPin = (int)($rawDrop['pin'] ?? ($rawDrop['pincode'] ?? 500081));
+        $dropCountry = !empty($rawDrop['country']) ? (string)$rawDrop['country'] : 'India';
         $cleanDrop = [
             'name' => $dropName,
             'address' => $rawDrop['address'] ?? 'Customer Delivery Address',
             'city' => $rawDrop['city'] ?? 'Hyderabad',
             'state' => $rawDrop['state'] ?? 'Telangana',
+            'country' => $dropCountry,
             'phone' => $dropPhone,
             'pin' => $dropPin
         ];
@@ -888,6 +890,7 @@ class EkartLogisticsService
                 'address' => $pickupLoc['address_line1'] ?? ($pickupLoc['address'] ?? 'Registered Warehouse Facility'),
                 'city' => $pickupLoc['city'] ?? 'Yeleswaram',
                 'state' => $pickupLoc['state'] ?? 'Andhra Pradesh',
+                'country' => !empty($pickupLoc['country']) ? (string)$pickupLoc['country'] : 'India',
                 'pin' => (int)($pickupLoc['pincode'] ?? ($pickupLoc['pin'] ?? 533429)),
                 'phone' => (int)preg_replace('/\D/', '', (string)($pickupLoc['phone'] ?? '9876543210'))
             ];
