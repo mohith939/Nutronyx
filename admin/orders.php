@@ -618,8 +618,8 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                                 $isSelected = ($initialOrder && $initialOrder['id'] === $order['id']);
                                                 $isRowChecked = false; // Only checked when clicked
                                                 $paymentPillClass = strtolower($order['payment_status'] ?? 'pending');
-                                                $fulfillmentPillClass = strtolower($order['fulfillment_status'] ?? 'pending');
-                                                $dt = new DateTime($order['created_at']);
+                                                $dt = new DateTime($order['created_at'], new DateTimeZone('UTC'));
+                                                $dt->setTimezone(new DateTimeZone('Asia/Kolkata'));
                                                 $datePart = $dt->format('M d, Y');
                                                 $timePart = $dt->format('h:i A');
                                                 $amountFormatted = '₹' . number_format(($order['grand_total_amount'] ?? 0) / 100);
@@ -813,7 +813,9 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                     <?php if ($initialOrder): ?>
                         <?php 
                             $o = $initialOrder;
-                            $orderDateStr = (new DateTime($o['created_at']))->format('M d, Y \a\t h:i A');
+                            $dtOrder = new DateTime($o['created_at'], new DateTimeZone('UTC'));
+                            $dtOrder->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                            $orderDateStr = $dtOrder->format('M d, Y \a\t h:i A');
                             $subtotalRupees = number_format(($o['subtotal_amount'] ?? 0) / 100);
                             $shippingRupees = number_format(($o['shipping_amount'] ?? 0) / 100);
                             $discountRupees = number_format(($o['discount_amount'] ?? 0) / 100);
@@ -1056,7 +1058,9 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                     <?php else: ?>
                                         <?php foreach ($o['timeline'] as $tl): ?>
                                             <?php 
-                                                $tlDate = (new DateTime($tl['created_at']))->format('M d, Y, h:i A');
+                                                $dtTl = new DateTime($tl['created_at'], new DateTimeZone('UTC'));
+                                                $dtTl->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                                $tlDate = $dtTl->format('M d, Y, h:i A');
                                             ?>
                                             <div class="timeline-v2-item">
                                                 <span class="node-dot"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>

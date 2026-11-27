@@ -819,13 +819,9 @@ class EkartLogisticsService
             'seller_gst_amount' => (float)($shipment['seller_gst_amount'] ?? 0),
             'consignee_gst_amount' => (float)($shipment['consignee_gst_amount'] ?? 0),
             'integrated_gst_amount' => (float)($shipment['integrated_gst_amount'] ?? 0),
-            'ewbn' => $shipment['ewbn'] ?? '',
             'order_number' => $orderNumber,
             'invoice_number' => $shipment['invoice_number'] ?? ('INV-' . date('Ymd') . '-' . substr($orderNumber, -4)),
             'invoice_date' => $shipment['invoice_date'] ?? date('Y-m-d'),
-            'document_number' => $shipment['document_number'] ?? '',
-            'document_date' => $shipment['document_date'] ?? '',
-            'consignee_gst_tin' => $shipment['consignee_gst_tin'] ?? '',
             'consignee_name' => $dropName,
             'consignee_alternate_phone' => (string)$dropPhone,
             'products_desc' => $shipment['products_desc'] ?? 'Nutronyx Botanical Wellness Nutrition Blend',
@@ -842,7 +838,6 @@ class EkartLogisticsService
             'length' => (int)($shipment['length'] ?? 15),
             'height' => (int)($shipment['height'] ?? 10),
             'width' => (int)($shipment['width'] ?? 12),
-            'return_reason' => $shipment['return_reason'] ?? '',
             'drop_location' => $cleanDrop,
             'pickup_location' => $cleanPickup,
             'return_location' => $cleanPickup,
@@ -851,6 +846,25 @@ class EkartLogisticsService
             'obd_shipment' => false,
             'mps' => false
         ];
+
+        // Only include e-Way bill if valid 12-digit number (omitted for shipments under ₹50,000)
+        if (!empty($shipment['ewbn']) && preg_match('/^\d{12}$/', (string)$shipment['ewbn'])) {
+            $payload['ewbn'] = (string)$shipment['ewbn'];
+        }
+
+        // Only include optional document fields if non-empty
+        if (!empty($shipment['document_number'])) {
+            $payload['document_number'] = (string)$shipment['document_number'];
+        }
+        if (!empty($shipment['document_date'])) {
+            $payload['document_date'] = (string)$shipment['document_date'];
+        }
+        if (!empty($shipment['consignee_gst_tin'])) {
+            $payload['consignee_gst_tin'] = (string)$shipment['consignee_gst_tin'];
+        }
+        if (!empty($shipment['return_reason'])) {
+            $payload['return_reason'] = (string)$shipment['return_reason'];
+        }
 
         $endpoint = self::BASE_URL . "/api/v1/package/create";
         $response = self::executeHttpRequest('PUT', $endpoint, json_encode($payload), ["Authorization: Bearer {$token}"]);

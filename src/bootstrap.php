@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+date_default_timezone_set('Asia/Kolkata');
+
 spl_autoload_register(function ($class) {
     $prefix = 'Nutronyx\\';
     $baseDir = __DIR__ . '/';

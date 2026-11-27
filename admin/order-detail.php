@@ -193,9 +193,6 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
                                 <span>Ship on Ekart</span>
                             </button>
-                            <button type="button" class="btn-action btn-action-sm btn-action-outline" onclick="window.NutronyxModal.open('fulfillModal')">
-                                <span>Other Carrier &hellip;</span>
-                            </button>
                         <?php endif; ?>
                         
                         <?php if ($canRefund): ?>
@@ -314,7 +311,11 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
                                             <?= htmlspecialchars($tEvent['message']) ?>
                                         </div>
                                         <div style="font-size: 11.5px; color: #8A9A90; margin-top: 2px;">
-                                            <?= date('d M Y, h:i A', strtotime($tEvent['created_at'])) ?> &bull; Actor: <strong><?= htmlspecialchars($tEvent['actor']) ?></strong>
+                                            <?php
+                                                $dtEv = new DateTime($tEvent['created_at'], new DateTimeZone('UTC'));
+                                                $dtEv->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                            ?>
+                                            <?= $dtEv->format('d M Y, h:i A') ?> &bull; Actor: <strong><?= htmlspecialchars($tEvent['actor']) ?></strong>
                                         </div>
                                     </div>
                                 </div>

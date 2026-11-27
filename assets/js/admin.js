@@ -1464,10 +1464,17 @@
             const workspace = document.getElementById('orderDetailWorkspace');
             if (!workspace) return;
 
-            const orderDateStr = new Date(o.created_at).toLocaleDateString('en-US', {
-                month: 'short', day: 'numeric', year: 'numeric'
-            }) + ' at ' + new Date(o.created_at).toLocaleTimeString('en-US', {
-                hour: '2-digit', minute: '2-digit'
+            const parseUtc = (s) => {
+                if (!s) return new Date();
+                const iso = (s.includes('Z') || s.includes('+')) ? s : s.replace(' ', 'T') + 'Z';
+                return new Date(iso);
+            };
+
+            const dOrder = parseUtc(o.created_at);
+            const orderDateStr = dOrder.toLocaleDateString('en-US', {
+                timeZone: 'Asia/Kolkata', month: 'short', day: 'numeric', year: 'numeric'
+            }) + ' at ' + dOrder.toLocaleTimeString('en-US', {
+                timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit'
             });
 
             const statusClass = (o.order_status || 'PENDING').toLowerCase();
@@ -1513,10 +1520,11 @@
             let timelineHtml = '';
             if (o.timeline && o.timeline.length > 0) {
                 o.timeline.forEach(tl => {
-                    const dtStr = new Date(tl.created_at).toLocaleDateString('en-US', {
-                        month: 'short', day: 'numeric', year: 'numeric'
-                    }) + ', ' + new Date(tl.created_at).toLocaleTimeString('en-US', {
-                        hour: '2-digit', minute: '2-digit'
+                    const dTl = parseUtc(tl.created_at);
+                    const dtStr = dTl.toLocaleDateString('en-US', {
+                        timeZone: 'Asia/Kolkata', month: 'short', day: 'numeric', year: 'numeric'
+                    }) + ', ' + dTl.toLocaleTimeString('en-US', {
+                        timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit'
                     });
 
                     timelineHtml += `
