@@ -43,6 +43,8 @@ $homeReviews = ReviewService::getApprovedReviewsForProduct('prod_abc_powder', 10
 if (count($homeReviews) < 3) {
     $homeReviews = ReviewService::getApprovedReviewsForProduct('all', 10);
 }
+$homeRatingStats = ReviewService::getProductRatingStats('prod_abc_powder');
+$homeAvgRating = !empty($homeRatingStats['count']) && !empty($homeRatingStats['average']) ? number_format((float)$homeRatingStats['average'], 1) : '5.0';
 
 // Location and routine metadata mapping for authentic customer stories
 $reviewMetaMap = [
@@ -415,7 +417,7 @@ $reviewMetaMap = [
                     </div>
                     <div class="ing-card-content">
                         <h3 class="ing-card-title">Amla</h3>
-                        <p class="ing-card-desc">A natural source of plant nutrients.</p>
+                        <p class="ing-card-desc">Naturally rich in vitamin C and antioxidants.</p>
                     </div>
                 </div>
 
@@ -431,7 +433,7 @@ $reviewMetaMap = [
                     </div>
                     <div class="ing-card-content">
                         <h3 class="ing-card-title">Beetroot</h3>
-                        <p class="ing-card-desc">Rich in naturally occurring nutrients.</p>
+                        <p class="ing-card-desc">A natural source of dietary nitrates and betalains.</p>
                     </div>
                 </div>
 
@@ -448,7 +450,7 @@ $reviewMetaMap = [
                     </div>
                     <div class="ing-card-content">
                         <h3 class="ing-card-title">Carrot</h3>
-                        <p class="ing-card-desc">A wholesome plant ingredient.</p>
+                        <p class="ing-card-desc">Naturally rich in beta-carotene and carotenoids.</p>
                     </div>
                 </div>
 
@@ -462,7 +464,7 @@ $reviewMetaMap = [
                     </div>
                     <div class="ing-card-content">
                         <h3 class="ing-card-title">Ginger</h3>
-                        <p class="ing-card-desc">A time-honored ingredient.</p>
+                        <p class="ing-card-desc">Contains naturally occurring gingerols.</p>
                     </div>
                 </div>
 
@@ -481,7 +483,7 @@ $reviewMetaMap = [
                     </div>
                     <div class="ing-card-content">
                         <h3 class="ing-card-title">Lemon</h3>
-                        <p class="ing-card-desc">Adds a fresh, natural zest.</p>
+                        <p class="ing-card-desc">A natural source of vitamin C and citrus compounds.</p>
                     </div>
                 </div>
             </div>
@@ -521,7 +523,7 @@ $reviewMetaMap = [
 
                     <!-- Product Description -->
                     <p class="showcase-description">
-                        ABC+ is a carefully crafted blend of Beetroot, Carrot, Amla, Lemon, and Ginger, created to bring the goodness of five natural ingredients into your everyday routine. Rich in naturally occurring antioxidants and key nutrients, it provides Vitamin C, beta-carotene, and plant-based compounds that support everyday immunity, digestion, healthy circulation, and overall wellness. A simple, convenient way to make natural nutrition part of every day.
+                        ABC+ is a carefully crafted blend of Amla, Beetroot, Carrot, Ginger, and Lemon, created to bring the goodness of five natural ingredients into your daily routine. Rich in naturally occurring antioxidants and key nutrients, it provides vitamin C, beta-carotene, and plant-based compounds that support immunity, digestion, healthy circulation, and overall wellness. A simple, convenient way to make natural nutrition part of your lifestyle.
                     </p>
 
                     <!-- Product Specifications Bar with Interactive Size Pills -->
@@ -531,12 +533,12 @@ $reviewMetaMap = [
                             <div class="showcase-size-pills-row" style="display:inline-flex; gap:6px;">
                                 <?php if (isset($flagshipVariants['var_abc_250g'])): ?>
                                     <button type="button" class="showcase-size-pill <?= ($defaultVariantKey === 'var_abc_250g') ? 'active' : '' ?>" id="scPill250" onclick="onShowcasePillClick('var_abc_250g', <?= (int)round(($flagshipVariants['var_abc_250g']['sale_price_amount'] ?? 29900) / 100) ?>, this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid #143D24; background:<?= ($defaultVariantKey === 'var_abc_250g') ? '#143D24' : '#fff' ?>; color:<?= ($defaultVariantKey === 'var_abc_250g') ? '#fff' : '#374151' ?>; font-size:12px; font-weight:700; cursor:pointer;">
-                                        200gm
+                                        200g
                                     </button>
                                 <?php endif; ?>
                                 <?php if (isset($flagshipVariants['var_abc_500g'])): ?>
                                     <button type="button" class="showcase-size-pill <?= ($defaultVariantKey === 'var_abc_500g') ? 'active' : '' ?>" id="scPill500" onclick="onShowcasePillClick('var_abc_500g', <?= (int)round(($flagshipVariants['var_abc_500g']['sale_price_amount'] ?? 49900) / 100) ?>, this)" style="padding:4px 10px; border-radius:6px; border:1.5px solid <?= ($defaultVariantKey === 'var_abc_500g') ? '#143D24' : '#D1D5DB' ?>; background:<?= ($defaultVariantKey === 'var_abc_500g') ? '#143D24' : '#fff' ?>; color:<?= ($defaultVariantKey === 'var_abc_500g') ? '#fff' : '#374151' ?>; font-size:12px; font-weight:700; cursor:pointer;">
-                                        400gm
+                                        400g
                                     </button>
                                 <?php endif; ?>
                             </div>
@@ -560,7 +562,7 @@ $reviewMetaMap = [
                             </div>
                             <span class="row-v-divider" aria-hidden="true">|</span>
                             <div class="ingredient-desc-cell">
-                                <p class="ingredient-benefit">Immunity & everyday vitality</p>
+                                <p class="ingredient-benefit">Supports immunity &amp; everyday vitality</p>
                             </div>
                         </div>
 
@@ -575,7 +577,7 @@ $reviewMetaMap = [
                             </div>
                             <span class="row-v-divider" aria-hidden="true">|</span>
                             <div class="ingredient-desc-cell">
-                                <p class="ingredient-benefit">Supports blood circulation & stamina</p>
+                                <p class="ingredient-benefit">Supports healthy blood circulation</p>
                             </div>
                         </div>
 
@@ -590,7 +592,7 @@ $reviewMetaMap = [
                             </div>
                             <span class="row-v-divider" aria-hidden="true">|</span>
                             <div class="ingredient-desc-cell">
-                                <p class="ingredient-benefit">Rich in beta-carotene for skin & eye health</p>
+                                <p class="ingredient-benefit">Supports healthy vision &amp; skin</p>
                             </div>
                         </div>
 
@@ -605,7 +607,7 @@ $reviewMetaMap = [
                             </div>
                             <span class="row-v-divider" aria-hidden="true">|</span>
                             <div class="ingredient-desc-cell">
-                                <p class="ingredient-benefit">Aids digestion & gut comfort</p>
+                                <p class="ingredient-benefit">Supports digestion &amp; gut comfort</p>
                             </div>
                         </div>
 
@@ -620,7 +622,7 @@ $reviewMetaMap = [
                             </div>
                             <span class="row-v-divider" aria-hidden="true">|</span>
                             <div class="ingredient-desc-cell">
-                                <p class="ingredient-benefit">Helps in daily cleansing & natural freshness</p>
+                                <p class="ingredient-benefit">Supports immunity &amp; antioxidant protection</p>
                             </div>
                         </div>
                     </div>
@@ -669,7 +671,7 @@ $reviewMetaMap = [
 
                 <!-- Narrative Subtitle -->
                 <p class="minute-subtext">
-                    Thoughtfully crafted natural nutrition, made to fit effortlessly into your everyday routine.
+                    Even on your busiest days, nourishing your body should never be an afterthought.
                 </p>
             </div>
 
@@ -1226,7 +1228,7 @@ $reviewMetaMap = [
 
                         <!-- Circular Media Frame -->
                         <div class="stage-circle-inner">
-                            <img src="assets/images/ritual-mix.png?v=<?= file_exists(__DIR__ . '/assets/images/ritual-mix.png') ? filemtime(__DIR__ . '/assets/images/ritual-mix.png') : '1' ?>" alt="Mixing ABC+ powder with fresh water" class="stage-base-img mix-base-img" loading="lazy">
+                            <img src="assets/images/mix.png?v=<?= file_exists(__DIR__ . '/assets/images/mix.png') ? filemtime(__DIR__ . '/assets/images/mix.png') : '1' ?>" alt="Mixing ABC+ powder with fresh water" class="stage-base-img mix-base-img" loading="lazy">
                             <!-- Continuous Pouring Water Stream & Ripples Canvas -->
                             <canvas class="stage-canvas canvas-water" width="340" height="340" aria-hidden="true"></canvas>
                         </div>
@@ -1402,27 +1404,9 @@ $reviewMetaMap = [
                 </button>
             </div>
 
-            <!-- FOUR-PILLAR TRUST BAR -->
+            <!-- TRUST BAR (Dynamic Ratings & Verified Quality) -->
             <div class="experience-trust-bar">
-                <!-- Metric 1: Happy Customers -->
-                <div class="trust-stat-col">
-                    <div class="trust-stat-icon-wrap" aria-hidden="true">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#25533A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                    </div>
-                    <div class="trust-stat-content">
-                        <span class="stat-number">5,000+</span>
-                        <span class="stat-label">Happy Customers</span>
-                    </div>
-                </div>
-
-                <div class="trust-stat-divider" aria-hidden="true"></div>
-
-                <!-- Metric 2: Average Rating -->
+                <!-- Metric 1: Average Rating (Dynamically calculated from verified backend reviews) -->
                 <div class="trust-stat-col">
                     <div class="trust-stat-icon-wrap" aria-hidden="true">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#25533A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1431,7 +1415,7 @@ $reviewMetaMap = [
                         </svg>
                     </div>
                     <div class="trust-stat-content">
-                        <span class="stat-number">4.8/5</span>
+                        <span class="stat-number"><?= htmlspecialchars($homeAvgRating) ?>/5</span>
                         <span class="stat-label">Average Rating</span>
                     </div>
                 </div>

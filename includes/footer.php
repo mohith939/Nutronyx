@@ -61,19 +61,6 @@
                 <span class="col-accent-dash" aria-hidden="true"></span>
                 <p class="footer-connect-sub">Your wellness concierge.</p>
 
-                <!-- Contact WhatsApp Feature -->
-                <a href="https://wa.me/919392633211" target="_blank" rel="noopener noreferrer" class="footer-phone-badge" aria-label="Chat with Wellness Concierge on WhatsApp at 93926 33211">
-                    <span class="phone-round-icon" aria-hidden="true">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.403 5.638A8.919 8.919 0 0 0 12.053 3c-4.948 0-8.976 4.027-8.978 8.977 0 1.582.413 3.126 1.2 4.488L3 21l4.645-1.218a8.936 8.936 0 0 0 4.406 1.157h.004c4.947 0 8.976-4.027 8.978-8.977 0-2.399-.935-4.654-2.63-6.324zM12.053 19.426h-.003a7.442 7.442 0 0 1-3.791-1.037l-.272-.162-2.82.739.752-2.748-.177-.282a7.432 7.432 0 0 1-1.144-3.959c.002-4.114 3.35-7.461 7.46-7.461a7.417 7.417 0 0 1 5.279 2.188 7.42 7.42 0 0 1 2.183 5.28c-.002 4.114-3.35 7.462-7.46 7.462zm4.093-5.589c-.225-.113-1.327-.655-1.533-.73-.205-.075-.354-.112-.504.112s-.58.73-.711.879-.262.169-.486.056c-.225-.113-.948-.349-1.806-1.114-.667-.595-1.117-1.329-1.248-1.554s-.014-.346.098-.458c.101-.1.224-.262.336-.393.112-.131.15-.224.224-.374s.038-.281-.019-.393c-.056-.113-.505-1.217-.692-1.666-.182-.439-.367-.379-.504-.386l-.43-.008c-.149 0-.393.056-.599.281s-.786.767-.786 1.872.805 2.172.917 2.321c.112.15 1.582 2.415 3.832 3.387.536.231.954.369 1.279.473.538.171 1.028.147 1.415.089.433-.065 1.327-.542 1.514-1.067.188-.524.188-.973.131-1.067-.056-.094-.206-.15-.431-.262z" fill="#FFFFFF"/>
-                        </svg>
-                    </span>
-                    <span class="phone-vert-divider" aria-hidden="true"></span>
-                    <span class="phone-digits">93926 33211</span>
-                </a>
-
-                <p class="footer-timings">Mon – Sat • 9 AM – 7 PM IST</p>
-
                 <!-- Social Icons (Instagram & Email from Reference Image 1) -->
                 <div class="footer-social-row">
                     <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="footer-social-circle" aria-label="Follow us on Instagram">

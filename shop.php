@@ -160,7 +160,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                         <h3 class="dossier-title">ABC+</h3>
                         
                         <p class="dossier-desc">
-                            ABC+ is a carefully crafted blend of Beetroot, Carrot, Amla, Lemon, and Ginger, created to bring the goodness of five natural ingredients into your everyday routine. Rich in naturally occurring antioxidants and key nutrients, it provides Vitamin C, beta-carotene, and plant-based compounds that support everyday immunity, digestion, healthy circulation, and overall wellness. A simple, convenient way to make natural nutrition part of every day.
+                            ABC+ is a carefully crafted blend of Amla, Beetroot, Carrot, Ginger, and Lemon, created to bring the goodness of five natural ingredients into your daily routine. Rich in naturally occurring antioxidants and key nutrients, it provides vitamin C, beta-carotene, and plant-based compounds that support immunity, digestion, healthy circulation, and overall wellness. A simple, convenient way to make natural nutrition part of your lifestyle.
                         </p>
 
                         <!-- Authentic Specifications Bar -->
@@ -200,7 +200,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                             role="radio"
                                             aria-checked="<?= (($_GET['variant'] ?? '') === 'var_abc_500g' && isset($flagshipVariants['var_abc_500g'])) ? 'false' : 'true' ?>"
                                             onclick="selectDossierSize('var_abc_250g', <?= (int)($flagshipVariants['var_abc_250g']['price_amount']/100) ?>, '1 Month Ritual', this)">
-                                        <span class="pill-weight"><?= htmlspecialchars($flagshipVariants['var_abc_250g']['title'] ?: '200gm') ?></span>
+                                        <span class="pill-weight"><?= htmlspecialchars(str_ireplace('gm', 'g', $flagshipVariants['var_abc_250g']['title'] ?: '200g')) ?></span>
                                         <span class="pill-badge">Most Popular</span>
                                     </button>
                                 <?php endif; ?>
@@ -211,7 +211,7 @@ $showFlagship = ($flagshipProduct !== null && !empty($flagshipVariants));
                                             role="radio"
                                             aria-checked="<?= ((($_GET['variant'] ?? '') === 'var_abc_500g') || !isset($flagshipVariants['var_abc_250g'])) ? 'true' : 'false' ?>"
                                             onclick="selectDossierSize('var_abc_500g', <?= (int)($flagshipVariants['var_abc_500g']['price_amount']/100) ?>, '2 Months Ritual (Save 17%)', this)">
-                                        <span class="pill-weight"><?= htmlspecialchars($flagshipVariants['var_abc_500g']['title'] ?: '400gm') ?></span>
+                                        <span class="pill-weight"><?= htmlspecialchars(str_ireplace('gm', 'g', $flagshipVariants['var_abc_500g']['title'] ?: '400g')) ?></span>
                                         <span class="pill-badge pill-badge-value">Best Value</span>
                                     </button>
                                 <?php endif; ?>
