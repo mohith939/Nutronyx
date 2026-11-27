@@ -48,6 +48,7 @@
                 <span class="col-accent-dash" aria-hidden="true"></span>
                 <ul class="footer-nav-list" role="list">
                     <li><a href="shop" class="footer-nav-link">Shop</a></li>
+                    <li><a href="track-order" class="footer-nav-link">Track Your Order</a></li>
                     <li><a href="/#nutronyx-experience" class="footer-nav-link">Customer Reviews</a></li>
                     <li><a href="partner" class="footer-nav-link">Become A Partner</a></li>
                     <li><a href="faq" class="footer-nav-link">FAQ</a></li>

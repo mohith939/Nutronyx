@@ -860,7 +860,7 @@ $reviewMetaMap = [
 
                     <!-- Supporting Description -->
                     <p class="ritual-hero-sub">
-                        Thoughtfully crafted natural nutrition, designed to fit effortlessly into your everyday routine
+                        Nature-inspired nutrition, thoughtfully crafted to make healthier choices a natural part of your day.
                     </p>
 
                     <!-- CTA Button -->
