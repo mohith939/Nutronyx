@@ -28,6 +28,7 @@ if (isset($_GET['format']) && $_GET['format'] === 'json') {
 }
 
 if ($validation['valid']) {
+    $_SESSION['nutronyx_applied_coupon'] = $validation['promo'];
     $_SESSION['applied_coupon'] = $validation['promo'];
     $_SESSION['coupon_banner'] = [
         'type' => 'success',
@@ -43,7 +44,7 @@ if ($validation['valid']) {
 }
 
 // Redirect to target or show confirmation page
-$target = in_array($redirect, ['shop.php', 'index.php', 'track-order.php'], true) ? $redirect : 'shop.php';
+$target = in_array($redirect, ['cart', 'checkout', 'shop', 'shop.php', 'index.php', 'track-order.php'], true) ? $redirect : 'shop';
 ?>
 <!DOCTYPE html>
 <html lang="en">

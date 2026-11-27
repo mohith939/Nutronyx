@@ -1029,7 +1029,7 @@
             tr.innerHTML = `
                 <td>
                     <input type="hidden" name="variants[${idx}][id]" value="${id}">
-                    <input type="text" name="variants[${idx}][title]" value="${title}" required placeholder="e.g. 500 g Pack" class="form-control" style="font-size:12.5px; padding:6px 10px;">
+                    <input type="text" name="variants[${idx}][title]" value="${title}" required placeholder="e.g. 200g or 400g" class="form-control" style="font-size:12.5px; padding:6px 10px;">
                 </td>
                 <td>
                     <input type="text" name="variants[${idx}][sku]" value="${sku}" placeholder="Auto SKU" class="form-control" style="font-size:12px; padding:6px 8px; font-family:monospace;">

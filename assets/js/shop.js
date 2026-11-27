@@ -460,7 +460,7 @@ function addDossierToCart(btn) {
     .catch(err => console.error("Cart update error:", err));
 
     const activePill = document.querySelector(".size-pill-btn.active .pill-weight");
-    const varLabel = activePill ? activePill.textContent.trim() : (activeVariantId === 'var_abc_500g' ? "400gm" : "200gm");
+    const varLabel = activePill ? activePill.textContent.trim() : (activeVariantId === 'var_abc_500g' ? "400g" : "200g");
     showCartToast(`Added ${qty}x NUTRONYX ABC+ Daily Powder (${varLabel}) to your cart!`);
 
     // Button pulse animation

@@ -13,6 +13,12 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
 
+// Auto-apply coupon from URL (?coupon=... or ?code=...)
+$urlCoupon = trim((string)($_GET['coupon'] ?? $_GET['code'] ?? ''));
+if (!empty($urlCoupon)) {
+    CartService::applyCoupon($urlCoupon);
+}
+
 // Clear lingering shipping estimates when loading checkout for a new order
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' && empty($_GET['confirmed'])) {
     CartService::clearShippingEstimate();
@@ -22,19 +28,10 @@ $cart = CartService::getCart();
 $placedOrder = null;
 $errorMessage = '';
 
-// Active promo codes from database (never show deleted codes like WELCOME15)
+// Active promo codes from database configured for storefront
 $activeCoupons = [];
 try {
-    $allPromos = \Nutronyx\Services\PromotionService::getPromotions();
-    $now = time();
-    foreach ($allPromos as $p) {
-        if (($p['status'] ?? '') === 'ACTIVE' && (int)($p['is_active'] ?? 1) === 1) {
-            if (!empty($p['expires_at']) && strtotime($p['expires_at']) < $now) {
-                continue;
-            }
-            $activeCoupons[] = $p;
-        }
-    }
+    $activeCoupons = \Nutronyx\Services\PromotionService::getCartCoupons();
 } catch (\Throwable $e) {
     $activeCoupons = [];
 }
@@ -426,7 +423,7 @@ $currentPage = 'checkout';
                 <div class="checkout-header-block">
                     <div>
                         <h1 class="checkout-main-title">Complete Your Order</h1>
-                        <p class="checkout-sub-title">Provide your contact and delivery details to proceed.</p>
+                        <p class="checkout-sub-title">Enter your contact and delivery details to complete your purchase.</p>
                     </div>
 
                     <!-- 2-Step Progress (Image 2: (1) Delivery details --- (2) Review) -->
@@ -465,7 +462,7 @@ $currentPage = 'checkout';
                                     </div>
                                     <div>
                                         <h2 class="checkout-card-title">Contact Information</h2>
-                                        <p class="checkout-card-desc">We'll send order updates and dispatch tracking here.</p>
+                                        <p class="checkout-card-desc">We'll use these details to send your order confirmation, tracking information, and delivery updates.</p>
                                     </div>
                                 </div>
 
@@ -481,7 +478,7 @@ $currentPage = 'checkout';
                                     </div>
 
                                     <div class="form-field-group">
-                                        <label for="phone">Mobile Phone <span class="req">*</span></label>
+                                        <label for="phone">Mobile No <span class="req">*</span></label>
                                         <div class="input-icon-wrap">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                                             <input type="tel" id="phone" name="phone" class="form-input-control" 
@@ -500,12 +497,12 @@ $currentPage = 'checkout';
                                     </div>
                                     <div>
                                         <h2 class="checkout-card-title">Delivery Address</h2>
-                                        <p class="checkout-card-desc">Where should we deliver your botanical formulations?</p>
+                                        <p class="checkout-card-desc">Enter the address where you would like your order delivered.</p>
                                     </div>
                                 </div>
 
                                 <div class="form-field-group">
-                                    <label for="full_name">Recipient Full Name <span class="req">*</span></label>
+                                    <label for="full_name">Full name <span class="req">*</span></label>
                                     <div class="input-icon-wrap">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                                         <input type="text" id="full_name" name="full_name" class="form-input-control" 
@@ -515,7 +512,7 @@ $currentPage = 'checkout';
                                 </div>
 
                                 <div class="form-field-group">
-                                    <label for="address_line1">Street Address <span class="req">*</span></label>
+                                    <label for="address_line1">House / Flat No. & Street Address <span class="req">*</span></label>
                                     <div class="input-icon-wrap">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                                         <input type="text" id="address_line1" name="address_line1" class="form-input-control" 
@@ -624,30 +621,27 @@ $currentPage = 'checkout';
                             </div>
                         </div>
 
-                        <!-- Right Column: Order Review (Exact Image 2 Match with user exclusions) -->
+                        <!-- Right Column: Order Summary (Exact Reference Match) -->
                         <aside class="cart-summary-panel">
                             <div class="checkout-card-header" style="margin-bottom:16px;">
                                 <div class="checkout-icon-circle">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                                 </div>
                                 <div>
-                                    <h2 class="checkout-card-title">Order Review</h2>
-                                    <p class="checkout-card-desc"><?= count($cart['items']) ?> <?= count($cart['items']) === 1 ? 'item' : 'items' ?> in your ritual</p>
+                                    <h2 class="checkout-card-title">Order Summary</h2>
+                                    <p class="checkout-card-desc"><?= count($cart['items']) ?> <?= count($cart['items']) === 1 ? 'item' : 'items' ?> in your order</p>
                                 </div>
                             </div>
 
-                            <!-- Items List -->
-                            <div class="review-items-list">
+                            <!-- Items List (Clean rows without bulky images) -->
+                            <div class="review-items-list" style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px;">
                                 <?php foreach ($cart['items'] as $cit): ?>
-                                    <div class="review-item-row">
-                                        <img src="<?= htmlspecialchars($cit['image_url'] ?: 'assets/images/product-abc.jpg') ?>" 
-                                             alt="<?= htmlspecialchars($cit['product_title']) ?>" 
-                                             class="review-item-thumb">
-                                        <div class="review-item-info">
-                                            <div class="review-item-name"><?= htmlspecialchars($cit['product_title']) ?></div>
-                                            <div class="review-item-qty">Qty: <?= (int)$cit['quantity'] ?> &bull; <?= htmlspecialchars($cit['variant_title']) ?></div>
+                                    <div class="review-item-row" style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                        <div>
+                                            <div class="review-item-name" style="font-weight:700; font-size:14.5px; color:#1C2826;"><?= htmlspecialchars($cit['product_title']) ?></div>
+                                            <div class="review-item-qty" style="font-size:12.5px; color:#6B7280; margin-top:2px;">Qty: <?= (int)$cit['quantity'] ?> &bull; <?= htmlspecialchars($cit['variant_title']) ?></div>
                                         </div>
-                                        <div class="review-item-price">
+                                        <div class="review-item-price" style="font-weight:700; font-size:14.5px; color:#1C2826;">
                                             ₹<?= number_format($cit['line_total_rupees'], 2) ?>
                                         </div>
                                     </div>
@@ -659,13 +653,13 @@ $currentPage = 'checkout';
                                 <div class="coupon-input-group" style="display:flex; gap:8px;">
                                     <div class="coupon-field-wrap" style="flex:1; position:relative; display:flex; align-items:center;">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="position:absolute; left:12px; color:#7A766F;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-                                        <input type="text" id="checkoutCouponCode" class="coupon-input" placeholder="COUPON CODE" 
+                                        <input type="text" id="checkoutCouponCode" class="coupon-input" placeholder="Enter coupon code" 
                                                value="<?= htmlspecialchars($cart['applied_coupon']['code'] ?? '') ?>"
                                                onkeydown="if(event.key === 'Enter'){ event.preventDefault(); applyCheckoutCoupon(); }"
-                                               style="width:100%; padding:10px 12px 10px 36px; border:1px solid #D9D2C5; border-radius:8px; font-size:13px; text-transform:uppercase; font-weight:600; letter-spacing:0.5px; background:#fff;">
+                                               style="width:100%; padding:10px 12px 10px 36px; border:1px solid #D9D2C5; border-radius:8px; font-size:13px; font-weight:500; background:#fff;">
                                     </div>
                                     <button type="button" class="coupon-apply-btn" id="checkoutCouponBtn" onclick="applyCheckoutCoupon()" 
-                                            style="padding:10px 18px; background:#1C2826; color:#fff; border:none; border-radius:8px; font-weight:700; font-size:12px; cursor:pointer; letter-spacing:0.8px;">
+                                            style="padding:10px 18px; background:#143D24; color:#fff; border:none; border-radius:8px; font-weight:700; font-size:12px; cursor:pointer; letter-spacing:0.8px;">
                                         APPLY
                                     </button>
                                 </div>
@@ -681,74 +675,89 @@ $currentPage = 'checkout';
                                 </div>
 
                                 <?php if (!empty($activeCoupons)): ?>
-                                    <p class="coupon-hints" style="font-size:11px; color:#7A766F; margin-top:6px; margin-bottom:0;">
-                                        Use 
-                                        <?php 
-                                        $hints = [];
-                                        foreach (array_slice($activeCoupons, 0, 2) as $ac) {
-                                            $cCode = htmlspecialchars($ac['code']);
-                                            $cType = $ac['discount_type'] ?? 'PERCENTAGE';
-                                            $cVal = (int)($ac['discount_value'] ?? 0);
-                                            $cDesc = ($cType === 'PERCENTAGE') ? "{$cVal}% OFF" : (($cType === 'FIXED_AMOUNT') ? "₹{$cVal} OFF" : "Free Delivery");
-                                            $hints[] = "<strong onclick=\"quickApplyCheckout('{$cCode}')\" style=\"color:#175C31; cursor:pointer; text-decoration:underline;\">{$cCode}</strong> ({$cDesc})";
-                                        }
-                                        echo implode(' or ', $hints) . '.';
-                                        ?>
-                                    </p>
+                                    <div class="cart-available-offers-box" style="margin-top: 14px; background: #FAF9F6; border: 1px solid #ECE7DE; border-radius: 10px; padding: 12px 14px;">
+                                        <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #143D24; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                            <span>Available Offers</span>
+                                        </div>
+                                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                                            <?php foreach ($activeCoupons as $ac): 
+                                                $acCode = htmlspecialchars($ac['code']);
+                                                $isApplied = (!empty($cart['applied_coupon']) && strtoupper($cart['applied_coupon']['code']) === strtoupper($ac['code']));
+                                                $desc = !empty($ac['description']) ? htmlspecialchars($ac['description']) : "Enjoy {$ac['discount_value']}% off your order with code {$acCode}.";
+                                            ?>
+                                                <div style="background: #FFFFFF; border: 1px solid <?= $isApplied ? '#A7F3D0' : '#E5E7EB' ?>; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                                                    <div style="flex: 1;">
+                                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                                            <span style="font-family: monospace; font-size: 11.5px; font-weight: 700; background: #F3F4F6; color: #143D24; padding: 2px 6px; border-radius: 4px; border: 1px dashed #CBD5E1;"><?= $acCode ?></span>
+                                                        </div>
+                                                        <div style="font-size: 11px; color: #4B5563; margin-top: 3px; line-height: 1.35;"><?= $desc ?></div>
+                                                    </div>
+                                                    <div>
+                                                        <span id="checkout-badge-<?= $acCode ?>" style="font-size: 10.5px; font-weight: 700; color: #059669; background: #ECFDF5; padding: 3px 6px; border-radius: 5px; <?= $isApplied ? 'display:inline-block;' : 'display:none;' ?>">Applied</span>
+                                                        <button type="button" class="checkout-offer-apply-btn" data-code="<?= $acCode ?>" onclick="quickApplyCheckout('<?= $acCode ?>')" style="font-size: 11px; font-weight: 700; color: #143D24; background: transparent; border: 1px solid #143D24; padding: 3px 8px; border-radius: 5px; cursor: pointer; transition: all 0.2s; <?= $isApplied ? 'display:none;' : 'display:inline-block;' ?>" onmouseover="this.style.background='#143D24';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#143D24'">APPLY</button>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    </div>
                                 <?php endif; ?>
                             </div>
 
                             <!-- Price Breakdown -->
                             <div class="summary-rows-wrap" style="border-top:1px solid #EBE6DC; padding-top:16px;">
-                                <div class="summary-data-row">
-                                    <span>Items Subtotal</span>
-                                    <span id="checkoutSubtotalText">₹<?= number_format($cart['subtotal_rupees'], 2) ?></span>
+                                <div class="summary-data-row" style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:13.5px; color:#4B5563;">
+                                    <span>Subtotal</span>
+                                    <span id="checkoutSubtotalText" style="font-weight:600; color:#1C2826;">₹<?= number_format($cart['subtotal_rupees'], 2) ?></span>
                                 </div>
 
-                                <div class="summary-data-row discount-text" id="checkoutDiscountRow" style="<?= ($cart['discount_rupees'] > 0) ? '' : 'display:none;' ?>">
+                                <div class="summary-data-row discount-text" id="checkoutDiscountRow" style="<?= ($cart['discount_rupees'] > 0) ? 'display:flex;' : 'display:none;' ?> justify-content:space-between; margin-bottom:10px; font-size:13.5px; color:#175C31; font-weight:600;">
                                     <span id="checkoutDiscountLabel">Discount (<?= htmlspecialchars($cart['applied_coupon']['code'] ?? '') ?>)</span>
                                     <span id="checkoutDiscountVal">&minus;₹<?= number_format($cart['discount_rupees'], 2) ?></span>
                                 </div>
 
-                                <div class="summary-data-row">
-                                    <span>Express Shipping (Ekart)</span>
+                                <div class="summary-data-row" style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:13.5px; color:#4B5563;">
+                                    <span>Shipping Charges</span>
                                     <span id="checkoutShippingText">
                                         <?php if ($cart['is_free_shipping']): ?>
                                             <strong style="color: #10B981;">FREE</strong>
                                         <?php elseif (!empty($cart['shipping_calculated']) && $cart['shipping_rupees'] > 0): ?>
-                                            ₹<?= number_format($cart['shipping_rupees'], 2) ?>
+                                            <span style="font-weight:600; color:#1C2826;">₹<?= number_format($cart['shipping_rupees'], 2) ?></span>
                                         <?php else: ?>
                                             <span style="color:#6B7280; font-size:12.5px;">Enter PIN code</span>
                                         <?php endif; ?>
                                     </span>
                                 </div>
 
-                                <div class="summary-data-row">
-                                    <span>GST (18% Included)</span>
-                                    <span id="checkoutGstText">₹<?= number_format($gstAmount, 2) ?></span>
+                                <div class="summary-data-row" style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:13.5px; color:#4B5563;">
+                                    <span>Taxes</span>
+                                    <span id="checkoutGstText" style="color:#6B7280; font-size:13px; font-weight:500;">Included</span>
                                 </div>
                             </div>
 
-                            <!-- Green Highlighted Total Box (Image 2) -->
-                            <div class="summary-green-box">
-                                <span class="summary-green-label">Final Payable</span>
-                                <span class="summary-green-val" id="checkoutFinalPayableText">₹<?= number_format($cart['total_rupees'], 2) ?></span>
+                            <!-- Green Highlighted Total Box (Reference Match) -->
+                            <div class="summary-green-box" style="background:#EAF3EC; border:1px solid #D0E6D5; border-radius:10px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; margin:16px 0;">
+                                <span class="summary-green-label" style="font-size:15px; font-weight:700; color:#143D24;">Total Payable</span>
+                                <span class="summary-green-val" id="checkoutFinalPayableText" style="font-family:var(--font-sans); font-size:22px; font-weight:800; color:#143D24;">₹<?= number_format($cart['total_rupees'], 2) ?></span>
                             </div>
 
                             <!-- Cashfree Payment Gateway Selector (No COD) -->
                             <input type="hidden" name="payment_method" value="CASHFREE">
 
                             <!-- CTA Submit Button -->
-                            <button type="submit" class="btn-cart-proceed" id="submitCheckoutBtn">
-                                <span>Proceed to Cashfree Payment</span>
+                            <button type="submit" class="btn-cart-proceed" id="submitCheckoutBtn" style="background:#143D24; color:#fff; border-radius:8px; padding:15px; font-weight:700; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; display:flex; justify-content:center; align-items:center; gap:8px; width:100%; border:none; cursor:pointer;">
+                                <span>PROCEED TO PAYMENT</span>
                                 <span>&rarr;</span>
                             </button>
 
-                            <!-- Trust Hallmarks (Cleaned per user request) -->
-                            <div class="cart-hallmarks-list">
-                                <div class="hallmark-item">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                                    <span>100% Organic &amp; FSSAI Certified Formulations</span>
+                            <!-- Security and Payment Assurance (Reference Match) -->
+                            <div style="margin-top:16px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:4px;">
+                                <div style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#1F2937;">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#143D24" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                    <span>Safe &amp; Secure Payments</span>
+                                </div>
+                                <div style="font-size:11.5px; color:#6B7280;">
+                                    Payments securely processed by Cashfree.
                                 </div>
                             </div>
                         </aside>
@@ -911,11 +920,10 @@ $currentPage = 'checkout';
             }
         }
 
-        // GST (18% Included)
+        // Taxes
         const gstEl = document.getElementById('checkoutGstText');
         if (gstEl) {
-            const gstRupees = parseFloat(cart.tax_rupees || (cart.subtotal_rupees - (cart.subtotal_rupees / 1.18)));
-            gstEl.textContent = '₹' + gstRupees.toFixed(2);
+            gstEl.textContent = 'Included';
         }
 
         // Final Payable
@@ -943,6 +951,19 @@ $currentPage = 'checkout';
             if (couponInput) couponInput.value = '';
             if (discountRow) discountRow.style.display = 'none';
         }
+
+        // Update Available Offers badges & buttons
+        document.querySelectorAll('.checkout-offer-apply-btn').forEach(btn => {
+            const btnCode = btn.getAttribute('data-code');
+            const badge = document.getElementById('checkout-badge-' + btnCode);
+            if (cart.applied_coupon && cart.applied_coupon.code.toUpperCase() === btnCode.toUpperCase()) {
+                btn.style.display = 'none';
+                if (badge) badge.style.display = 'inline-block';
+            } else {
+                btn.style.display = 'inline-block';
+                if (badge) badge.style.display = 'none';
+            }
+        });
     }
 
     // Auto-initialize character counter & pincode calculation on load

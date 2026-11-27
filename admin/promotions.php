@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'usage_limit' => (int)($_POST['usage_limit'] ?? 500),
                 'per_customer_limit' => (int)($_POST['per_customer_limit'] ?? 1),
                 'status' => $_POST['status'] ?? 'ACTIVE',
+                'show_in_cart' => (int)($_POST['show_in_cart'] ?? 1),
                 'expires_at' => !empty($_POST['expires_at']) ? $_POST['expires_at'] . ' 23:59:59' : null
             ]);
             $notice = "Coupon '" . strtoupper(trim($_POST['code'])) . "' created successfully.";
@@ -55,12 +56,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'code' => trim($_POST['code']),
                 'name' => trim($_POST['name'] ?? ''),
                 'campaign_name' => trim($_POST['campaign_name'] ?? 'General Promotion'),
+                'description' => trim($_POST['description'] ?? ''),
                 'discount_type' => $_POST['discount_type'] ?? 'PERCENTAGE',
                 'discount_value' => (int)($_POST['discount_value'] ?? 0),
                 'minimum_order_rupees' => (int)($_POST['minimum_order_rupees'] ?? 0),
                 'usage_limit' => (int)($_POST['usage_limit'] ?? 500),
                 'per_customer_limit' => (int)($_POST['per_customer_limit'] ?? 1),
                 'status' => $_POST['status'] ?? 'ACTIVE',
+                'show_in_cart' => (int)($_POST['show_in_cart'] ?? 1),
                 'expires_at' => !empty($_POST['expires_at']) ? $_POST['expires_at'] : null
             ]);
             $notice = "Coupon updated successfully.";
@@ -1273,6 +1276,9 @@ if (!empty($_GET['selected_id'])) {
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                                                 </button>
                                             </div>
+                                            <div style="margin-top: 5px;">
+                                                <?= ((int)($p['show_in_cart'] ?? 1) === 1) ? '<span style="font-size: 10px; font-weight: 700; background: #E8F5E9; color: #1E6B39; padding: 2px 7px; border-radius: 999px; display: inline-block;">✓ Show in Cart</span>' : '<span style="font-size: 10px; font-weight: 600; background: #F3F4F6; color: #6B7280; padding: 2px 7px; border-radius: 999px; display: inline-block;">Hidden in Cart</span>' ?>
+                                            </div>
                                         </td>
 
                                         <td>
@@ -2079,6 +2085,27 @@ if (!empty($_GET['selected_id'])) {
                             <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">For internal admin reference</span>
                             <input type="hidden" name="campaign_name" id="couponCampaignSelect" value="General Storewide Promotion">
                         </div>
+
+                        <div style="margin-top: 14px;">
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Description (Displayed to Customers in Cart)</label>
+                            <textarea name="description" id="couponDescInp" rows="2" placeholder="e.g. Enjoy 10% off your first order with code FIRST10." class="form-control" style="border-radius: 8px; font-size: 13px; padding: 8px 12px; border: 1px solid #D1D5DB; width: 100%;"></textarea>
+                            <span style="font-size: 11px; color: #9CA3AF; margin-top: 3px; display: block;">Explained to customers on the shopping cart and checkout pages.</span>
+                        </div>
+
+                        <div style="margin-top: 14px; padding: 12px; background: #F9FAFB; border-radius: 10px; border: 1px solid #E5E7EB;">
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #1F2937; margin-bottom: 6px;">Show this coupon in cart?</label>
+                            <div style="display: flex; gap: 16px; align-items: center;">
+                                <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #374151; cursor: pointer;">
+                                    <input type="radio" name="show_in_cart" id="modalShowInCartYes" value="1" checked style="accent-color: #144D29; width: 16px; height: 16px;">
+                                    <span>Yes (Show in Cart &amp; Checkout)</span>
+                                </label>
+                                <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #374151; cursor: pointer;">
+                                    <input type="radio" name="show_in_cart" id="modalShowInCartNo" value="0" style="accent-color: #144D29; width: 16px; height: 16px;">
+                                    <span>No (Hidden / Secret Code)</span>
+                                </label>
+                            </div>
+                            <span style="font-size: 11px; color: #6B7280; margin-top: 4px; display: block;">If Yes, customers will see this offer listed directly on the cart page.</span>
+                        </div>
                     </div>
 
                     <!-- Card 2: Discount Benefit (Segmented Buttons) -->
@@ -2437,6 +2464,8 @@ if (!empty($_GET['selected_id'])) {
         window.autoGenCode();
         window.selectDiscountType('PERCENTAGE');
         if (document.getElementById('modalDiscountValInput')) document.getElementById('modalDiscountValInput').value = '15';
+        if (document.getElementById('couponDescInp')) document.getElementById('couponDescInp').value = '';
+        if (document.getElementById('modalShowInCartYes')) document.getElementById('modalShowInCartYes').checked = true;
         if (document.getElementById('couponMinCartInp')) document.getElementById('couponMinCartInp').value = '0';
         if (document.getElementById('couponUsageLimitInp')) document.getElementById('couponUsageLimitInp').value = '0';
         if (document.getElementById('couponPerCustomerLimit')) document.getElementById('couponPerCustomerLimit').checked = true;
@@ -2470,6 +2499,15 @@ if (!empty($_GET['selected_id'])) {
         // Populate fields
         if (document.getElementById('couponCodeInp')) document.getElementById('couponCodeInp').value = coupon.code || '';
         if (document.getElementById('couponNameInp')) document.getElementById('couponNameInp').value = coupon.name || '';
+        if (document.getElementById('couponDescInp')) document.getElementById('couponDescInp').value = coupon.description || '';
+        
+        const showInCart = (coupon.show_in_cart !== undefined && coupon.show_in_cart !== null) ? parseInt(coupon.show_in_cart, 10) : 1;
+        if (showInCart === 1) {
+            if (document.getElementById('modalShowInCartYes')) document.getElementById('modalShowInCartYes').checked = true;
+        } else {
+            if (document.getElementById('modalShowInCartNo')) document.getElementById('modalShowInCartNo').checked = true;
+        }
+
         if (document.getElementById('couponCampaignSelect')) {
             document.getElementById('couponCampaignSelect').value = coupon.campaign_name || 'General Storewide Promotion';
         }

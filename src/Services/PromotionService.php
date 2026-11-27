@@ -30,7 +30,8 @@ class PromotionService
             'max_discount_amount' => "INTEGER DEFAULT 0",
             'eligible_categories' => "TEXT DEFAULT '[]'",
             'eligible_products' => "TEXT DEFAULT '[]'",
-            'combination_rules' => "TEXT DEFAULT '[]'"
+            'combination_rules' => "TEXT DEFAULT '[]'",
+            'show_in_cart' => "INTEGER DEFAULT 1"
         ];
 
         foreach ($newCols as $col => $def) {
@@ -196,15 +197,16 @@ class PromotionService
         $status = strtoupper(trim($data['status'] ?? 'ACTIVE'));
         $isActive = ($status === 'ACTIVE' || $status === 'SCHEDULED') ? 1 : 0;
         $minRupees = (int)($data['minimum_order_rupees'] ?? 0);
+        $showInCart = isset($data['show_in_cart']) ? (int)$data['show_in_cart'] : 1;
         $expiry = !empty($data['expires_at']) ? $data['expires_at'] : null;
 
         $stmt = $db->prepare("
             INSERT INTO promotions (
                 id, website_id, code, name, campaign_name, description, discount_type, discount_value,
-                minimum_order_amount, usage_limit, per_customer_limit, status, is_active, expires_at, created_at
+                minimum_order_amount, usage_limit, per_customer_limit, status, is_active, expires_at, show_in_cart, created_at
             ) VALUES (
                 :id, :wid, :code, :name, :campaign, :desc, :type, :val,
-                :min, :limit, :per_cust, :st, :act, :exp, CURRENT_TIMESTAMP
+                :min, :limit, :per_cust, :st, :act, :exp, :sic, CURRENT_TIMESTAMP
             )
         ");
         $stmt->execute([
@@ -221,7 +223,8 @@ class PromotionService
             ':per_cust' => $perCustomerLimit,
             ':st' => $status,
             ':act' => $isActive,
-            ':exp' => $expiry
+            ':exp' => $expiry,
+            ':sic' => $showInCart
         ]);
 
         AuditService::log('promotion.create', 'promotion', $id, "Created coupon code {$code} for campaign {$campaign}");
@@ -241,11 +244,15 @@ class PromotionService
             $val = (int)($val * 100);
         }
 
+        $showInCart = isset($data['show_in_cart']) ? (int)$data['show_in_cart'] : 1;
+        $desc = isset($data['description']) ? trim($data['description']) : null;
+
         $stmt = $db->prepare("
             UPDATE promotions SET
                 code = COALESCE(:code, code),
                 name = COALESCE(:name, name),
                 campaign_name = COALESCE(:campaign, campaign_name),
+                description = CASE WHEN :has_desc = 1 THEN :desc ELSE description END,
                 discount_type = :type,
                 discount_value = :val,
                 minimum_order_amount = :min,
@@ -253,7 +260,8 @@ class PromotionService
                 per_customer_limit = :per_cust,
                 status = :st,
                 is_active = :act,
-                expires_at = :exp
+                expires_at = :exp,
+                show_in_cart = :sic
             WHERE id = :id AND website_id = :wid
         ");
 
@@ -264,6 +272,8 @@ class PromotionService
             ':code' => !empty($code) ? $code : null,
             ':name' => $data['name'] ?? null,
             ':campaign' => $data['campaign_name'] ?? null,
+            ':has_desc' => isset($data['description']) ? 1 : 0,
+            ':desc' => $desc,
             ':type' => $type,
             ':val' => $val,
             ':min' => (int)($data['minimum_order_rupees'] ?? 0) * 100,
@@ -272,9 +282,27 @@ class PromotionService
             ':st' => $status,
             ':act' => $isActive,
             ':exp' => !empty($data['expires_at']) ? $data['expires_at'] : null,
+            ':sic' => $showInCart,
             ':id' => $id,
             ':wid' => $wid
         ]);
+    }
+
+    public static function getCartCoupons(): array
+    {
+        self::ensureTables();
+        $db = Database::getConnection();
+        $stmt = $db->prepare("
+            SELECT * FROM promotions 
+            WHERE website_id = :wid 
+              AND status = 'ACTIVE' 
+              AND is_active = 1 
+              AND (show_in_cart = 1 OR show_in_cart IS NULL)
+              AND (expires_at IS NULL OR expires_at >= CURRENT_DATE)
+            ORDER BY created_at DESC
+        ");
+        $stmt->execute([':wid' => Context::getWebsiteId()]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public static function duplicatePromotion(string $id): ?string

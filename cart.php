@@ -52,25 +52,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Auto-apply coupon from URL (?coupon=... or ?code=...)
+$urlCoupon = trim((string)($_GET['coupon'] ?? $_GET['code'] ?? ''));
+if (!empty($urlCoupon)) {
+    $cRes = CartService::applyCoupon($urlCoupon);
+    if ($cRes['success']) {
+        $notice = "Coupon '{$urlCoupon}' applied successfully!";
+    }
+}
+
 // The cart page presents items prior to entering destination details; clear any stale checkout shipping estimates
 CartService::clearShippingEstimate();
 $cart = CartService::getCart();
 $items = $cart['items'];
 $cartItemVids = array_column($items, 'variant_id');
 
-// Fetch active promo codes dynamically from database
+// Fetch active promo codes dynamically from database (only those configured for cart)
 $activeCoupons = [];
 try {
-    $allPromos = \Nutronyx\Services\PromotionService::getPromotions();
-    $now = time();
-    foreach ($allPromos as $p) {
-        if (($p['status'] ?? '') === 'ACTIVE' && (int)($p['is_active'] ?? 1) === 1) {
-            if (!empty($p['expires_at']) && strtotime($p['expires_at']) < $now) {
-                continue;
-            }
-            $activeCoupons[] = $p;
-        }
-    }
+    $activeCoupons = \Nutronyx\Services\PromotionService::getCartCoupons();
 } catch (\Throwable $e) {
     $activeCoupons = [];
 }
@@ -131,7 +131,7 @@ $currentPage = 'cart';
             <!-- Header Row -->
             <div class="cart-header-row">
                 <div class="cart-title-row">
-                    <h1 class="cart-title">Your Wellness Cart</h1>
+                    <h1 class="cart-title">Shopping Cart</h1>
                     <div class="cart-item-count-badge">
                         <span id="cartCountHeader"><?= count($items) ?></span> <?= count($items) === 1 ? 'item' : 'items' ?>
                     </div>
@@ -162,7 +162,7 @@ $currentPage = 'cart';
                             <path d="M16 10a4 4 0 0 1-8 0"></path>
                         </svg>
                     </div>
-                    <h2 class="cart-empty-title">Your Wellness Cart is Empty</h2>
+                    <h2 class="cart-empty-title">Your Shopping Cart is Empty</h2>
                     <p class="cart-empty-text">It seems you haven't added any items to your ritual yet. Explore our cold-milled single-origin powders and revitalize your daily routine.</p>
                     <a href="shop" class="btn-cart-proceed" style="display:inline-flex; width:auto; padding:12px 28px;">
                         Explore Products
@@ -190,7 +190,6 @@ $currentPage = 'cart';
                                         <div class="cart-prod-details">
                                             <a href="shop" class="cart-prod-name"><?= htmlspecialchars($it['product_title']) ?></a>
                                             <span class="cart-variant-badge"><?= htmlspecialchars($it['variant_title']) ?></span>
-                                            <span class="cart-sku-code">SKU: <?= htmlspecialchars($it['sku']) ?></span>
                                         </div>
                                     </div>
                                     <div class="cart-price-col">
@@ -258,20 +257,35 @@ $currentPage = 'cart';
                         </div>
 
                         <?php if (!empty($activeCoupons)): ?>
-                            <p class="coupon-hints">
-                                Use 
-                                <?php 
-                                $hints = [];
-                                foreach (array_slice($activeCoupons, 0, 2) as $ac) {
-                                    $cCode = htmlspecialchars($ac['code']);
-                                    $cType = $ac['discount_type'] ?? 'PERCENTAGE';
-                                    $cVal = (int)($ac['discount_value'] ?? 0);
-                                    $cDesc = ($cType === 'PERCENTAGE') ? "{$cVal}% OFF" : (($cType === 'FIXED_AMOUNT') ? "₹{$cVal} OFF" : "Free Delivery");
-                                    $hints[] = "<strong onclick=\"quickApplyCoupon('{$cCode}')\" style=\"cursor:pointer;\">{$cCode}</strong> ({$cDesc})";
-                                }
-                                echo implode(' or ', $hints) . '.';
-                                ?>
-                            </p>
+                            <div class="cart-available-offers-box" style="margin-top: 14px; margin-bottom: 16px; background: #FAF9F6; border: 1px solid #ECE7DE; border-radius: 12px; padding: 12px 14px;">
+                                <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #1E5736; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                    <span>Available Offers</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <?php foreach ($activeCoupons as $ac): 
+                                        $acCode = htmlspecialchars($ac['code']);
+                                        $isApplied = (!empty($cart['applied_coupon']) && strtoupper($cart['applied_coupon']['code']) === strtoupper($ac['code']));
+                                        $desc = !empty($ac['description']) ? htmlspecialchars($ac['description']) : "Enjoy {$ac['discount_value']}% off your order with code {$acCode}.";
+                                    ?>
+                                        <div style="background: #FFFFFF; border: 1px solid <?= $isApplied ? '#A7F3D0' : '#E5E7EB' ?>; border-radius: 8px; padding: 9px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                                            <div style="flex: 1;">
+                                                <div style="display: flex; align-items: center; gap: 6px;">
+                                                    <span style="font-family: monospace; font-size: 12px; font-weight: 700; background: #F3F4F6; color: #1E5736; padding: 2px 7px; border-radius: 4px; border: 1px dashed #CBD5E1;"><?= $acCode ?></span>
+                                                </div>
+                                                <div style="font-size: 11.5px; color: #4B5563; margin-top: 4px; line-height: 1.35;"><?= $desc ?></div>
+                                            </div>
+                                            <div>
+                                                <?php if ($isApplied): ?>
+                                                    <span style="font-size: 11px; font-weight: 700; color: #059669; background: #ECFDF5; padding: 4px 8px; border-radius: 6px;">Applied</span>
+                                                <?php else: ?>
+                                                    <button type="button" onclick="quickApplyCoupon('<?= $acCode ?>')" style="font-size: 11.5px; font-weight: 700; color: #1E5736; background: transparent; border: 1px solid #1E5736; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#1E5736';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#1E5736'">APPLY</button>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
                         <?php endif; ?>
 
                         <!-- Price Breakdown -->
@@ -478,7 +492,7 @@ $currentPage = 'cart';
     }
 
     function clearCart() {
-        if (!confirm('Clear all items from your wellness cart?')) return;
+        if (!confirm('Clear all items from your shopping cart?')) return;
         fetch('api/cart.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

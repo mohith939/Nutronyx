@@ -141,7 +141,38 @@ class CartService
         $items = [];
         $subtotalPaise = 0;
 
+        // Fetch live variant details from database to ensure titles and prices remain 100% current
+        $variantMap = [];
+        if (!empty($_SESSION['nutronyx_cart'])) {
+            $vids = array_keys($_SESSION['nutronyx_cart']);
+            $db = Database::getConnection();
+            $inQ = implode(',', array_fill(0, count($vids), '?'));
+            $vStmt = $db->prepare("
+                SELECT pv.id, pv.sku, pv.title as variant_title, pv.price_amount, p.title as product_title, p.image_url
+                FROM product_variants pv
+                JOIN products p ON pv.product_id = p.id
+                WHERE pv.id IN ({$inQ})
+            ");
+            $vStmt->execute($vids);
+            foreach ($vStmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+                $variantMap[$row['id']] = $row;
+            }
+        }
+
         foreach ($_SESSION['nutronyx_cart'] as $vid => $item) {
+            if (isset($variantMap[$vid])) {
+                $item['variant_title'] = $variantMap[$vid]['variant_title'];
+                $item['sku'] = $variantMap[$vid]['sku'];
+                $item['product_title'] = $variantMap[$vid]['product_title'];
+                $item['price_amount'] = (int)$variantMap[$vid]['price_amount'];
+                if (!empty($variantMap[$vid]['image_url'])) {
+                    $item['image_url'] = $variantMap[$vid]['image_url'];
+                }
+            }
+            // Normalize any 'gm' / 'GM' to 'g' (e.g. 200gm -> 200g)
+            $item['variant_title'] = preg_replace('/\b(\d+)\s*gm\b/i', '$1g', (string)$item['variant_title']);
+            $_SESSION['nutronyx_cart'][$vid]['variant_title'] = $item['variant_title'];
+
             $qty = (int)$item['quantity'];
             $pricePaise = (int)$item['price_amount'];
             $linePaise = $pricePaise * $qty;

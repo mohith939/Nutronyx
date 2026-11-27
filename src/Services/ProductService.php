@@ -508,6 +508,7 @@ class ProductService
             foreach ($data['variants'] as $v) {
                 $vTitle = trim($v['title'] ?? '');
                 if (empty($vTitle)) continue;
+                $vTitle = preg_replace('/\b(\d+)\s*gm\b/i', '$1g', $vTitle);
 
                 $vSku = strtoupper(trim($v['sku'] ?? ''));
                 if (empty($vSku)) {
@@ -713,7 +714,7 @@ class ProductService
         }
 
         $variantId = !empty($data['id']) ? $data['id'] : ('var_' . bin2hex(random_bytes(6)));
-        $title = trim($data['title'] ?? 'Variant');
+        $title = preg_replace('/\b(\d+)\s*gm\b/i', '$1g', trim($data['title'] ?? 'Variant'));
         $priceAmount = isset($data['price_amount']) ? (int)$data['price_amount'] : (int)round(((float)($data['price_rupees'] ?? 499)) * 100);
         $compareAtAmount = !empty($data['compare_at_amount']) ? (int)$data['compare_at_amount'] : (!empty($data['sale_price']) ? (int)round(((float)$data['sale_price']) * 100) : null);
         $costPriceAmount = !empty($data['cost_price_amount']) ? (int)$data['cost_price_amount'] : (!empty($data['cost_price']) ? (int)round(((float)$data['cost_price']) * 100) : null);
