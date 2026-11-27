@@ -36,7 +36,8 @@ class OrderService
             SELECT o.*, c.name as customer_name, c.email as customer_email, c.phone as customer_phone,
                    (SELECT COUNT(*) FROM order_items oi WHERE oi.order_id = o.id) as item_count,
                    (SELECT s.tracking_number FROM shipments s WHERE s.order_id = o.id ORDER BY s.shipped_at DESC LIMIT 1) as tracking_number,
-                   (SELECT s.carrier FROM shipments s WHERE s.order_id = o.id ORDER BY s.shipped_at DESC LIMIT 1) as carrier
+                   (SELECT s.carrier FROM shipments s WHERE s.order_id = o.id ORDER BY s.shipped_at DESC LIMIT 1) as carrier,
+                   (SELECT s.status FROM shipments s WHERE s.order_id = o.id ORDER BY s.shipped_at DESC LIMIT 1) as shipment_status
             FROM orders o
             LEFT JOIN customers c ON o.customer_id = c.id
             WHERE o.website_id = :wid
@@ -775,6 +776,96 @@ class OrderService
     }
 
     /**
+     * Synchronize live tracking status from Ekart Logistics API.
+     */
+    public static function syncEkartStatus(string $orderId): array
+    {
+        $db = Database::getConnection();
+        $wid = Context::getWebsiteId();
+
+        $stmt = $db->prepare("SELECT * FROM shipments WHERE order_id = :oid ORDER BY shipped_at DESC LIMIT 1");
+        $stmt->execute([':oid' => $orderId]);
+        $shipment = $stmt->fetch();
+
+        if (!$shipment || empty($shipment['tracking_number'])) {
+            return ['synced' => false, 'message' => 'No active shipment found with Ekart AWB for this order.'];
+        }
+
+        $awb = trim($shipment['tracking_number']);
+        $trackData = EkartLogisticsService::trackShipment($awb);
+
+        if (empty($trackData['track']) || !is_array($trackData['track'])) {
+            return ['synced' => false, 'awb' => $awb, 'message' => 'Ekart tracking data not available yet.'];
+        }
+
+        $ekartStatus = trim($trackData['track']['status'] ?? 'Order Placed');
+        $checkpoints = $trackData['track']['details'] ?? [];
+
+        // Map Ekart status to Nutronyx shipment & order statuses
+        $newShipmentStatus = 'DISPATCHED';
+        $newFulfillmentStatus = 'FULFILLED';
+        $newOrderStatus = null;
+
+        $normalized = strtolower($ekartStatus);
+
+        if (str_contains($normalized, 'cancel')) {
+            $newShipmentStatus = 'CANCELLED';
+            $newFulfillmentStatus = 'CANCELLED';
+        } elseif (str_contains($normalized, 'deliver') && !str_contains($normalized, 'out for')) {
+            $newShipmentStatus = 'DELIVERED';
+            $newFulfillmentStatus = 'DELIVERED';
+            $newOrderStatus = 'COMPLETED';
+        } elseif (str_contains($normalized, 'transit') || str_contains($normalized, 'out for delivery') || str_contains($normalized, 'picked')) {
+            $newShipmentStatus = 'IN_TRANSIT';
+            $newFulfillmentStatus = 'IN_TRANSIT';
+        } elseif (str_contains($normalized, 'rto')) {
+            $newShipmentStatus = 'RTO';
+            $newFulfillmentStatus = 'RTO';
+        } else {
+            // 'Order Placed', 'Ready For Pickup', 'Manifested'
+            $newShipmentStatus = 'MANIFESTED';
+            $newFulfillmentStatus = 'FULFILLED';
+        }
+
+        // Update shipment status in database
+        $deliveredAtSql = ($newShipmentStatus === 'DELIVERED') ? ', delivered_at = CURRENT_TIMESTAMP' : '';
+        $uShip = $db->prepare("UPDATE shipments SET status = :st {$deliveredAtSql} WHERE id = :sid");
+        $uShip->execute([':st' => $newShipmentStatus, ':sid' => $shipment['id']]);
+
+        // Update order fulfillment_status and optionally order_status
+        if ($newOrderStatus) {
+            $uOrd = $db->prepare("UPDATE orders SET fulfillment_status = :fst, order_status = :ost, updated_at = CURRENT_TIMESTAMP WHERE id = :oid");
+            $uOrd->execute([':fst' => $newFulfillmentStatus, ':ost' => $newOrderStatus, ':oid' => $orderId]);
+        } else {
+            $uOrd = $db->prepare("UPDATE orders SET fulfillment_status = :fst, updated_at = CURRENT_TIMESTAMP WHERE id = :oid");
+            $uOrd->execute([':fst' => $newFulfillmentStatus, ':oid' => $orderId]);
+        }
+
+        // Record any new tracking checkpoint into order timeline
+        if (!empty($checkpoints) && is_array($checkpoints)) {
+            $latestCp = end($checkpoints);
+            $cpMsg = "Ekart Update: " . ($latestCp['status'] ?? $ekartStatus);
+            if (!empty($latestCp['location'])) $cpMsg .= " at " . $latestCp['location'];
+            if (!empty($latestCp['desc'])) $cpMsg .= " (" . $latestCp['desc'] . ")";
+
+            $chkStmt = $db->prepare("SELECT id FROM order_timeline WHERE order_id = :oid AND message = :msg LIMIT 1");
+            $chkStmt->execute([':oid' => $orderId, ':msg' => $cpMsg]);
+            if (!$chkStmt->fetchColumn()) {
+                self::addTimelineEvent($orderId, 'EKART_UPDATE', $cpMsg);
+            }
+        }
+
+        return [
+            'synced' => true,
+            'awb' => $awb,
+            'ekart_status' => $ekartStatus,
+            'shipment_status' => $newShipmentStatus,
+            'fulfillment_status' => $newFulfillmentStatus,
+            'checkpoints' => $checkpoints
+        ];
+    }
+
+    /**
      * Fulfill an order directly via Ekart Logistics Enterprise Gateway
      */
     public static function fulfillWithEkart(string $orderId, ?string $manualAwb = null): array
@@ -785,6 +876,18 @@ class OrderService
         }
 
         $trackingId = trim((string)$manualAwb);
+
+        // Check if order already has an active Ekart shipment to prevent duplicate booking on page refreshes
+        $db = Database::getConnection();
+        $chkStmt = $db->prepare("SELECT * FROM shipments WHERE order_id = :oid AND status != 'CANCELLED' ORDER BY shipped_at DESC LIMIT 1");
+        $chkStmt->execute([':oid' => $orderId]);
+        $existingShipment = $chkStmt->fetch();
+
+        if (empty($trackingId) && $existingShipment && !empty($existingShipment['tracking_number'])) {
+            // Already booked! Sync live status from Ekart instead of creating duplicate package
+            self::syncEkartStatus($orderId);
+            return $existingShipment;
+        }
 
         // If manual AWB was not provided, attempt to create via live Ekart API
         if (empty($trackingId)) {

@@ -58,8 +58,26 @@ if (isset($_GET['ajax']) || isset($_POST['ajax'])) {
 // -------------------------------------------------------------------------
 // 2. FORM ACTIONS & LIFECYCLE WORKFLOWS
 // -------------------------------------------------------------------------
-$notice = '';
-$error = '';
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    session_start();
+}
+$notice = $_SESSION['admin_notice'] ?? ($_GET['notice'] ?? '');
+$error = $_SESSION['admin_error'] ?? ($_GET['error'] ?? '');
+unset($_SESSION['admin_notice'], $_SESSION['admin_error']);
+
+// Handle 1-Click Sync from Ekart via GET
+if (isset($_GET['action']) && $_GET['action'] === 'sync_ekart' && !empty($_GET['order_id'])) {
+    try {
+        $syncRes = OrderService::syncEkartStatus(trim($_GET['order_id']));
+        $awbStr = !empty($syncRes['awb']) ? " (AWB: {$syncRes['awb']})" : "";
+        $_SESSION['admin_notice'] = "Ekart tracking synced{$awbStr}! Status: " . htmlspecialchars($syncRes['ekart_status'] ?? ($syncRes['message'] ?? 'Updated'));
+    } catch (\Throwable $e) {
+        $_SESSION['admin_error'] = "Ekart sync failed: " . $e->getMessage();
+    }
+    $redirectTab = !empty($_GET['tab']) ? '?tab=' . urlencode($_GET['tab']) : '';
+    header("Location: orders.php{$redirectTab}");
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -73,6 +91,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } catch (\Throwable $ekErr) {
                 $notice = "Order " . htmlspecialchars($order['order_number']) . " created successfully.";
             }
+        } elseif ($action === 'sync_ekart') {
+            $orderId = trim($_POST['order_id'] ?? '');
+            $syncRes = OrderService::syncEkartStatus($orderId);
+            $awbStr = !empty($syncRes['awb']) ? " (AWB: {$syncRes['awb']})" : "";
+            $notice = "Ekart tracking synced{$awbStr}! Status: " . htmlspecialchars($syncRes['ekart_status'] ?? ($syncRes['message'] ?? 'Updated'));
         } elseif ($action === 'ship_ekart_auto') {
             $orderId = trim($_POST['order_id'] ?? '');
             $res = OrderService::fulfillWithEkart($orderId, null);
@@ -210,6 +233,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (\Throwable $e) {
         $error = $e->getMessage();
     }
+
+    // Post-Redirect-Get (PRG): store flash message and redirect to prevent duplicate booking on browser refresh
+    if ($notice) {
+        $_SESSION['admin_notice'] = $notice;
+    }
+    if ($error) {
+        $_SESSION['admin_error'] = $error;
+    }
+    $retTab = !empty($_POST['return_tab']) ? '?tab=' . urlencode($_POST['return_tab']) : '';
+    header("Location: orders.php{$retTab}");
+    exit;
 }
 
 // -------------------------------------------------------------------------
@@ -704,7 +738,16 @@ $initialOrder = $initialOrderId ? OrderService::getOrder($initialOrderId) : null
                                                                 <span>Download Receipt (PDF)</span>
                                                             </a>
                                                             <div style="height: 1px; background: #F3F4F6; margin: 4px 0;"></div>
-                                                            <?php if ($order['fulfillment_status'] !== 'FULFILLED' && $order['order_status'] !== 'DELIVERED' && $order['order_status'] !== 'CANCELLED'): ?>
+                                                            <?php if (!empty($order['tracking_number'])): ?>
+                                                                <a href="orders.php?action=sync_ekart&order_id=<?= urlencode($order['id']) ?>" class="action-menu-item" style="color: #047857; font-weight: 600;">
+                                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                                                                    <span>Sync Status from Ekart</span>
+                                                                </a>
+                                                                <a href="https://app.elite.ekartlogistics.in/track/<?= urlencode($order['tracking_number']) ?>" target="_blank" class="action-menu-item" style="color: #1E40AF;">
+                                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                                                    <span>Track on Ekart (<?= htmlspecialchars($order['tracking_number']) ?>)</span>
+                                                                </a>
+                                                            <?php elseif ($order['fulfillment_status'] !== 'FULFILLED' && $order['order_status'] !== 'DELIVERED' && $order['order_status'] !== 'CANCELLED'): ?>
                                                                 <?php
                                                                     $rowShippingAddr = trim(($order['shipping_address_line1'] ?? '') . ' ' . ($order['shipping_address_line2'] ?? '') . ', ' . ($order['shipping_city'] ?? '') . ', ' . ($order['shipping_state'] ?? '') . ' - ' . ($order['shipping_postal_code'] ?? ''));
                                                                     $rowShippingName = $order['shipping_name'] ?: ($order['customer_name'] ?: 'Customer');

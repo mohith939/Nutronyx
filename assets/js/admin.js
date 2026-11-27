@@ -1565,9 +1565,12 @@
                             <div style="font-size: 12px; color: #4B5563; margin-bottom: 6px;">
                                 Tracking AWB: <strong style="color: #111827; font-family: monospace;">${s.tracking_number}</strong>
                             </div>
-                            <div style="margin-bottom: 6px;">
+                            <div style="margin-bottom: 6px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                                 <a href="${trackingUrl || '#'}" target="_blank" rel="noopener noreferrer" style="color: #047857; font-weight: 600; text-decoration: underline; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;">
                                     <span>Track on ${sCarrier} &rarr;</span>
+                                </a>
+                                <a href="orders.php?action=sync_ekart&order_id=${encodeURIComponent(o.id)}" style="color: #065F46; font-weight: 600; text-decoration: underline; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                    <span>&#8635; Sync Status</span>
                                 </a>
                             </div>
                             <div style="font-size: 11px; color: #9CA3AF;">
@@ -1737,10 +1740,21 @@
                             <span>Download Receipt</span>
                         </a>
 
+                        ${(o.tracking_number || (o.shipments && o.shipments.length > 0)) ? `
+                        <a href="orders.php?action=sync_ekart&order_id=${encodeURIComponent(o.id)}" class="btn-order-action-card" style="text-decoration: none;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                            <span>Sync from Ekart</span>
+                        </a>
+                        <a href="https://app.elite.ekartlogistics.in/track/${encodeURIComponent(o.tracking_number || (o.shipments && o.shipments[0] ? o.shipments[0].tracking_number : ''))}" target="_blank" class="btn-order-action-card" style="text-decoration: none;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            <span>Track on Ekart</span>
+                        </a>
+                        ` : `
                         <button type="button" class="btn-order-action-card" onclick="window.NutronyxOrder.openEkartShipModal('${o.id}', '${o.order_number}', '${(o.shipping_name || o.customer_name || '').replace(/'/g, "\\'")}', '${(o.shipping_phone || o.customer_phone || '').replace(/'/g, "\\'")}', '${fullAddress.replace(/'/g, "\\'")}', ${(o.grand_total_amount || 0)/100}, '${o.payment_method || 'Prepaid'}')">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
                             <span>Ship on Ekart</span>
                         </button>
+                        `}
 
                         <button type="button" class="btn-order-action-card" onclick="window.NutronyxOrder.openRefundModal('${o.id}', ${(o.refundable_balance || o.grand_total_amount || 0)/100})">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>

@@ -24,6 +24,31 @@ if (!$order) {
 $notice = '';
 $error = '';
 
+if (isset($_SESSION['admin_notice'])) {
+    $notice = $_SESSION['admin_notice'];
+    unset($_SESSION['admin_notice']);
+}
+if (isset($_SESSION['admin_error'])) {
+    $error = $_SESSION['admin_error'];
+    unset($_SESSION['admin_error']);
+}
+
+// Handle Direct GET Live Ekart Sync
+if (isset($_GET['action']) && $_GET['action'] === 'sync_ekart' && !empty($orderId)) {
+    try {
+        $syncRes = OrderService::syncEkartStatus($orderId);
+        if (!empty($syncRes['synced'])) {
+            $_SESSION['admin_notice'] = "Live Ekart tracking synchronized! Status: " . htmlspecialchars($syncRes['ekart_status']) . " (AWB: " . htmlspecialchars($syncRes['awb']) . ")";
+        } else {
+            $_SESSION['admin_notice'] = $syncRes['message'] ?? 'Ekart sync checked.';
+        }
+    } catch (\Throwable $e) {
+        $_SESSION['admin_error'] = "Ekart Sync Error: " . $e->getMessage();
+    }
+    header("Location: order-detail.php?id=" . urlencode($orderId));
+    exit;
+}
+
 $db = \Nutronyx\Database::getConnection();
 $refStmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payment_transactions WHERE order_id = :oid AND transaction_type = 'REFUND' AND status = 'SUCCESS'");
 $refStmt->execute([':oid' => $orderId]);
@@ -43,11 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             'shipping_state' => trim($_POST['shipping_state']),
             'shipping_postal_code' => trim($_POST['shipping_postal_code'])
         ]);
-        $notice = 'Shipping address updated successfully and recorded in the immutable audit timeline.';
-        $order = OrderService::getOrder($orderId);
+        $_SESSION['admin_notice'] = 'Shipping address updated successfully and recorded in the immutable audit timeline.';
     } catch (\Throwable $e) {
-        $error = $e->getMessage();
+        $_SESSION['admin_error'] = $e->getMessage();
     }
+    header("Location: order-detail.php?id=" . urlencode($orderId));
+    exit;
 }
 
 // Handle Add Internal Note
@@ -55,20 +81,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $noteText = trim($_POST['note_text'] ?? '');
     if ($noteText) {
         OrderService::addInternalNote($orderId, $noteText);
-        $notice = 'Internal staff note recorded.';
-        $order = OrderService::getOrder($orderId);
+        $_SESSION['admin_notice'] = 'Internal staff note recorded.';
     }
+    header("Location: order-detail.php?id=" . urlencode($orderId));
+    exit;
 }
 
 // Handle Direct Ekart Dispatch
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'ship_ekart_auto') {
     try {
         $res = OrderService::fulfillWithEkart($orderId, null);
-        $notice = "Order booked directly via Ekart Logistics API! Official AWB: " . htmlspecialchars($res['tracking_number']);
-        $order = OrderService::getOrder($orderId);
+        $_SESSION['admin_notice'] = "Order booked directly via Ekart Logistics API! Official AWB: " . htmlspecialchars($res['tracking_number']);
     } catch (\Throwable $e) {
-        $error = "Ekart Logistics Error: " . $e->getMessage();
+        $_SESSION['admin_error'] = "Ekart Logistics Error: " . $e->getMessage();
     }
+    header("Location: order-detail.php?id=" . urlencode($orderId));
+    exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'ship_ekart') {
@@ -78,11 +106,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             throw new \InvalidArgumentException("Tracking AWB is required. Please enter the authentic AWB from your Ekart Merchant Portal or use Auto-Book.");
         }
         $res = OrderService::fulfillWithEkart($orderId, $trackingNumber);
-        $notice = "Order dispatched with Ekart Logistics! Real AWB: " . htmlspecialchars($res['tracking_number']);
-        $order = OrderService::getOrder($orderId);
+        $_SESSION['admin_notice'] = "Order dispatched with Ekart Logistics! Real AWB: " . htmlspecialchars($res['tracking_number']);
     } catch (\Throwable $e) {
-        $error = "Ekart Logistics Error: " . $e->getMessage();
+        $_SESSION['admin_error'] = "Ekart Logistics Error: " . $e->getMessage();
     }
+    header("Location: order-detail.php?id=" . urlencode($orderId));
+    exit;
 }
 
 // Handle Fulfillment Dispatch
@@ -95,22 +124,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
         if (str_contains(strtolower($carrier), 'ekart')) {
             $res = OrderService::fulfillWithEkart($orderId, $tracking);
-            $notice = "Order dispatched with Ekart Logistics! Tracking AWB: " . htmlspecialchars($res['tracking_number']);
+            $_SESSION['admin_notice'] = "Order dispatched with Ekart Logistics! Tracking AWB: " . htmlspecialchars($res['tracking_number']);
         } else {
             $res = OrderService::markFulfilled($orderId, $carrier, $tracking);
-            $notice = "Order fulfilled via {$carrier} with tracking #{$res['tracking_number']}.";
+            $_SESSION['admin_notice'] = "Order fulfilled via {$carrier} with tracking #{$res['tracking_number']}.";
         }
-        $order = OrderService::getOrder($orderId);
     } catch (\Throwable $e) {
-        $error = "Dispatch Error: " . $e->getMessage();
+        $_SESSION['admin_error'] = "Dispatch Error: " . $e->getMessage();
     }
+    header("Location: order-detail.php?id=" . urlencode($orderId));
+    exit;
 }
 
 // Handle Order Cancellation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'cancel_order') {
-    OrderService::transitionStatus($orderId, 'CANCELLED');
-    $notice = 'Order status transitioned to CANCELLED and reserved inventory was released.';
-    $order = OrderService::getOrder($orderId);
+    try {
+        OrderService::transitionStatus($orderId, 'CANCELLED');
+        $_SESSION['admin_notice'] = 'Order status transitioned to CANCELLED and reserved inventory was released.';
+    } catch (\Throwable $e) {
+        $_SESSION['admin_error'] = "Cancellation Error: " . $e->getMessage();
+    }
+    header("Location: order-detail.php?id=" . urlencode($orderId));
+    exit;
 }
 
 // Handle Refund Process
@@ -119,17 +154,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $reason = trim($_POST['refund_reason'] ?: 'Customer requested return');
     
     if ($amountPaise <= 0) {
-        $error = 'Refund amount must be greater than zero.';
+        $_SESSION['admin_error'] = 'Refund amount must be greater than zero.';
     } elseif ($amountPaise > $refundablePaise) {
-        $error = 'Refund amount cannot exceed remaining balance of ' . Context::formatMoney($refundablePaise) . '.';
+        $_SESSION['admin_error'] = 'Refund amount cannot exceed remaining balance of ' . Context::formatMoney($refundablePaise) . '.';
     } else {
         PaymentService::processRefund($orderId, $amountPaise, $reason);
-        $notice = 'Refund of ' . Context::formatMoney($amountPaise) . ' recorded in the transaction ledger successfully.';
-        $order = OrderService::getOrder($orderId);
-        $refStmt->execute([':oid' => $orderId]);
-        $totalRefundedPaise = (int)$refStmt->fetchColumn();
-        $refundablePaise = max(0, (int)$order['grand_total_amount'] - $totalRefundedPaise);
-        $canRefund = ($order['payment_status'] !== 'REFUNDED' && $refundablePaise > 0 && $order['order_status'] !== 'CANCELLED');
+        $_SESSION['admin_notice'] = 'Refund of ' . Context::formatMoney($amountPaise) . ' recorded in the transaction ledger successfully.';
+    }
+    header("Location: order-detail.php?id=" . urlencode($orderId));
+    exit;
+}
+
+// Background auto-sync if active Ekart shipment exists
+if (!empty($order['shipments'])) {
+    $firstShip = $order['shipments'][0] ?? null;
+    $awb = trim($firstShip['tracking_number'] ?? '');
+    $shipStatus = strtoupper(trim($firstShip['status'] ?? ''));
+    if (!empty($awb) && !in_array($shipStatus, ['DELIVERED', 'CANCELLED'], true)) {
+        try {
+            OrderService::syncEkartStatus($orderId);
+            $order = OrderService::getOrder($orderId); // reload with latest updates
+        } catch (\Throwable $ignore) {
+            // Silently continue if Ekart API timeout on page view
+        }
     }
 }
 
@@ -179,22 +226,36 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
                         <span>Customer View</span>
                     </a>
 
+                    <?php 
+                        $firstShipment = !empty($order['shipments']) ? $order['shipments'][0] : null;
+                        $firstAwb = $firstShipment['tracking_number'] ?? '';
+                    ?>
+
+                    <?php if (!empty($firstAwb)): ?>
+                        <a href="order-detail.php?id=<?= urlencode($order['id']) ?>&action=sync_ekart" class="btn-action btn-action-sm btn-action-outline" style="border-color: #144D29; color: #144D29; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                            <span>Sync Ekart Status</span>
+                        </a>
+                        <a href="https://app.elite.ekartlogistics.in/track/<?= urlencode($firstAwb) ?>" target="_blank" class="btn-action btn-action-sm btn-action-outline" style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            <span>Track on Ekart (<?= htmlspecialchars($firstAwb) ?>)</span>
+                        </a>
+                    <?php elseif ($order['order_status'] !== 'CANCELLED' && $order['fulfillment_status'] !== 'FULFILLED' && $order['order_status'] !== 'DELIVERED'): ?>
+                        <?php
+                            $detailShippingAddr = trim(($order['shipping_address_line1'] ?? '') . ' ' . ($order['shipping_address_line2'] ?? '') . ', ' . ($order['shipping_city'] ?? '') . ', ' . ($order['shipping_state'] ?? '') . ' - ' . ($order['shipping_postal_code'] ?? ''));
+                            $detailShippingName = $order['shipping_name'] ?: ($order['customer_name'] ?: 'Customer');
+                            $detailShippingPhone = $order['shipping_phone'] ?: ($order['customer_phone'] ?: '');
+                            $detailTotalRupees = (float)(($order['grand_total_amount'] ?? 0) / 100);
+                            $detailPayMode = strtoupper($order['payment_method'] ?? '') === 'COD' ? 'COD' : 'Prepaid';
+                        ?>
+                        <button type="button" class="btn-action btn-action-sm" style="background: #144D29; color: #FFFFFF; border-color: #144D29; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"
+                            onclick="window.NutronyxOrder.openEkartShipModal('<?= htmlspecialchars($order['id'], ENT_QUOTES) ?>', '<?= htmlspecialchars($order['order_number'], ENT_QUOTES) ?>', '<?= htmlspecialchars($detailShippingName, ENT_QUOTES) ?>', '<?= htmlspecialchars($detailShippingPhone, ENT_QUOTES) ?>', '<?= htmlspecialchars($detailShippingAddr, ENT_QUOTES) ?>', '<?= $detailTotalRupees ?>', '<?= $detailPayMode ?>')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            <span>Ship on Ekart</span>
+                        </button>
+                    <?php endif; ?>
+
                     <?php if ($order['order_status'] !== 'CANCELLED'): ?>
-                        <?php if ($order['fulfillment_status'] !== 'FULFILLED' && $order['order_status'] !== 'DELIVERED'): ?>
-                            <?php
-                                $detailShippingAddr = trim(($order['shipping_address_line1'] ?? '') . ' ' . ($order['shipping_address_line2'] ?? '') . ', ' . ($order['shipping_city'] ?? '') . ', ' . ($order['shipping_state'] ?? '') . ' - ' . ($order['shipping_postal_code'] ?? ''));
-                                $detailShippingName = $order['shipping_name'] ?: ($order['customer_name'] ?: 'Customer');
-                                $detailShippingPhone = $order['shipping_phone'] ?: ($order['customer_phone'] ?: '');
-                                $detailTotalRupees = (float)(($order['grand_total_amount'] ?? 0) / 100);
-                                $detailPayMode = strtoupper($order['payment_method'] ?? '') === 'COD' ? 'COD' : 'Prepaid';
-                            ?>
-                            <button type="button" class="btn-action btn-action-sm" style="background: #144D29; color: #FFFFFF; border-color: #144D29; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"
-                                onclick="window.NutronyxOrder.openEkartShipModal('<?= htmlspecialchars($order['id'], ENT_QUOTES) ?>', '<?= htmlspecialchars($order['order_number'], ENT_QUOTES) ?>', '<?= htmlspecialchars($detailShippingName, ENT_QUOTES) ?>', '<?= htmlspecialchars($detailShippingPhone, ENT_QUOTES) ?>', '<?= htmlspecialchars($detailShippingAddr, ENT_QUOTES) ?>', '<?= $detailTotalRupees ?>', '<?= $detailPayMode ?>')">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                                <span>Ship on Ekart</span>
-                            </button>
-                        <?php endif; ?>
-                        
                         <?php if ($canRefund): ?>
                             <button type="button" class="btn-action btn-action-sm btn-action-outline" onclick="window.NutronyxModal.open('refundModal')">
                                 <span>Process Refund</span>
@@ -385,6 +446,10 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
                                         <code style="color: var(--admin-forest); font-weight: 700; background: #FAF9F6; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--admin-input-border);"><?= htmlspecialchars($shipment['tracking_number']) ?></code>
                                         <button type="button" onclick="window.NutronyxCopy('<?= htmlspecialchars($shipment['tracking_number']) ?>', this)" style="background: none; border: none; color: var(--admin-forest); cursor: pointer; font-size: 12px; text-decoration: underline;">Copy</button>
                                     </div>
+                                    <div style="margin: 6px 0; display: flex; align-items: center; gap: 8px;">
+                                        <span>Status:</span>
+                                        <span class="badge-status badge-<?= strtolower($shipment['status'] ?? 'shipped') ?>"><?= htmlspecialchars($shipment['status'] ?? 'SHIPPED') ?></span>
+                                    </div>
                                     <div style="font-size: 12px; color: #697C70; margin-bottom: 8px;">Dispatched on: <?= date('d M Y, h:i A', strtotime($shipment['shipped_at'])) ?></div>
 <?php 
                                         $shipCarrier = $shipment['carrier_name'] ?? $shipment['carrier'] ?? 'Ekart Logistics';
@@ -401,9 +466,14 @@ $sdkSidebarWidget = ExtensionRegistry::getInstance()->renderSlot('order.detail.s
                                             }
                                         }
                                     ?>
-                                    <a href="<?= htmlspecialchars($shipUrl ?: 'https://app.elite.ekartlogistics.in/') ?>" target="_blank" class="dash-tool-link" style="display: inline-flex;">
-                                        <span>Track on <?= htmlspecialchars($shipCarrier) ?> &rarr;</span>
-                                    </a>
+                                    <div style="display: flex; gap: 14px; align-items: center; margin-top: 8px; flex-wrap: wrap;">
+                                        <a href="<?= htmlspecialchars($shipUrl ?: 'https://app.elite.ekartlogistics.in/') ?>" target="_blank" class="dash-tool-link" style="display: inline-flex;">
+                                            <span>Track on <?= htmlspecialchars($shipCarrier) ?> &rarr;</span>
+                                        </a>
+                                        <a href="order-detail.php?id=<?= urlencode($order['id']) ?>&action=sync_ekart" class="dash-tool-link" style="color: #047857; display: inline-flex;">
+                                            <span>&#8635; Sync Ekart Status</span>
+                                        </a>
+                                    </div>
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>

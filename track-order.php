@@ -15,9 +15,10 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
 
 use Nutronyx\Database;
 use Nutronyx\Context;
+use Nutronyx\Services\OrderService;
 
-$orderNumber = trim($_GET['order_number'] ?? $_POST['order_number'] ?? '');
-$mobileNumber = trim($_GET['mobile'] ?? $_POST['mobile'] ?? '');
+$orderNumber = trim($_GET['order_number'] ?? $_GET['order'] ?? $_POST['order_number'] ?? '');
+$mobileNumber = trim($_GET['mobile'] ?? $_GET['phone'] ?? $_POST['mobile'] ?? '');
 
 $matchedOrder = null;
 $error = '';
@@ -48,6 +49,25 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
             $sStmt = $db->prepare("SELECT * FROM shipments WHERE order_id = :oid ORDER BY shipped_at DESC LIMIT 1");
             $sStmt->execute([':oid' => $order['id']]);
             $order['shipment'] = $sStmt->fetch() ?: null;
+
+            // Live sync with Ekart API if tracking number is present
+            if ($order['shipment'] && !empty($order['shipment']['tracking_number'])) {
+                try {
+                    OrderService::syncEkartStatus($order['id']);
+                    // Reload updated order and shipment
+                    $stmt->execute([':onum' => $orderNumber]);
+                    $order = $stmt->fetch();
+                    $sStmt->execute([':oid' => $order['id']]);
+                    $order['shipment'] = $sStmt->fetch() ?: null;
+                } catch (\Throwable $ignore) {
+                    // Fail gracefully on network timeout
+                }
+            }
+
+            // Fetch live checkpoints from order_timeline
+            $tlStmt = $db->prepare("SELECT * FROM order_timeline WHERE order_id = :oid AND event_type IN ('EKART_UPDATE', 'FULFILLMENT') ORDER BY created_at DESC LIMIT 6");
+            $tlStmt->execute([':oid' => $order['id']]);
+            $order['ekart_checkpoints'] = $tlStmt->fetchAll();
 
             $matchedOrder = $order;
         } else {
@@ -137,8 +157,12 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
 
             <!-- Matched Order Verified Milestone View -->
             <?php if ($matchedOrder): 
-                $isFulfilled = ($matchedOrder['fulfillment_status'] === 'FULFILLED');
-                $isCancelled = ($matchedOrder['order_status'] === 'CANCELLED');
+                $shipmentStatus = strtoupper($matchedOrder['shipment']['status'] ?? '');
+                $orderStatus = strtoupper($matchedOrder['order_status'] ?? '');
+                $isCancelled = ($orderStatus === 'CANCELLED' || $shipmentStatus === 'CANCELLED');
+                $isPacked = !empty($matchedOrder['shipment']);
+                $isDispatched = in_array($shipmentStatus, ['IN_TRANSIT', 'DISPATCHED', 'DELIVERED'], true);
+                $isDelivered = ($shipmentStatus === 'DELIVERED' || $orderStatus === 'DELIVERED' || $orderStatus === 'COMPLETED');
             ?>
                 <div style="border-top: 1px solid #ECE7DE; padding-top: 24px; margin-top: 20px;">
                     
@@ -151,7 +175,7 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
                         </div>
                         <div style="text-align: right;">
                             <span style="font-size: 11.5px; font-weight: 700; background: <?= $isCancelled ? '#FDF3F3' : '#EAF6ED' ?>; color: <?= $isCancelled ? '#B83838' : '#1E6B39' ?>; padding: 4px 10px; border-radius: 9999px;">
-                                <?= htmlspecialchars($matchedOrder['order_status']) ?>
+                                <?= htmlspecialchars($isCancelled ? 'CANCELLED' : ($isDelivered ? 'DELIVERED' : ($isDispatched ? 'IN TRANSIT' : ($isPacked ? 'MANIFESTED' : $matchedOrder['order_status'])))) ?>
                             </span>
                             <div style="font-size: 12px; color: #697C70; margin-top: 4px;">Placed on <?= date('d M Y', strtotime($matchedOrder['created_at'])) ?></div>
                         </div>
@@ -165,38 +189,67 @@ if (!empty($orderNumber) && !empty($mobileNumber)) {
                                 <span class="step-title active">Confirmed</span>
                             </div>
                             <div class="step-node">
-                                <div class="step-dot <?= $isFulfilled ? 'completed' : 'active' ?>">
-                                    <?= $isFulfilled ? '&check;' : '2' ?>
+                                <div class="step-dot <?= $isPacked ? 'completed' : 'active' ?>">
+                                    <?= $isPacked ? '&check;' : '2' ?>
                                 </div>
                                 <span class="step-title active">Packed</span>
                             </div>
                             <div class="step-node">
-                                <div class="step-dot <?= $isFulfilled ? 'active' : '' ?>">3</div>
-                                <span class="step-title <?= $isFulfilled ? 'active' : '' ?>">Dispatched</span>
+                                <div class="step-dot <?= $isDelivered ? 'completed' : ($isDispatched ? 'active' : '') ?>">
+                                    <?= $isDelivered ? '&check;' : '3' ?>
+                                </div>
+                                <span class="step-title <?= ($isDispatched || $isDelivered) ? 'active' : '' ?>">Dispatched</span>
                             </div>
                             <div class="step-node">
-                                <div class="step-dot">4</div>
-                                <span class="step-title">Delivered</span>
+                                <div class="step-dot <?= $isDelivered ? 'completed' : '' ?>">
+                                    <?= $isDelivered ? '&check;' : '4' ?>
+                                </div>
+                                <span class="step-title <?= $isDelivered ? 'active' : '' ?>">Delivered</span>
                             </div>
                         </div>
                     <?php else: ?>
                         <div style="background: #FDF3F3; padding: 14px; border-radius: 10px; color: #B83838; font-size: 13.5px; margin: 20px 0; text-align: center;">
-                            This order was cancelled. Any captured payments have been scheduled for full refund.
+                            This order was cancelled on Ekart Logistics / Nutronyx. Any captured payments have been scheduled for refund.
                         </div>
                     <?php endif; ?>
 
                     <!-- Carrier Tracking Details -->
-                    <?php if (!empty($matchedOrder['shipment'])): ?>
+                    <?php if (!empty($matchedOrder['shipment'])): 
+                        $shipCarrier = $matchedOrder['shipment']['carrier_name'] ?? $matchedOrder['shipment']['carrier'] ?? 'Ekart Logistics';
+                        $shipAwb = $matchedOrder['shipment']['tracking_number'] ?? '';
+                        $shipUrl = $matchedOrder['shipment']['tracking_url'] ?? '';
+                        if (empty($shipUrl) && !empty($shipAwb)) {
+                            $shipUrl = 'https://app.elite.ekartlogistics.in/track/' . urlencode($shipAwb);
+                        }
+                    ?>
                         <div style="background: #FAF9F6; border: 1px solid #ECE7DE; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <div>
                                     <span style="font-size: 11.5px; color: #697C70; text-transform: uppercase; font-weight: 600;">Carrier Partner</span>
-                                    <div style="font-size: 14px; font-weight: 700; color: #14221A;"><?= htmlspecialchars($matchedOrder['shipment']['carrier']) ?></div>
-                                    <div style="font-size: 12.5px; color: #1E5736; margin-top: 2px;">AWB: <?= htmlspecialchars($matchedOrder['shipment']['tracking_number']) ?></div>
+                                    <div style="font-size: 14px; font-weight: 700; color: #14221A;"><?= htmlspecialchars($shipCarrier) ?></div>
+                                    <div style="font-size: 12.5px; color: #1E5736; margin-top: 2px;">AWB: <?= htmlspecialchars($shipAwb) ?></div>
                                 </div>
-                                <a href="<?= htmlspecialchars($matchedOrder['shipment']['tracking_url']) ?>" target="_blank" style="padding: 7px 14px; border-radius: 9999px; background: #143D24; color: #FFFFFF; font-size: 12px; font-weight: 600; text-decoration: none;">
-                                    Carrier Live GPS &rarr;
+                                <a href="<?= htmlspecialchars($shipUrl) ?>" target="_blank" style="padding: 7px 14px; border-radius: 9999px; background: #143D24; color: #FFFFFF; font-size: 12px; font-weight: 600; text-decoration: none;">
+                                    Track on Ekart &rarr;
                                 </a>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <!-- Live Checkpoints Timeline -->
+                    <?php if (!empty($matchedOrder['ekart_checkpoints'])): ?>
+                        <div style="background: #FFFFFF; border: 1px solid #ECE7DE; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                            <div style="font-size: 12px; font-weight: 700; color: #14221A; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Live Ekart Checkpoint History</div>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <?php foreach ($matchedOrder['ekart_checkpoints'] as $cp): ?>
+                                    <div style="display: flex; align-items: flex-start; gap: 10px; font-size: 12.5px;">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: #1E6B39; margin-top: 5px; flex-shrink: 0;"></div>
+                                        <div style="flex: 1;">
+                                            <div style="color: #27382D; font-weight: 600;"><?= htmlspecialchars($cp['message']) ?></div>
+                                            <div style="font-size: 11px; color: #8C9E94;"><?= date('d M Y, h:i A', strtotime($cp['created_at'])) ?></div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
                         </div>
                     <?php endif; ?>
