@@ -42,16 +42,19 @@ if (isset($_GET['ajax'])) {
     }
 
     if ($ajaxAction === 'ekart_serviceability') {
-        $pin = $_GET['pin'] ?? '533429';
+        $loc = EkartLogisticsService::getPickupLocation();
+        $pin = $_GET['pin'] ?? ($loc['pincode'] ?? '500039');
         $res = EkartLogisticsService::checkServiceability($pin);
         echo json_encode($res);
         exit;
     }
 
     if ($ajaxAction === 'ekart_estimate') {
+        $loc = EkartLogisticsService::getPickupLocation();
+        $defaultPin = (int)($loc['pincode'] ?? ($loc['pin'] ?? 500039));
         $res = EkartLogisticsService::getRateEstimate([
-            'pickupPincode' => (int)($_GET['pickup'] ?? 533101),
-            'dropPincode' => (int)($_GET['drop'] ?? 533429),
+            'pickupPincode' => (int)($_GET['pickup'] ?? $defaultPin),
+            'dropPincode' => (int)($_GET['drop'] ?? $defaultPin),
             'weight' => (int)($_GET['weight'] ?? 1000),
             'serviceType' => $_GET['service'] ?? 'EXPRESS',
             'codAmount' => (float)($_GET['cod'] ?? 0),
@@ -113,6 +116,7 @@ if (isset($_GET['ajax'])) {
 if (isset($_GET['action']) && $_GET['action'] === 'view_label') {
     $waybill = htmlspecialchars($_GET['id'] ?? '500999A3408005');
     $orderNum = 'NX-' . rand(2000, 2999);
+    $pickup = EkartLogisticsService::getPickupLocation();
     ?>
     <!DOCTYPE html>
     <html lang="en">
@@ -141,7 +145,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view_label') {
         </style>
     </head>
     <body>
-        <div class="no-print" style="text-align: center; margin-bottom: 12px;">
+        <div class="no-print" style="text-align: center; margin-bottom: 14px;">
             <button onclick="window.print()" class="btn-print" style="max-width: 380px; margin: 0 auto 12px auto;">🖨 Print 4x6 Thermal Label</button>
         </div>
         <div class="label-card">
@@ -174,9 +178,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'view_label') {
             </div>
             <div class="addr-box" style="border-bottom: none; margin-bottom: 0;">
                 <div style="font-size: 9px; font-weight: 800; color: #555;">RETURN TO ORIGIN (SHIPPER):</div>
-                <div style="font-weight: 700;">Nutronyx Healthcare Pvt Ltd</div>
-                <div>Plot 42, APIIC Industrial Park, Morampudi, Rajahmundry &ndash; 533101</div>
-                <div>GSTIN: 37AAAAA0000A1Z5 &bull; Ph: +91 98765 43210</div>
+                <div style="font-weight: 700;"><?= htmlspecialchars($pickup['name'] ?? $pickup['alias'] ?? 'Nutronyx Healthcare Pvt Ltd') ?></div>
+                <div><?= htmlspecialchars($pickup['address_line1'] ?? $pickup['address'] ?? 'H no: 2-127/84, Road Number 3, Sai Ram Nagar') ?>, <?= htmlspecialchars(($pickup['city'] ?? 'Hyderabad') . ', ' . ($pickup['state'] ?? 'Telangana') . ' - ' . ($pickup['pincode'] ?? $pickup['pin'] ?? 500039)) ?></div>
+                <div>GSTIN: 36AAAAA0000A1Z5 &bull; Ph: +91 <?= htmlspecialchars((string)($pickup['phone'] ?? '9876543210')) ?></div>
             </div>
         </div>
     </body>
@@ -256,14 +260,15 @@ $isEkartConnected = ($ekartConfig['status'] ?? '') === 'CONNECTED';
 $liveStatus = EkartLogisticsService::isLiveConnected();
 $isLiveEkart = !empty($liveStatus['is_live']);
 $pickupLocation = EkartLogisticsService::getPickupLocation();
+$activePickupPin = (int)($pickupLocation['pincode'] ?? ($pickupLocation['pin'] ?? 500039));
 
-// Pre-calculate initial serviceability and rate for local hub PIN 533101
-$initPin = '533101';
+// Pre-calculate initial serviceability and rate for local warehouse hub PIN
+$initPin = (string)$activePickupPin;
 $initService = EkartLogisticsService::checkServiceability($initPin);
 $initRate = EkartLogisticsService::getRateEstimate([
-    'pickupPincode' => 533101,
-    'dropPincode' => 533101,
-    'weight' => 500,
+    'pickupPincode' => $activePickupPin,
+    'dropPincode' => $activePickupPin,
+    'weight' => 100,
     'serviceType' => 'SURFACE',
     'codAmount' => 0,
     'invoiceAmount' => 1250
@@ -881,7 +886,7 @@ $initRate = EkartLogisticsService::getRateEstimate([
 
                         <!-- Pincode Input & Check Button Row -->
                         <div style="display: flex; gap: 10px; margin-bottom: 14px;">
-                            <input type="text" id="ekartTestPin" value="533101" maxlength="6" class="form-standard-input" style="flex: 1; font-weight: 600;" placeholder="Enter PIN (e.g. 533101)" oninput="window.handlePinTyping(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();window.testEkartPincode();}">
+                            <input type="text" id="ekartTestPin" value="<?= htmlspecialchars($initPin) ?>" maxlength="6" class="form-standard-input" style="flex: 1; font-weight: 600;" placeholder="Enter PIN (e.g. <?= htmlspecialchars($initPin) ?>)" oninput="window.handlePinTyping(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();window.testEkartPincode();}">
                             <button type="button" class="btn-check-pin" onclick="window.testEkartPincode()">
                                 Check
                             </button>
@@ -892,13 +897,13 @@ $initRate = EkartLogisticsService::getRateEstimate([
                             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
                                 <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #166534; font-size: 14.5px;">
                                     <span id="pinResultBadge" style="width: 20px; height: 20px; border-radius: 50%; background: #10B981; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900;">✓</span>
-                                    <span id="pinResultTitle">PIN 533101 is Serviceable</span>
+                                    <span id="pinResultTitle">PIN <?= htmlspecialchars($initPin) ?> is <?= !empty($initService['serviceable']) || !empty($initService['status']) ? 'Serviceable' : 'Checked' ?></span>
                                 </div>
-                                <span id="pinResultZonePill" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 9999px; background: #DCFCE7; color: #15803D;">Local Zone</span>
+                                <span id="pinResultZonePill" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 9999px; background: #DCFCE7; color: #15803D;"><?= htmlspecialchars($initService['details']['zone'] ?? $initService['zone'] ?? 'Local Zone') ?></span>
                             </div>
 
                             <div id="pinResultLocation" style="font-size: 12.5px; color: #374151; font-weight: 600; margin-top: 6px;">
-                                Rajahmundry / Kakinada (East Godavari), Andhra Pradesh
+                                <?= htmlspecialchars(($initService['details']['city'] ?? 'Hyderabad') . ', ' . ($initService['details']['state'] ?? 'Telangana')) ?>
                             </div>
 
                             <div style="display: flex; align-items: center; gap: 20px; margin-top: 10px; font-size: 13px; color: #166534; font-weight: 500; flex-wrap: wrap;">
@@ -908,7 +913,7 @@ $initRate = EkartLogisticsService::getRateEstimate([
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                    <span id="pinResultTat">Estimated Delivery: <strong>2–3 Business Days</strong></span>
+                                    <span id="pinResultTat">Estimated Delivery: <strong><?= htmlspecialchars($initService['estimated_tat_days'] ?? '1–2 Business Days') ?></strong></span>
                                 </div>
                             </div>
                         </div>
@@ -960,7 +965,7 @@ $initRate = EkartLogisticsService::getRateEstimate([
                                         Estimated Shipping Charge
                                     </div>
                                     <div id="ekartRateZoneInfo" style="font-size: 11.5px; color: #4B5563; margin-top: 2px;">
-                                        Zone A (Local / Godavari AP) &bull; 100g package
+                                        <?= htmlspecialchars($initRate['zone'] ?? 'Zone A (Local / Hyderabad, Telangana)') ?> &bull; 100g package
                                     </div>
                                 </div>
                                 <div style="font-size: 28px; font-weight: 700; color: #144D29; letter-spacing: -0.02em;" id="ekartRateTotal">
@@ -1089,9 +1094,21 @@ $initRate = EkartLogisticsService::getRateEstimate([
                     }
                     if (zonePill) {
                         zonePill.style.display = 'inline-block';
-                        zonePill.style.background = '#DCFCE7';
-                        zonePill.style.color = '#15803D';
-                        zonePill.textContent = d.zone || 'Serviceable';
+                        const zName = d.zone || data.zone || 'Serviceable';
+                        zonePill.textContent = zName;
+                        if (zName.includes('Local')) {
+                            zonePill.style.background = '#DCFCE7';
+                            zonePill.style.color = '#15803D';
+                        } else if (zName.includes('Regional') || zName.includes('Intra-State')) {
+                            zonePill.style.background = '#E0F2FE';
+                            zonePill.style.color = '#0369A1';
+                        } else if (zName.includes('Metro')) {
+                            zonePill.style.background = '#F3E8FF';
+                            zonePill.style.color = '#6B21A8';
+                        } else {
+                            zonePill.style.background = '#FEF3C7';
+                            zonePill.style.color = '#92400E';
+                        }
                     }
                     if (locationEl) {
                         locationEl.style.display = 'block';
@@ -1143,10 +1160,10 @@ $initRate = EkartLogisticsService::getRateEstimate([
         const paymentEl = document.getElementById('ekartCalcPayment');
         const payment = paymentEl ? paymentEl.value : 'Prepaid';
         const pinInp = document.getElementById('ekartTestPin');
-        const dropPin = pinInp ? (pinInp.value.trim() || '533101') : '533101';
+        const dropPin = pinInp ? (pinInp.value.trim() || '<?= $activePickupPin ?>') : '<?= $activePickupPin ?>';
         const codAmount = (payment === 'COD') ? 1250 : 0;
 
-        fetch(`shipping.php?ajax=ekart_estimate&weight=${weight}&drop=${encodeURIComponent(dropPin)}&cod=${codAmount}&service=SURFACE&invoice=1250`)
+        fetch(`shipping.php?ajax=ekart_estimate&weight=${weight}&drop=${encodeURIComponent(dropPin)}&pickup=<?= $activePickupPin ?>&cod=${codAmount}&service=SURFACE&invoice=1250`)
             .then(r => r.json())
             .then(data => {
                 if (data.total) {

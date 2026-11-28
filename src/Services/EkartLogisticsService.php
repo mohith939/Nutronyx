@@ -220,12 +220,12 @@ class EkartLogisticsService
                         'address' => $addr['address_line1'] ?? ($addr['address'] ?? ''),
                         'address_line1' => $addr['address_line1'] ?? ($addr['address'] ?? ''),
                         'address_line2' => $addr['address_line2'] ?? '',
-                        'city' => $addr['city'] ?? 'Yeleswaram',
-                        'state' => $addr['state'] ?? 'Andhra Pradesh',
+                        'city' => $addr['city'] ?? 'Hyderabad',
+                        'state' => $addr['state'] ?? 'Telangana',
                         'country' => $addr['country'] ?? 'India',
                         'phone' => (int)preg_replace('/\D/', '', (string)($addr['phone'] ?? '9876543210')),
-                        'pin' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 533429)),
-                        'pincode' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 533429))
+                        'pin' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 500039)),
+                        'pincode' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 500039))
                     ];
                 }
             }
@@ -238,34 +238,34 @@ class EkartLogisticsService
                 $addr = $addresses[0];
                 return [
                     'location_type' => 'Warehouse',
-                    'name' => $addr['alias'] ?? ($addr['name'] ?? 'Nutronyx Fulfillment Warehouse'),
-                    'alias' => $addr['alias'] ?? ($addr['name'] ?? 'Nutronyx Fulfillment Warehouse'),
-                    'address' => $addr['address_line1'] ?? ($addr['address'] ?? ''),
-                    'address_line1' => $addr['address_line1'] ?? ($addr['address'] ?? ''),
+                    'name' => $addr['alias'] ?? ($addr['name'] ?? 'H NO: 2-127/84'),
+                    'alias' => $addr['alias'] ?? ($addr['name'] ?? 'H NO: 2-127/84'),
+                    'address' => $addr['address_line1'] ?? ($addr['address'] ?? 'H no: 2-127/84, Road Number 3, Sai Ram Nagar Near Sai baba temple, Vijayapuri colony, Uppal'),
+                    'address_line1' => $addr['address_line1'] ?? ($addr['address'] ?? 'H no: 2-127/84, Road Number 3, Sai Ram Nagar Near Sai baba temple, Vijayapuri colony, Uppal'),
                     'address_line2' => $addr['address_line2'] ?? '',
-                    'city' => $addr['city'] ?? 'Yeleswaram',
-                    'state' => $addr['state'] ?? 'Andhra Pradesh',
+                    'city' => $addr['city'] ?? 'Hyderabad',
+                    'state' => $addr['state'] ?? 'Telangana',
                     'country' => $addr['country'] ?? 'India',
                     'phone' => (int)preg_replace('/\D/', '', (string)($addr['phone'] ?? '9876543210')),
-                    'pin' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 533429)),
-                    'pincode' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 533429))
+                    'pin' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 500039)),
+                    'pincode' => (int)($addr['pincode'] ?? ($addr['pin'] ?? 500039))
                 ];
             }
         } catch (\Throwable $e) {}
 
         return [
             'location_type' => 'Warehouse',
-            'name' => 'Nutronyx Warehouse',
-            'alias' => 'Nutronyx Warehouse',
-            'address' => 'Registered Warehouse Facility',
-            'address_line1' => 'Registered Warehouse Facility',
+            'name' => 'H NO: 2-127/84',
+            'alias' => 'H NO: 2-127/84',
+            'address' => 'H no: 2-127/84, Road Number 3, Sai Ram Nagar Near Sai baba temple, Vijayapuri colony, Uppal',
+            'address_line1' => 'H no: 2-127/84, Road Number 3, Sai Ram Nagar Near Sai baba temple, Vijayapuri colony, Uppal',
             'address_line2' => '',
-            'city' => 'Yeleswaram',
-            'state' => 'Andhra Pradesh',
+            'city' => 'Hyderabad',
+            'state' => 'Telangana',
             'country' => 'India',
             'phone' => 9876543210,
-            'pin' => 533429,
-            'pincode' => 533429
+            'pin' => 500039,
+            'pincode' => 500039
         ];
     }
 
@@ -447,6 +447,196 @@ class EkartLogisticsService
     }
 
     /**
+     * Dynamically determine the logistics shipping zone relative to the active origin warehouse.
+     *
+     * @param int|string $dropPincode Destination PIN code
+     * @param int|string|null $pickupPincode Origin warehouse PIN code (defaults to active warehouse)
+     * @return array Zone details including zone title, badge, tat, and rate cards
+     */
+    public static function determineZone(int|string $dropPincode, int|string|null $pickupPincode = null): array
+    {
+        if (empty($pickupPincode)) {
+            $loc = self::getPickupLocation();
+            $pickupPincode = $loc['pincode'] ?? ($loc['pin'] ?? 500039);
+        }
+
+        $destStr = sprintf('%06d', (int)preg_replace('/\D/', '', (string)$dropPincode));
+        $origStr = sprintf('%06d', (int)preg_replace('/\D/', '', (string)$pickupPincode));
+
+        $dest3 = substr($destStr, 0, 3);
+        $dest2 = substr($destStr, 0, 2);
+        $orig3 = substr($origStr, 0, 3);
+        $orig2 = substr($origStr, 0, 2);
+
+        // Geography definitions:
+        // Telangana: 50 (500-509). Hyderabad Metro: 500 (Hyderabad/Secunderabad), 501 (Ranga Reddy, Cyberabad, Uppal, Medchal)
+        $isDestHyderabad = in_array($dest3, ['500', '501'], true);
+        $isDestTelangana = ($dest2 === '50');
+
+        // Andhra Pradesh: 51, 52, 53 (East/West Godavari 533/534, Vizag 530/531, Vijayawada 520, Guntur 522, Tirupati 517, etc.)
+        $isDestAndhra = in_array($dest2, ['51', '52', '53'], true);
+
+        // South India (Karnataka, Tamil Nadu, Kerala): 56, 57, 58, 60, 61, 62, 63, 64, 67, 68, 69
+        $isDestSouthIndia = in_array($dest2, ['56', '57', '58', '60', '61', '62', '63', '64', '67', '68', '69'], true);
+
+        // National Metros: Mumbai/Pune (400, 411), Delhi NCR (110, 121, 122, 201), Kolkata (700), Ahmedabad (380)
+        $isDestNationalMetro = in_array($dest3, ['400', '411', '110', '121', '122', '201', '700', '380'], true);
+
+        // Remote / Special Hill & Islands: North East (78, 79), J&K/Ladakh (18, 19), Andaman (744)
+        $isDestRemote = in_array($dest2, ['78', '79', '18', '19', '74'], true);
+
+        // Origin context
+        $isOrigHyderabad = in_array($orig3, ['500', '501'], true);
+        $isOrigTelangana = ($orig2 === '50');
+        $isOrigAndhra = in_array($orig2, ['51', '52', '53'], true);
+
+        // 1. ZONE A: Local Zone (Within City / Metro Hub)
+        // If origin is Hyderabad/Telangana and destination is in Hyderabad/Secunderabad/Ranga Reddy
+        if (($isOrigHyderabad && $isDestHyderabad) || ($orig3 === $dest3)) {
+            return [
+                'zone_code' => 'ZONE_A',
+                'zone' => 'Zone A (Local / Hyderabad, Telangana)',
+                'badge' => 'Local Zone',
+                'tat' => '1–2 Business Days',
+                'is_local' => true,
+                'base250' => 36.00,
+                'base500' => 42.00,
+                'extra500' => 22.00
+            ];
+        }
+
+        // 2. ZONE B: Regional / Intra-State & Neighboring State
+        if ($isOrigTelangana) {
+            if ($isDestTelangana) {
+                // Intra-State Telangana (Warangal, Nizamabad, Karimnagar, etc.)
+                return [
+                    'zone_code' => 'ZONE_B',
+                    'zone' => 'Zone B (Intra-State / Telangana)',
+                    'badge' => 'Intra-State (TS)',
+                    'tat' => '2–3 Business Days',
+                    'is_local' => false,
+                    'base250' => 44.00,
+                    'base500' => 50.00,
+                    'extra500' => 26.00
+                ];
+            }
+            if ($isDestAndhra) {
+                // Andhra Pradesh is Regional / Neighboring State (Rajahmundry, Vizag, Vijayawada, etc.)
+                return [
+                    'zone_code' => 'ZONE_B',
+                    'zone' => 'Zone B (Regional / Andhra Pradesh)',
+                    'badge' => 'Regional (AP)',
+                    'tat' => '2–3 Business Days',
+                    'is_local' => false,
+                    'base250' => 44.00,
+                    'base500' => 50.00,
+                    'extra500' => 26.00
+                ];
+            }
+            if ($isDestSouthIndia) {
+                return [
+                    'zone_code' => 'ZONE_B',
+                    'zone' => 'Zone B (Regional / South India)',
+                    'badge' => 'South Zone',
+                    'tat' => '3–4 Business Days',
+                    'is_local' => false,
+                    'base250' => 44.00,
+                    'base500' => 50.00,
+                    'extra500' => 26.00
+                ];
+            }
+        } elseif ($isOrigAndhra) {
+            if ($isDestAndhra) {
+                return [
+                    'zone_code' => 'ZONE_B',
+                    'zone' => 'Zone B (Intra-State / Andhra Pradesh)',
+                    'badge' => 'Intra-State (AP)',
+                    'tat' => '2–3 Business Days',
+                    'is_local' => false,
+                    'base250' => 44.00,
+                    'base500' => 50.00,
+                    'extra500' => 26.00
+                ];
+            }
+            if ($isDestTelangana) {
+                return [
+                    'zone_code' => 'ZONE_B',
+                    'zone' => 'Zone B (Regional / Telangana)',
+                    'badge' => 'Regional (TS)',
+                    'tat' => '2–3 Business Days',
+                    'is_local' => false,
+                    'base250' => 44.00,
+                    'base500' => 50.00,
+                    'extra500' => 26.00
+                ];
+            }
+            if ($isDestSouthIndia) {
+                return [
+                    'zone_code' => 'ZONE_B',
+                    'zone' => 'Zone B (Regional / South India)',
+                    'badge' => 'South Zone',
+                    'tat' => '3–4 Business Days',
+                    'is_local' => false,
+                    'base250' => 44.00,
+                    'base500' => 50.00,
+                    'extra500' => 26.00
+                ];
+            }
+        } elseif ($orig2 === $dest2) {
+            return [
+                'zone_code' => 'ZONE_B',
+                'zone' => 'Zone B (Intra-State Regional)',
+                'badge' => 'Intra-State',
+                'tat' => '2–3 Business Days',
+                'is_local' => false,
+                'base250' => 44.00,
+                'base500' => 50.00,
+                'extra500' => 26.00
+            ];
+        }
+
+        // 3. ZONE C: National Metros
+        if ($isDestNationalMetro) {
+            return [
+                'zone_code' => 'ZONE_C',
+                'zone' => 'Zone C (National Metro)',
+                'badge' => 'National Metro',
+                'tat' => '3–5 Business Days',
+                'is_local' => false,
+                'base250' => 52.00,
+                'base500' => 60.00,
+                'extra500' => 30.00
+            ];
+        }
+
+        // 4. ZONE E: Special / Remote / NE / J&K / Islands
+        if ($isDestRemote) {
+            return [
+                'zone_code' => 'ZONE_E',
+                'zone' => 'Zone E (Special / Remote)',
+                'badge' => 'Special Region',
+                'tat' => '6–8 Business Days',
+                'is_local' => false,
+                'base250' => 70.00,
+                'base500' => 85.00,
+                'extra500' => 42.00
+            ];
+        }
+
+        // 5. ZONE D: Rest of India / National
+        return [
+            'zone_code' => 'ZONE_D',
+            'zone' => 'Zone D (Rest of India)',
+            'badge' => 'National Zone',
+            'tat' => '4–6 Business Days',
+            'is_local' => false,
+            'base250' => 56.00,
+            'base500' => 66.00,
+            'extra500' => 32.00
+        ];
+    }
+
+    /**
      * Check Pincode Serviceability (V2).
      * GET /api/v2/serviceability/{pincode}
      */
@@ -493,32 +683,32 @@ class EkartLogisticsService
         $prefix3 = substr($pincodeStr, 0, 3);
         $prefix2 = substr($pincodeStr, 0, 2);
         
-        // Exact 3-digit hub prefix definitions with realistic TAT from dispatch warehouse in Rajahmundry/AP (533101)
+        // Exact 3-digit hub prefix definitions with realistic TAT from dispatch warehouse in Hyderabad/Telangana (500039)
         $directory3 = [
-            // Local Zone (Andhra Pradesh - Godavari & Coastal)
-            '533' => ['Andhra Pradesh', 'Rajahmundry / Kakinada (East Godavari)', true, 50000, '2–3 Business Days', 'Local Zone'],
-            '534' => ['Andhra Pradesh', 'Eluru / Bhimavaram (West Godavari)', true, 50000, '2–3 Business Days', 'Local Zone'],
-            '530' => ['Andhra Pradesh', 'Visakhapatnam Urban Hub', true, 50000, '2–3 Business Days', 'Local Zone'],
-            '531' => ['Andhra Pradesh', 'Anakapalli / Vizag Rural', true, 40000, '2–3 Business Days', 'Local Zone'],
-            '532' => ['Andhra Pradesh', 'Srikakulam', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
-            '535' => ['Andhra Pradesh', 'Vizianagaram', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
-            '520' => ['Andhra Pradesh', 'Vijayawada Central', true, 50000, '2–3 Business Days', 'Intra-State Hub'],
-            '521' => ['Andhra Pradesh', 'Machilipatnam / Krishna', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
-            '522' => ['Andhra Pradesh', 'Guntur Urban Hub', true, 50000, '3–4 Business Days', 'Intra-State Hub'],
-            '523' => ['Andhra Pradesh', 'Ongole / Prakasam', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
-            '524' => ['Andhra Pradesh', 'Nellore Central', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
-            '515' => ['Andhra Pradesh', 'Anantapur', true, 35000, '3–4 Business Days', 'Intra-State Hub'],
-            '516' => ['Andhra Pradesh', 'Kadapa', true, 35000, '3–4 Business Days', 'Intra-State Hub'],
-            '517' => ['Andhra Pradesh', 'Tirupati / Chittoor Hub', true, 45000, '3–4 Business Days', 'Intra-State Hub'],
-            '518' => ['Andhra Pradesh', 'Kurnool Hub', true, 40000, '3–4 Business Days', 'Intra-State Hub'],
+            // Andhra Pradesh Hubs (Neighboring State / Regional Zone B)
+            '533' => ['Andhra Pradesh', 'Rajahmundry / Kakinada (East Godavari)', true, 50000, '2–3 Business Days', 'Regional (AP)'],
+            '534' => ['Andhra Pradesh', 'Eluru / Bhimavaram (West Godavari)', true, 50000, '2–3 Business Days', 'Regional (AP)'],
+            '530' => ['Andhra Pradesh', 'Visakhapatnam Urban Hub', true, 50000, '2–3 Business Days', 'Regional (AP)'],
+            '531' => ['Andhra Pradesh', 'Anakapalli / Vizag Rural', true, 40000, '2–3 Business Days', 'Regional (AP)'],
+            '532' => ['Andhra Pradesh', 'Srikakulam', true, 40000, '3–4 Business Days', 'Regional (AP)'],
+            '535' => ['Andhra Pradesh', 'Vizianagaram', true, 40000, '3–4 Business Days', 'Regional (AP)'],
+            '520' => ['Andhra Pradesh', 'Vijayawada Central', true, 50000, '2–3 Business Days', 'Regional (AP)'],
+            '521' => ['Andhra Pradesh', 'Machilipatnam / Krishna', true, 40000, '3–4 Business Days', 'Regional (AP)'],
+            '522' => ['Andhra Pradesh', 'Guntur Urban Hub', true, 50000, '3–4 Business Days', 'Regional (AP)'],
+            '523' => ['Andhra Pradesh', 'Ongole / Prakasam', true, 40000, '3–4 Business Days', 'Regional (AP)'],
+            '524' => ['Andhra Pradesh', 'Nellore Central', true, 40000, '3–4 Business Days', 'Regional (AP)'],
+            '515' => ['Andhra Pradesh', 'Anantapur', true, 35000, '3–4 Business Days', 'Regional (AP)'],
+            '516' => ['Andhra Pradesh', 'Kadapa', true, 35000, '3–4 Business Days', 'Regional (AP)'],
+            '517' => ['Andhra Pradesh', 'Tirupati / Chittoor Hub', true, 45000, '3–4 Business Days', 'Regional (AP)'],
+            '518' => ['Andhra Pradesh', 'Kurnool Hub', true, 40000, '3–4 Business Days', 'Regional (AP)'],
 
-            // Telangana
-            '500' => ['Telangana', 'Hyderabad Metro Hub', true, 50000, '3–4 Business Days', 'Regional Metro Hub'],
-            '501' => ['Telangana', 'Ranga Reddy / Secunderabad', true, 45000, '3–4 Business Days', 'Regional Hub'],
-            '502' => ['Telangana', 'Medak / Sangareddy', true, 40000, '3–4 Business Days', 'Regional Hub'],
-            '503' => ['Telangana', 'Nizamabad', true, 35000, '4–5 Business Days', 'Regional Hub'],
-            '505' => ['Telangana', 'Karimnagar', true, 40000, '3–4 Business Days', 'Regional Hub'],
-            '506' => ['Telangana', 'Warangal Urban', true, 40000, '3–4 Business Days', 'Regional Hub'],
+            // Telangana (Local Zone 500/501, Intra-State 502-509)
+            '500' => ['Telangana', 'Hyderabad Metro Hub', true, 50000, '1–2 Business Days', 'Local Zone'],
+            '501' => ['Telangana', 'Ranga Reddy / Secunderabad', true, 45000, '1–2 Business Days', 'Local Zone'],
+            '502' => ['Telangana', 'Medak / Sangareddy', true, 40000, '2–3 Business Days', 'Intra-State (TS)'],
+            '503' => ['Telangana', 'Nizamabad', true, 35000, '2–3 Business Days', 'Intra-State (TS)'],
+            '505' => ['Telangana', 'Karimnagar', true, 40000, '2–3 Business Days', 'Intra-State (TS)'],
+            '506' => ['Telangana', 'Warangal Urban', true, 40000, '2–3 Business Days', 'Intra-State (TS)'],
 
             // South Metros & Hubs
             '560' => ['Karnataka', 'Bengaluru Metro Hub', true, 50000, '3–5 Business Days', 'South India Metro'],
@@ -560,10 +750,10 @@ class EkartLogisticsService
 
         // 2-digit fallback
         $directory2 = [
-            '50' => ['Telangana', 'Telangana District Hub', true, 40000, '3–5 Business Days', 'Regional Hub'],
-            '51' => ['Andhra Pradesh', 'Rayalaseema Region', true, 40000, '3–5 Business Days', 'Intra-State Hub'],
-            '52' => ['Andhra Pradesh', 'Coastal Central AP', true, 45000, '3–4 Business Days', 'Intra-State Hub'],
-            '53' => ['Andhra Pradesh', 'North Coastal AP', true, 45000, '2–3 Business Days', 'Local Zone'],
+            '50' => ['Telangana', 'Telangana District Hub', true, 40000, '2–3 Business Days', 'Intra-State (TS)'],
+            '51' => ['Andhra Pradesh', 'Rayalaseema Region', true, 40000, '2–3 Business Days', 'Regional (AP)'],
+            '52' => ['Andhra Pradesh', 'Coastal Central AP', true, 45000, '2–3 Business Days', 'Regional (AP)'],
+            '53' => ['Andhra Pradesh', 'North Coastal AP', true, 45000, '2–3 Business Days', 'Regional (AP)'],
             '56' => ['Karnataka', 'Bengaluru / South KA', true, 45000, '3–5 Business Days', 'South Zone'],
             '57' => ['Karnataka', 'Coastal Karnataka', true, 35000, '4–5 Business Days', 'South Zone'],
             '58' => ['Karnataka', 'North Karnataka', true, 35000, '4–6 Business Days', 'South Zone'],
@@ -623,7 +813,8 @@ class EkartLogisticsService
             '26' => ['Uttarakhand', 'Kumaon / Nainital', true, 35000, '5–7 Business Days', 'Hill Zone'],
         ];
 
-        $info = $directory3[$prefix3] ?? $directory2[$prefix2] ?? ['India', 'National Coverage Station', true, 30000, '4–6 Business Days', 'National Coverage'];
+        $zoneInfo = self::determineZone($pin);
+        $info = $directory3[$prefix3] ?? $directory2[$prefix2] ?? ['India', 'National Coverage Station', true, 30000, '4–6 Business Days', 'National Zone'];
 
         return [
             'status' => true,
@@ -638,10 +829,13 @@ class EkartLogisticsService
                 'reverse_drop' => true,
                 'city' => $info[1],
                 'state' => $info[0],
-                'zone' => $info[5] ?? 'National Coverage'
+                'zone' => $zoneInfo['badge']
             ],
+            'zone' => $zoneInfo['badge'],
+            'zone_name' => $zoneInfo['zone'],
+            'zone_code' => $zoneInfo['zone_code'],
             'service_types' => ['EXPRESS', 'SURFACE'],
-            'estimated_tat_days' => $info[4],
+            'estimated_tat_days' => $zoneInfo['tat'] ?? ($info[4] ?? '2–3 Business Days'),
             'is_live_data' => false
         ];
     }
@@ -694,43 +888,16 @@ class EkartLogisticsService
             }
         }
 
-        $dropPin = (string)($params['dropPincode'] ?? $params['drop'] ?? '533101');
-        $prefix3 = substr($dropPin, 0, 3);
-        $prefix2 = substr($dropPin, 0, 2);
+        $pickupLoc = self::getPickupLocation();
+        $defaultPickupPin = $pickupLoc['pincode'] ?? ($pickupLoc['pin'] ?? 500039);
+        $pickupPin = (int)($params['pickupPincode'] ?? ($params['pickup'] ?? $defaultPickupPin));
+        $dropPin = (int)($params['dropPincode'] ?? ($params['drop'] ?? 500039));
 
-        // Accurate Indian logistics zone pricing from dispatch warehouse (533101 - Rajahmundry, AP)
-        $isLocal = in_array($prefix3, ['533', '534', '530', '531'], true);
-        $isIntraState = in_array($prefix2, ['50', '51', '52', '53'], true);
-        $isSouthMetro = in_array($prefix3, ['560', '562', '600', '682'], true) || in_array($prefix2, ['56', '60'], true);
-        $isNorthWestMetro = in_array($prefix3, ['400', '411', '110', '122', '201', '700', '380'], true);
-        $isRemote = in_array($prefix2, ['78', '79', '18', '19', '74'], true);
-
-        if ($isLocal) {
-            $zone = 'Zone A (Local / Godavari AP)';
-            $base250 = 36.00;
-            $base500 = 42.00;
-            $extra500 = 22.00;
-        } elseif ($isIntraState || $isSouthMetro) {
-            $zone = 'Zone B (Regional / South India)';
-            $base250 = 44.00;
-            $base500 = 50.00;
-            $extra500 = 26.00;
-        } elseif ($isNorthWestMetro) {
-            $zone = 'Zone C (National Metro)';
-            $base250 = 52.00;
-            $base500 = 60.00;
-            $extra500 = 30.00;
-        } elseif ($isRemote) {
-            $zone = 'Zone E (Special / Remote)';
-            $base250 = 70.00;
-            $base500 = 85.00;
-            $extra500 = 42.00;
-        } else {
-            $zone = 'Zone D (Rest of India)';
-            $base250 = 56.00;
-            $base500 = 66.00;
-            $extra500 = 32.00;
-        }
+        $zoneInfo = self::determineZone($dropPin, $pickupPin);
+        $zone = $zoneInfo['zone'];
+        $base250 = $zoneInfo['base250'];
+        $base500 = $zoneInfo['base500'];
+        $extra500 = $zoneInfo['extra500'];
 
         $weightGrams = max(50, (int)($params['weight'] ?? 1000));
         if ($weightGrams <= 250) {
@@ -753,6 +920,10 @@ class EkartLogisticsService
         return [
             'type' => 'WEIGHT_BASED',
             'zone' => $zone,
+            'zone_badge' => $zoneInfo['badge'],
+            'zone_code' => $zoneInfo['zone_code'],
+            'originPincode' => (string)$pickupPin,
+            'dropPincode' => (string)$dropPin,
             'volumetricWeight' => (string)round(($weightGrams * 1.1) / 1000, 2),
             'billingWeight' => (string)($weightGrams / 1000),
             'shippingCharge' => (string)$shippingCharge,
@@ -1249,13 +1420,14 @@ class EkartLogisticsService
 
         return [
             [
-                'alias' => 'Nutronyx Fulfillment Warehouse',
+                'alias' => 'H NO: 2-127/84',
+                'name' => 'H NO: 2-127/84',
                 'phone' => 9876543210,
-                'address_line1' => 'Registered Warehouse Facility',
+                'address_line1' => 'H no: 2-127/84, Road Number 3, Sai Ram Nagar Near Sai baba temple, Vijayapuri colony, Uppal',
                 'address_line2' => '',
-                'pincode' => 533429,
-                'city' => 'Yeleswaram',
-                'state' => 'Andhra Pradesh',
+                'pincode' => 500039,
+                'city' => 'Hyderabad',
+                'state' => 'Telangana',
                 'country' => 'India'
             ]
         ];
