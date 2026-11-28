@@ -22,8 +22,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
-$awb = trim((string)($payload['tracking_id'] ?? $payload['awb'] ?? $payload['tracking_number'] ?? $_GET['awb'] ?? ''));
-$orderNumber = trim((string)($payload['order_id'] ?? $payload['order_number'] ?? $payload['orderReference'] ?? ''));
+$dataObj = $payload['data'] ?? ($payload['shipment'] ?? $payload);
+
+$awb = trim((string)(
+    $payload['tracking_id'] ?? 
+    $payload['awb'] ?? 
+    $payload['tracking_number'] ?? 
+    $payload['wbn'] ?? 
+    $dataObj['tracking_id'] ?? 
+    $dataObj['awb'] ?? 
+    $dataObj['wbn'] ?? 
+    $_GET['awb'] ?? 
+    ''
+));
+
+$orderNumber = trim((string)(
+    $payload['order_id'] ?? 
+    $payload['order_number'] ?? 
+    $payload['merchant_order_id'] ?? 
+    $payload['client_order_id'] ?? 
+    $payload['orderReference'] ?? 
+    $dataObj['order_id'] ?? 
+    $dataObj['order_number'] ?? 
+    ''
+));
 
 $db = Database::getConnection();
 $orderId = null;

@@ -827,10 +827,22 @@ class OrderService
             $newFulfillmentStatus = 'FULFILLED';
         }
 
-        // Update shipment status in database
+        // Update shipment status and estimated delivery date in database
+        $edd = $trackData['edd'] ?? ($trackData['track']['expected_delivery_date'] ?? ($trackData['expected_delivery_date'] ?? null));
+        $eddSql = '';
+        $eddParams = [];
+        if (!empty($edd)) {
+            $eddTime = is_numeric($edd) ? (int)($edd > 100000000000 ? (int)($edd / 1000) : $edd) : strtotime((string)$edd);
+            if ($eddTime && $eddTime > time() - (86400 * 30)) {
+                $eddFormatted = date('Y-m-d H:i:s', $eddTime);
+                $eddSql = ', estimated_delivery_date = :edd';
+                $eddParams[':edd'] = $eddFormatted;
+            }
+        }
+
         $deliveredAtSql = ($newShipmentStatus === 'DELIVERED') ? ', delivered_at = CURRENT_TIMESTAMP' : '';
-        $uShip = $db->prepare("UPDATE shipments SET status = :st {$deliveredAtSql} WHERE id = :sid");
-        $uShip->execute([':st' => $newShipmentStatus, ':sid' => $shipment['id']]);
+        $uShip = $db->prepare("UPDATE shipments SET status = :st {$deliveredAtSql} {$eddSql} WHERE id = :sid");
+        $uShip->execute(array_merge([':st' => $newShipmentStatus, ':sid' => $shipment['id']], $eddParams));
 
         // Update order fulfillment_status and optionally order_status
         if ($newOrderStatus) {
@@ -841,17 +853,26 @@ class OrderService
             $uOrd->execute([':fst' => $newFulfillmentStatus, ':oid' => $orderId]);
         }
 
-        // Record any new tracking checkpoint into order timeline
+        // Record all live checkpoints from Ekart into order timeline
         if (!empty($checkpoints) && is_array($checkpoints)) {
-            $latestCp = end($checkpoints);
-            $cpMsg = "Ekart Update: " . ($latestCp['status'] ?? $ekartStatus);
-            if (!empty($latestCp['location'])) $cpMsg .= " at " . $latestCp['location'];
-            if (!empty($latestCp['desc'])) $cpMsg .= " (" . $latestCp['desc'] . ")";
+            foreach ($checkpoints as $cp) {
+                $status = trim((string)($cp['status'] ?? ''));
+                if (empty($status)) continue;
+                $cpMsg = "Ekart Update: " . $status;
+                if (!empty($cp['location'])) $cpMsg .= " at " . $cp['location'];
+                if (!empty($cp['desc'])) $cpMsg .= " (" . $cp['desc'] . ")";
 
-            $chkStmt = $db->prepare("SELECT id FROM order_timeline WHERE order_id = :oid AND message = :msg LIMIT 1");
-            $chkStmt->execute([':oid' => $orderId, ':msg' => $cpMsg]);
-            if (!$chkStmt->fetchColumn()) {
-                self::addTimelineEvent($orderId, 'EKART_UPDATE', $cpMsg);
+                $chkStmt = $db->prepare("SELECT id FROM order_timeline WHERE order_id = :oid AND message = :msg LIMIT 1");
+                $chkStmt->execute([':oid' => $orderId, ':msg' => $cpMsg]);
+                if (!$chkStmt->fetchColumn()) {
+                    $eventTime = null;
+                    if (!empty($cp['ctime'])) {
+                        $cTimeVal = (int)$cp['ctime'];
+                        if ($cTimeVal > 100000000000) $cTimeVal = (int)($cTimeVal / 1000);
+                        $eventTime = date('Y-m-d H:i:s', $cTimeVal);
+                    }
+                    self::addTimelineEvent($orderId, 'EKART_UPDATE', $cpMsg, $eventTime);
+                }
             }
         }
 
@@ -861,7 +882,9 @@ class OrderService
             'ekart_status' => $ekartStatus,
             'shipment_status' => $newShipmentStatus,
             'fulfillment_status' => $newFulfillmentStatus,
-            'checkpoints' => $checkpoints
+            'edd' => $edd ?? null,
+            'checkpoints' => $checkpoints,
+            'is_live_track' => !empty($trackData['is_live_track'])
         ];
     }
 
@@ -1279,21 +1302,37 @@ class OrderService
     /**
      * Add timeline event
      */
-    public static function addTimelineEvent(string $orderId, string $eventType, string $message): void
+    public static function addTimelineEvent(string $orderId, string $eventType, string $message, ?string $createdAt = null): void
     {
         $user = AuthService::user();
         $db = Database::getConnection();
-        $stmt = $db->prepare("
-            INSERT INTO order_timeline (id, website_id, order_id, event_type, message, actor)
-            VALUES (:id, :wid, :oid, :type, :msg, :actor)
-        ");
-        $stmt->execute([
-            ':id' => 'tl_' . bin2hex(random_bytes(6)),
-            ':wid' => Context::getWebsiteId(),
-            ':oid' => $orderId,
-            ':type' => $eventType,
-            ':msg' => $message,
-            ':actor' => $user['name'] ?? ($user['email'] ?? 'System')
-        ]);
+        if ($createdAt) {
+            $stmt = $db->prepare("
+                INSERT INTO order_timeline (id, website_id, order_id, event_type, message, actor, created_at)
+                VALUES (:id, :wid, :oid, :type, :msg, :actor, :cat)
+            ");
+            $stmt->execute([
+                ':id' => 'tl_' . bin2hex(random_bytes(6)),
+                ':wid' => Context::getWebsiteId(),
+                ':oid' => $orderId,
+                ':type' => $eventType,
+                ':msg' => $message,
+                ':actor' => $user['name'] ?? ($user['email'] ?? 'Ekart Logistics'),
+                ':cat' => $createdAt
+            ]);
+        } else {
+            $stmt = $db->prepare("
+                INSERT INTO order_timeline (id, website_id, order_id, event_type, message, actor)
+                VALUES (:id, :wid, :oid, :type, :msg, :actor)
+            ");
+            $stmt->execute([
+                ':id' => 'tl_' . bin2hex(random_bytes(6)),
+                ':wid' => Context::getWebsiteId(),
+                ':oid' => $orderId,
+                ':type' => $eventType,
+                ':msg' => $message,
+                ':actor' => $user['name'] ?? ($user['email'] ?? 'Ekart Logistics')
+            ]);
+        }
     }
 }

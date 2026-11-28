@@ -17,6 +17,9 @@
     RewriteCond %{REQUEST_URI} !^/admin/ [NC]
     RewriteRule ^ /%1 [R=301,L]
 
+    # Ekart Webhook Endpoint Alias
+    RewriteRule ^api/v2/webhooks/ekart/?$ api/ekart-webhook.php [L,QSA]
+
     # 3. Internal Rewrite: Map extensionless URLs to .php files
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
